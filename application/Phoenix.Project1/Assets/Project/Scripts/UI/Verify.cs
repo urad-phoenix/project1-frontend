@@ -66,14 +66,19 @@ namespace Phoenix.Project1.Client.UI
         void _Verify(IObservable<bool> connect_obs)
         {
             _LoginDisposables.Clear();
-            var obs = from _ in connect_obs
-                      from msgBoxLogin in MessageBoxProvider.Instance.OpenObservable("登入中...", "提示")
-                      from notifier in NotifierRx.ToObservable()
-                      from verify in notifier.QueryNotifier<IVerifier>().SupplyEvent()
-                      from result in _VerifyAccount(verify)                      
-                      from closeDone in MessageBoxProvider.Instance.Close(msgBoxLogin)
-                      select result;
-            obs.Subscribe(_LoginResult).AddTo(_LoginDisposables);
+
+            var obs =
+                    from msgBoxConnect in MessageBoxProvider.Instance.OpenObservable("提示", "連線中...")                        
+                    from connectResult in connect_obs
+                    from connectCloseDone in MessageBoxProvider.Instance.Close(msgBoxConnect)
+                    where connectResult == true
+                    from msgBoxLogin in MessageBoxProvider.Instance.OpenObservable("提示", "登入中...")
+                    from notifier in NotifierRx.ToObservable()
+                    from verify in notifier.QueryNotifier<IVerifier>().SupplyEvent()
+                    from result in _VerifyAccount(verify)                      
+                    from closeDone in MessageBoxProvider.Instance.Close(msgBoxLogin)
+                    select result;
+            obs.DefaultIfEmpty(VerifyResult.Fail).Subscribe(_LoginResult).AddTo(_LoginDisposables);
             
         }
 
@@ -87,7 +92,7 @@ namespace Phoenix.Project1.Client.UI
         {
             if(result != VerifyResult.Success)
             {
-                var msgBox = MessageBoxProvider.Instance.Open($"登入失敗:{result}","提示","確定");
+                var msgBox = MessageBoxProvider.Instance.Open("提示", $"登入失敗:{result}", "確定");
                 msgBox.Buttons[0].OnClickAsObservable().Subscribe(_ => MessageBoxProvider.Instance.Close(msgBox)).AddTo(_LoginDisposables);
             }
         }
