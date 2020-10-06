@@ -35,7 +35,7 @@ namespace Phoenix.Project1.Client
             Common.ILobby lobby = new Phoenix.Project1.Users.Lobby();
             var entry = new Phoenix.Project1.Users.Entry(lobby);
             var service = Regulus.Remote.Standalone.Provider.CreateService(_Protocol, entry);            
-            _Machine.Push(new StandaloneUpdater(service, _Agent));            
+            _Machine.Push(new StandaloneStatus(service, _Agent));            
         }
 
         private void Update()
@@ -47,11 +47,18 @@ namespace Phoenix.Project1.Client
             _Machine.Termination();
         }
 
-        internal System.IObservable<Unit> SetStandalone()
+        internal System.IObservable<bool> SetStandalone()
         {
             _SetStandalone();
-            return UniRx.Observable.Return(Unit.Default);
+            return UniRx.Observable.Return(true);
 
+        }
+
+        internal System.IObservable<bool> SetTcp(IPAddress ip_address, int port)
+        {
+            var status = new TcpStatus(ip_address, port, _Agent);            
+            _Machine.Push(status);
+            return status.Result;
         }
     }
 }

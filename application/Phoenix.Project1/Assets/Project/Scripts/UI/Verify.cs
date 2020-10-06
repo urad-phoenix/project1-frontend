@@ -49,18 +49,24 @@ namespace Phoenix.Project1.Client.UI
 
         private void _Login()
         {
-            if(Standalone.isOn)
+            IObservable<bool> connectResult;
+            if (Standalone.isOn)
             {
-                _Verify();
+                connectResult = Agent.Instance.SetStandalone();
             }
-            
-            
-            
+            else
+            {
+                connectResult = Agent.Instance.SetTcp(_IpAddress , _Port);
+            }
+
+            _Verify(connectResult);
+
+
         }
-        void _Verify()
+        void _Verify(IObservable<bool> connect_obs)
         {
             _LoginDisposables.Clear();
-            var obs = from _ in Agent.Instance.SetStandalone()
+            var obs = from _ in connect_obs
                       from msgBoxLogin in MessageBoxProvider.Instance.OpenObservable("登入中...", "提示")
                       from notifier in NotifierRx.ToObservable()
                       from verify in notifier.QueryNotifier<IVerifier>().SupplyEvent()
