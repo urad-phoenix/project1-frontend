@@ -14,11 +14,12 @@ namespace Phoenix.Project1.Client
 
         void IStatus.Enter()
         {
-            _Service.Join(_Agent);
+            
+            _Service.Join(_Agent);            
         }
 
         void IStatus.Leave()
-        {
+        {            
             _Service.Leave(_Agent);
             _Service.Dispose();
         }

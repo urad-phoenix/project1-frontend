@@ -49,23 +49,25 @@ namespace Phoenix.Project1.Client.UI
 
         private void _Login()
         {
+            if(Standalone.isOn)
+            {
+                _Verify();
+            }
             
-            StartCoroutine(_Verify());
             
             
         }
-        IEnumerator _Verify()
+        void _Verify()
         {
-            yield return new WaitForEndOfFrame();
-            yield return new WaitForEndOfFrame();
-            _LoginDisposables.Dispose();
-            var obs =
+            _LoginDisposables.Clear();
+            var obs = from _ in Agent.Instance.SetStandalone()
                       from msgBoxLogin in MessageBoxProvider.Instance.OpenObservable("登入中...", "提示")
-                      from verify in Agent.Instance.Queryable.QueryNotifier<IVerifier>().SupplyEvent()
+                      from notifier in NotifierRx.ToObservable()
+                      from verify in notifier.QueryNotifier<IVerifier>().SupplyEvent()
                       from result in _VerifyAccount(verify)                      
                       from closeDone in MessageBoxProvider.Instance.Close(msgBoxLogin)
                       select result;
-            obs.DoOnError(_Error).Subscribe(_LoginResult).AddTo(_LoginDisposables);
+            obs.Subscribe(_LoginResult).AddTo(_LoginDisposables);
             
         }
 
@@ -73,12 +75,6 @@ namespace Phoenix.Project1.Client.UI
         {
             verifier.Verify(Account.text);
             return UniRx.Observable.Return(VerifyResult.Success);
-        }
-        
-
-        private void _Error(Exception obj)
-        {
-            throw new NotImplementedException();
         }
 
         private void _LoginResult(VerifyResult result)
@@ -123,7 +119,7 @@ namespace Phoenix.Project1.Client.UI
 
         public void OnDestroy()
         {
-            _UIDisposables.Dispose();
+            _UIDisposables.Clear();
         }
     }
 

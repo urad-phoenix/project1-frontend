@@ -21,15 +21,17 @@ namespace Phoenix.Project1.Client.UI
         }
         private void OnDestroy()
         {
-            _Disposables.Dispose();
+            _Disposables.Clear();
         }
         void Start()
         {
-            Agent.Instance.Queryable.NotifierSupply<IVerifier>().Subscribe(_ShowVerify).AddTo(_Disposables);
-            Agent.Instance.Queryable.NotifierUnsupply<IVerifier>().Subscribe(_HideVerify).AddTo(_Disposables);
 
-            Agent.Instance.Queryable.NotifierSupply<IPlayer>().Subscribe(_ShowLobby).AddTo(_Disposables);
-            Agent.Instance.Queryable.NotifierUnsupply<IPlayer>().Subscribe(_HideLobby).AddTo(_Disposables);
+            ;
+            NotifierRx.ToObservable().Supply<IVerifier>().Subscribe(_ShowVerify).AddTo(_Disposables);
+            NotifierRx.ToObservable().Unsupply<IVerifier>().Subscribe(_HideVerify).AddTo(_Disposables);
+
+            NotifierRx.ToObservable().Supply<IPlayer>().Subscribe(_ShowLobby).AddTo(_Disposables);
+            NotifierRx.ToObservable().Unsupply<IPlayer>().Subscribe(_HideLobby).AddTo(_Disposables);
         }
 
         private void _HideLobby(IPlayer obj)
