@@ -1,9 +1,8 @@
 ﻿using System;
 using UniRx;
-using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace Assets.Project.Scripts
+namespace Phoenix.Project1.Addressable
 {
     public static class AddressableAssetRx
     {

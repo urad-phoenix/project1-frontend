@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using UniRx;
 using UnityEngine;
 
 namespace Phoenix.Project1.Client.UI

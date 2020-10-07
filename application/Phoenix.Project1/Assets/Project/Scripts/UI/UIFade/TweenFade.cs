@@ -1,12 +1,11 @@
 ﻿using DG.Tweening;
-using Phoenix.Project1.Client.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UniRx;
 using UnityEngine;
 
-namespace Assets.Project.Scripts.UI.UIFade
+namespace Phoenix.Project1.Client.UI
 {
     public class TweenFade : UIFadeBase
     {

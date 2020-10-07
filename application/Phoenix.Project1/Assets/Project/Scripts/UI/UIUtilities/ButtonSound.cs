@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Project.Scripts.UI.UIUtilities
+namespace Phoenix.Project1.Client.UI
 {
     public enum SoundMode
     {
