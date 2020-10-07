@@ -3,6 +3,7 @@ using Phoenix.Project1.Common.Users;
 using Regulus.Remote;
 using Regulus.Remote.Reactive;
 using Regulus.Utility;
+using System;
 using UniRx;
 
 namespace Phoenix.Project1.Users
@@ -30,20 +31,28 @@ namespace Phoenix.Project1.Users
 
         void IBootable.Launch()
         {
-            
-            _Disposables.Add(_Actors.SupplyEvent().Subscribe(_Binder.Bind<IActor>));
-            _Disposables.Add(_Actors.UnsupplyEvent().Subscribe(_Binder.Unbind<IActor>));
+
+            _Disposables.Add(_Actors.SupplyEvent().Subscribe(_BindActor));
+            _Disposables.Add(_Actors.UnsupplyEvent().Subscribe(_UnbindActor));
 
 
             _Binder.Bind<IPlayer>(_Self);
         }
-        
+
+        private void _UnbindActor(IActor actor)
+        {
+            _Binder.Unbind<IActor>(actor); 
+        }
+
+        private void _BindActor(IActor actor)
+        {
+            _Binder.Bind<IActor>(actor);
+        }
 
         void IBootable.Shutdown()
         {
             _Binder.Unbind<IPlayer>(_Self);
-
-            _Disposables.Dispose();
+            
             _Disposables.Clear();
         }
     }

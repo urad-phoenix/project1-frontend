@@ -5,7 +5,7 @@ using UniRx;
 
 namespace Regulus.Remote.Reactive
 {
-    public static class QueryableRx
+    public static class INotifierQueryableRx
     {
 
         public static IObservable<TValue> RemoteValue<TValue>(this Regulus.Remote.Value<TValue> ret)

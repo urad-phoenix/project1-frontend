@@ -1,15 +1,19 @@
 ﻿using Regulus.Remote;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Phoenix.Project1
 {
     public class GhostNotifier<TSoul,TGhost> : INotifier<TGhost> where TSoul : TGhost 
     {
-        INotifier<TSoul> _Parent;
+        readonly INotifier<TSoul> _Parent;
+
+        readonly List<TGhost> _Ghosts;
         public GhostNotifier(INotifier<TSoul> parent)
         {
-            _Parent = parent;
+            _Ghosts = new List<TGhost>();
+            _Parent = parent;            
             _UnsupplyEvent += _Empty;
             _SupplyEvent += _Empty;
             _Parent.Supply += _ToChildSupply;
@@ -23,14 +27,15 @@ namespace Phoenix.Project1
 
         private void _ToChildUnsupply(TSoul parent)
         {
-            TGhost child = parent;
-            _UnsupplyEvent(child);
+            
+            _Ghosts.Remove(parent);
+            _UnsupplyEvent(parent);
         }
 
         private void _ToChildSupply(TSoul parent)
         {
-            TGhost child = parent;
-            _SupplyEvent(child);
+            _Ghosts.Add(parent);
+            _SupplyEvent(parent);
         }
 
         TGhost[] INotifier<TGhost>.Ghosts => _Parent.Ghosts.Cast<TGhost>().ToArray();
@@ -41,6 +46,10 @@ namespace Phoenix.Project1
             add
             {
                 _SupplyEvent += value;
+                foreach (var item in _Ghosts)
+                {
+                    value(item);
+                }
             }
 
             remove
