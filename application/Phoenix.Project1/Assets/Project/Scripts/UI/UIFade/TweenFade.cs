@@ -36,8 +36,7 @@ namespace Phoenix.Project1.Client.UI
 
             return Observable.Create<Unit>(observer =>
             {
-                Observable.WhenAll(_Dotweens.Select(x => x.PlayAllByIdAsObservable(_FadeInId, true)))
-                .Last()
+                Observable.WhenAll(_Dotweens.Select(x => x.PlayForwardByIdAsObservable(_FadeInId)))
                 .Subscribe(x =>
                 {
                    observer.OnNext(Unit.Default);
@@ -53,8 +52,7 @@ namespace Phoenix.Project1.Client.UI
         {
             return Observable.Create<Unit>(observer =>
             {
-                Observable.WhenAll(_Dotweens.Select(x => x.PlayAllByIdAsObservable(_FadeOutId, true)))                                                            
-                .Last()
+                Observable.WhenAll(_Dotweens.Select(x => x.PlayBackwardsByIdAsObservable(_FadeInId)))                                                               
                 .Subscribe(x =>
                 {
                     observer.OnNext(Unit.Default);
@@ -71,26 +69,26 @@ namespace Phoenix.Project1.Client.UI
 
     public static class DotweenExtensions
     {
-        public static IObservable<DOTweenAnimation> PlayAllByIdAsObservable(this DOTweenAnimation animation, string id, bool rewind = false)
+        public static IObservable<DOTweenAnimation> PlayAllByIdAsObservable(this DOTweenAnimation animtion, string id, bool rewind = false)
         {
             return Observable.Create<DOTweenAnimation>(observer =>
             {
-                if(animation.id == id)
+                if(animtion.id == id)
                 {
                     if(rewind)
-                        animation.DORewind();         
-                    
-                    animation.DOPlayAllById(id);
+                        animtion.DORewind();
 
-                    animation.tween.OnComplete(() =>
+                    animtion.DOPlayAllById(id);
+
+                    animtion.tween.OnComplete(() =>
                     {
-                        observer.OnNext(animation);
+                        observer.OnNext(animtion);
                         observer.OnCompleted();
                     });
                 }
                 else
                 {
-                    observer.OnNext(animation);
+                    observer.OnNext(animtion);
                     observer.OnCompleted();
                 }
 
@@ -100,63 +98,88 @@ namespace Phoenix.Project1.Client.UI
 
         public static IObservable<DOTweenAnimation> RestartAsObservable(this DOTweenAnimation animtion, bool fromHere = false)
         {
-            return Observable.Create<DOTweenAnimation>(observable =>
+            return Observable.Create<DOTweenAnimation>(observer =>
             {
+                animtion.DORestart();
+
                 animtion.tween.OnComplete(() =>
                 {
-                    observable.OnNext(animtion);
-                    observable.OnCompleted();
-                });
-
-                animtion.DORestart(fromHere);
+                    observer.OnNext(animtion);
+                    observer.OnCompleted();
+                });             
 
                 return Disposable.Empty;
-            });
+            });          
         }
 
         public static IObservable<DOTweenAnimation> RestartByIdAsObservable(this DOTweenAnimation animtion, string id)
         {
-            return Observable.Create<DOTweenAnimation>(observable =>
+            return Observable.Create<DOTweenAnimation>(observer =>
             {
-                animtion.tween.OnComplete(() =>
+                if(animtion.id == id)
                 {
-                    observable.OnNext(animtion);
-                    observable.OnCompleted();
-                });
+                    animtion.DORestartById(id);
 
-                animtion.DORestartById(id);
+                    animtion.tween.OnComplete(() =>
+                    {
+                        observer.OnNext(animtion);
+                        observer.OnCompleted();
+                    });
+                }
+                else
+                {
+                    observer.OnNext(animtion);
+                    observer.OnCompleted();
+                }
 
                 return Disposable.Empty;
-            });
+            });           
         }
 
         public static IObservable<DOTweenAnimation> RestartAllByIdAsObservable(this DOTweenAnimation animtion, string id)
         {
-            return Observable.Create<DOTweenAnimation>(observable =>
+            return Observable.Create<DOTweenAnimation>(observer =>
             {
-                animtion.tween.OnComplete(() =>
+                if(animtion.id == id)
                 {
-                    observable.OnNext(animtion);
-                    observable.OnCompleted();
-                });
+                    animtion.DORestartAllById(id);
 
-                animtion.DORestartAllById(id);
+                    animtion.tween.OnComplete(() =>
+                    {
+                        observer.OnNext(animtion);
+                        observer.OnCompleted();
+                    });
+                }
+                else
+                {
+                    observer.OnNext(animtion);
+                    observer.OnCompleted();
+                }
 
                 return Disposable.Empty;
-            });
+            });          
         }
 
         public static IObservable<DOTweenAnimation> PlayForwardByIdAsObservable(this DOTweenAnimation animtion, string id)
         {
-            return Observable.Create<DOTweenAnimation>(observable =>
+            return Observable.Create<DOTweenAnimation>(observer =>
             {
-                animtion.tween.OnComplete(() =>
+                if(animtion.id == id)
                 {
-                    observable.OnNext(animtion);
-                    observable.OnCompleted();
-                });
 
-                animtion.DOPlayForwardById(id);
+                    animtion.DOPlayForwardById(id);
+
+                    animtion.tween.OnComplete(() =>
+                    {
+                        observer.OnNext(animtion);
+                        observer.OnCompleted();
+                    });
+                }
+                else
+                {
+                    observer.OnNext(animtion);
+                    observer.OnCompleted();
+                }
 
                 return Disposable.Empty;
             });
@@ -164,18 +187,27 @@ namespace Phoenix.Project1.Client.UI
 
         public static IObservable<DOTweenAnimation> PlayBackwardsByIdAsObservable(this DOTweenAnimation animtion, string id)
         {
-            return Observable.Create<DOTweenAnimation>(observable =>
+            return Observable.Create<DOTweenAnimation>(observer =>
             {
-                animtion.tween.OnComplete(() =>
+                if(animtion.id == id)
                 {
-                    observable.OnNext(animtion);
-                    observable.OnCompleted();
-                });
 
-                animtion.DOPlayBackwardsById(id);
+                    animtion.DOPlayBackwardsById(id);
+
+                    animtion.tween.OnComplete(() =>
+                    {
+                        observer.OnNext(animtion);
+                        observer.OnCompleted();
+                    });
+                }
+                else
+                {
+                    observer.OnNext(animtion);
+                    observer.OnCompleted();
+                }
 
                 return Disposable.Empty;
-            });
+            });          
         }
     }
 }
