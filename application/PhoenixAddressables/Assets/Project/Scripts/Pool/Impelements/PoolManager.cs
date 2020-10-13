@@ -5,7 +5,7 @@ namespace Phoenix.Pool
 {
     public class PoolManager : IDisposable
     {
-        private Dictionary<object, IPool> m_PoolMap = new Dictionary<object, IPool>();
+        private Dictionary<object, IPool> _PoolMap = new Dictionary<object, IPool>();
 
         private bool _IsInitialized;
 
@@ -30,9 +30,9 @@ namespace Phoenix.Pool
             }
         }
 
-        private void CheckHaveNoKey(object poolKey)
+        private void _CheckHaveNoKey(object poolKey)
         {
-            if(poolKey == null || !m_PoolMap.ContainsKey(poolKey))
+            if(poolKey == null || !_PoolMap.ContainsKey(poolKey))
             {
                 throw new ResourcesPoolException(
                     "PoolManager has no this key, Please make sure you call Add() before this function " +
@@ -40,7 +40,7 @@ namespace Phoenix.Pool
             }
         }
 
-        private void CheckNotInitialized()
+        private void _CheckNotInitialized()
         {
             if(!_IsInitialized)
             {
@@ -51,16 +51,16 @@ namespace Phoenix.Pool
 
         public IPool AddPool(IPool pool)
         {
-            CheckNotInitialized();
+            _CheckNotInitialized();
             var poolKey = pool.GetKey();
-            if(m_PoolMap.ContainsKey(pool.GetKey()))
+            if(_PoolMap.ContainsKey(pool.GetKey()))
             {
                 throw new ResourcesPoolException(
                     "Pool : " + poolKey + " is already added.");
             }
             else
             {
-                m_PoolMap.Add(poolKey, pool);
+                _PoolMap.Add(poolKey, pool);
             }
 
             pool.Initialize();
@@ -70,23 +70,23 @@ namespace Phoenix.Pool
 
         public IPool GetPool(object poolKey)
         {
-            CheckNotInitialized();
+            _CheckNotInitialized();
 
-            CheckHaveNoKey(poolKey);
+            _CheckHaveNoKey(poolKey);
 
-            return m_PoolMap[poolKey];
+            return _PoolMap[poolKey];
         }
 
         public bool IsContainsPool(object poolKey)
         {
-            return m_PoolMap.ContainsKey(poolKey);
+            return _PoolMap.ContainsKey(poolKey);
         }
 
         public T GetObject<T>(object poolKey, bool isDoBefore = true) where T : class
         {
-            CheckHaveNoKey(poolKey);
+            _CheckHaveNoKey(poolKey);
 
-            var pool = m_PoolMap[poolKey] as IPool<T>;
+            var pool = _PoolMap[poolKey] as IPool<T>;
 
             if(pool == null)
             {
@@ -99,7 +99,7 @@ namespace Phoenix.Pool
 
         public bool TryGetObject<T>(object poolKey, out T obj, bool isDoBefore = true) where T : class
         {
-            if(m_PoolMap.TryGetValue(poolKey, out var pool))
+            if(_PoolMap.TryGetValue(poolKey, out var pool))
             {
                 if(pool is IPool<T>)
                 {
@@ -115,32 +115,32 @@ namespace Phoenix.Pool
 
         public void RemovePool(object poolKey)
         {
-            CheckNotInitialized();
+            _CheckNotInitialized();
 
-            CheckHaveNoKey(poolKey);
+            _CheckHaveNoKey(poolKey);
 
-            var pool = m_PoolMap[poolKey];
+            var pool = _PoolMap[poolKey];
             pool.Dispose();
-            m_PoolMap.Remove(poolKey);
+            _PoolMap.Remove(poolKey);
         }
 
         public void RemoveAllPools()
         {
-            CheckNotInitialized();
+            _CheckNotInitialized();
 
-            foreach(var pool in m_PoolMap)
+            foreach(var pool in _PoolMap)
             {
                 pool.Value.Dispose();
             }
 
-            m_PoolMap.Clear();
+            _PoolMap.Clear();
         }
 
         public void Recycle<T>(object poolKey, T poolObject, bool isDoBefore = true)
         {
-            CheckHaveNoKey(poolKey);
+            _CheckHaveNoKey(poolKey);
 
-            var pool = m_PoolMap[poolKey] as IPool<T>;
+            var pool = _PoolMap[poolKey] as IPool<T>;
 
             if(pool == null)
             {
@@ -151,18 +151,18 @@ namespace Phoenix.Pool
             pool.Recycle(poolObject, isDoBefore);
         }
 
-        protected void Dispose(bool disposing)
+        private void _Dispose(bool disposing)
         {
             if(!_IsDispose)
             {
                 if(disposing)
                 {
-                    foreach(var pool in m_PoolMap)
+                    foreach(var pool in _PoolMap)
                     {
                         pool.Value.Dispose();
                     }
 
-                    m_PoolMap.Clear();
+                    _PoolMap.Clear();
                 }
             }
             _IsDispose = true;
@@ -171,9 +171,9 @@ namespace Phoenix.Pool
 
         public void Dispose()
         {
-            CheckNotInitialized();
+            _CheckNotInitialized();
 
-            Dispose(true);
+            _Dispose(true);
 
             GC.SuppressFinalize(this);
         }

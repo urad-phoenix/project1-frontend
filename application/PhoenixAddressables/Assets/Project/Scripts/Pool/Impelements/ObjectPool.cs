@@ -6,15 +6,15 @@ namespace Phoenix.Pool
 {
     public class ObjectPool : IPool<GameObject>
     {
-        private readonly Transform m_Parent;
-        private readonly GameObject m_Source;
-        private readonly object m_ID;
-        private readonly int m_Size;
+        private readonly Transform _Parent;
+        private readonly GameObject _Source;
+        private readonly object _ID;
+        private readonly int _Size;
 
-        private Stack<GameObject> m_Stack;
-        private bool m_IsInitialized;
-        private bool m_IsDispose;
-        private bool m_IsBeforeRecycle;
+        private Stack<GameObject> _Stack;
+        private bool _IsInitialized;
+        private bool _IsDispose;
+        private bool _IsBeforeRecycle;
 
         public Action<GameObject> OnAfterSpawn
         {
@@ -23,17 +23,17 @@ namespace Phoenix.Pool
 
         #region Exception
 
-        private void ChekNotInitialized()
+        private void _ChekNotInitialized()
         {
-            if(m_IsInitialized)
+            if(_IsInitialized)
             {
                 throw new ResourcesPoolException("ObjectPool is already initialized, Do not call this function when ObjectPool is initialized ");
             }
         }
 
-        private void ChekIsInitialized()
+        private void _ChekIsInitialized()
         {
-            if(!m_IsInitialized)
+            if(!_IsInitialized)
             {
                 throw new ResourcesPoolException("ObjectPool is not initialized, Please call Initialize before this function");
             }
@@ -51,27 +51,27 @@ namespace Phoenix.Pool
 
         public ObjectPool(object id, GameObject source, Transform parent, int size, bool isBeforeRecycle = true)
         {
-            m_ID = id;
-            m_Source = source;
-            m_Parent = parent;
-            m_Size = size;
-            m_Stack = new Stack<GameObject>();
-            m_IsBeforeRecycle = isBeforeRecycle;
+            _ID = id;
+            _Source = source;
+            _Parent = parent;
+            _Size = size;
+            _Stack = new Stack<GameObject>();
+            _IsBeforeRecycle = isBeforeRecycle;
         }
 
         private GameObject Create()
         {
-            if(m_Source == null)
+            if(_Source == null)
                 throw new ResourcesPoolException("ObjectPool source is null, Key :" + GetKey());
 
-            var obj = GameObject.Instantiate(m_Source);
+            var obj = GameObject.Instantiate(_Source);
 
-            if(m_Parent != null)
-                obj.transform.SetParent(m_Parent);
+            if(_Parent != null)
+                obj.transform.SetParent(_Parent);
 
             OnAfterSpawn?.Invoke(obj);
 
-            if(m_IsBeforeRecycle)
+            if(_IsBeforeRecycle)
                 OnBeforeRecycle(obj);
 
             return obj;
@@ -99,35 +99,35 @@ namespace Phoenix.Pool
 
         public void Initialize()
         {
-            ChekNotInitialized();
-            m_IsDispose = false;
-            m_IsInitialized = true;
+            _ChekNotInitialized();
+            _IsDispose = false;
+            _IsInitialized = true;
         }
 
         public void Spawn()
         {
-            ChekIsInitialized();
+            _ChekIsInitialized();
 
-            for(int i = 0; i < m_Size; ++i)
+            for(int i = 0; i < _Size; ++i)
             {
                 var obj = Create();
 
-                m_Stack.Push(obj);
+                _Stack.Push(obj);
             }
         }
 
         public GameObject Get(bool isDoBefore)
         {
-            ChekIsInitialized();
+            _ChekIsInitialized();
 
             GameObject obj;
-            if(m_Stack.Count == 0)
+            if(_Stack.Count == 0)
             {
                 obj = Create();
             }
             else
             {
-                obj = m_Stack.Pop();
+                obj = _Stack.Pop();
             }
 
             if(isDoBefore)
@@ -138,7 +138,7 @@ namespace Phoenix.Pool
 
         public void Recycle(GameObject obj, bool isDoBefor)
         {
-            ChekIsInitialized();
+            _ChekIsInitialized();
 
             CheckObjectIsNull(obj);
 
@@ -147,52 +147,52 @@ namespace Phoenix.Pool
             if(isDoBefor)
                 OnBeforeRecycle(poolObj);
 
-            if(!m_Stack.Contains(poolObj))
-                m_Stack.Push(poolObj);
+            if(!_Stack.Contains(poolObj))
+                _Stack.Push(poolObj);
         }
 
         public void Clear()
         {
-            ChekIsInitialized();
+            _ChekIsInitialized();
 
-            if(m_Stack == null)
+            if(_Stack == null)
                 return;
 
-            while(m_Stack.Count != 0)
+            while(_Stack.Count != 0)
             {
-                var obj = m_Stack.Pop();
+                var obj = _Stack.Pop();
                 OnClear(obj);
             }
         }
 
         public int GetCount()
         {
-            return m_Stack.Count;
+            return _Stack.Count;
         }
 
         public object GetKey()
         {
-            return m_ID;
+            return _ID;
         }
 
-        private void Dispose(bool disposing)
+        private void _Dispose(bool disposing)
         {
-            if(!m_IsDispose)
+            if(!_IsDispose)
             {
                 if(disposing)
                 {
                     Clear();
                 }
             }
-            m_IsDispose = true;
-            m_IsInitialized = false;
+            _IsDispose = true;
+            _IsInitialized = false;
         }
 
         public void Dispose()
         {
-            ChekIsInitialized();
+            _ChekIsInitialized();
 
-            Dispose(true);
+            _Dispose(true);
 
             GC.SuppressFinalize(this);
         }
