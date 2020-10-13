@@ -1,5 +1,7 @@
 ﻿using Phoenix.Project1.Addressable;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using UniRx;
 using UnityEngine;
@@ -9,6 +11,38 @@ using UnityEngine.UI;
 
 namespace Phoenix.Project1.Client
 {
+    public class SceneHookers
+        : Regulus.Utility.Singleton<SceneHookers>
+    {
+        readonly HashSet<int> _Numbers;
+        public SceneHookers()
+        {
+            _Numbers = new HashSet<int>();
+        }
+        int _Sn;
+        public int Allocate()
+        {
+            var num = _Sn++;
+            _Numbers.Add(num);
+            return _Sn;
+        }
+        public void Free(int token)
+        {
+            _Numbers.Remove(token);
+        }
+
+        public bool Empty => _Numbers.Count == 0;
+
+        public IObservable<Unit> WaitEmpty()
+        {
+            return UniRx.Observable.FromCoroutineValue<Unit>(_Wait);
+        }
+
+        private IEnumerator _Wait()
+        {
+            return new WaitUntil(() => Empty == true);
+        }
+    }
     public class SceneLoader 
     {
         
@@ -19,13 +53,9 @@ namespace Phoenix.Project1.Client
             var loadObs = from unloadDone in unloadObs
                           from handle in UnityEngine.AddressableAssets.Addressables.LoadSceneAsync(scene_name,UnityEngine.SceneManagement.LoadSceneMode.Additive).AsObserver()
                           select handle;
-
-            /*var percentObs = from handle in loadObs
-                             select handle.PercentComplete;
-            percentObs.Subscribe(_PercentUI);*/
-
+            
             var completeObs = from handle in loadObs
-                              from _ in _PercentUI(handle.PercentComplete)
+                              from _ in _Percent(handle.PercentComplete)
                               where handle.IsDone
                               select handle.Result;
             completeObs.Subscribe(_SetScene);
@@ -35,7 +65,8 @@ namespace Phoenix.Project1.Client
         {
             if(_Scene.Scene.IsValid())
             {
-                return from hnd in UnityEngine.AddressableAssets.Addressables.UnloadSceneAsync(_Scene).AsObserver()
+                return from empty in SceneHookers.Instance.WaitEmpty()                       
+                       from hnd in UnityEngine.AddressableAssets.Addressables.UnloadSceneAsync(_Scene).AsObserver()
                        where hnd.IsDone == true
                        select hnd.Result;
             }
@@ -47,7 +78,7 @@ namespace Phoenix.Project1.Client
             Open("scene-dashboard");
         }
 
-        private IObservable<Unit> _PercentUI(float percent)
+        private IObservable<Unit> _Percent(float percent)
         {
             UnityEngine.Debug.Log($"{percent}");
             return UniRx.Observable.Return(Unit.Default);

@@ -49,7 +49,7 @@ namespace Phoenix.Project1.Client
         private void _Result(IOnlineable onlineable)
         {
             _Onlineable = onlineable;
-            var errorObs = from error in Reactive.FromActionPattern<System.Net.Sockets.SocketError>(h => _Onlineable.ErrorEvent += h, h => _Onlineable.ErrorEvent -= h)
+            var errorObs = from error in Reactive.FromActionPattern<System.Net.Sockets.SocketError>(h => onlineable.ErrorEvent += h, h => onlineable.ErrorEvent -= h).ObserveOnMainThread()
                             select error;
             errorObs.Subscribe(_Disconnect).AddTo(_Disposables);
         }

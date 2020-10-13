@@ -14,6 +14,8 @@ namespace Phoenix.Project1.Client
             return Observable.FromEvent<System.Action<T>, T>(h => (gpi) => h(gpi), addHandler, removeHandler);
         }
     }
+
+    
     public static class NotifierRx 
     {        
 
@@ -26,7 +28,7 @@ namespace Phoenix.Project1.Client
             
             while (Agent.Instance == null)
             {
-                yield return new WaitForEndOfFrame();           
+                yield return new WaitForEndOfFrame();          
             }
             observer.OnNext(Agent.Instance.Queryable);
             observer.OnCompleted();
