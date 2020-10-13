@@ -24,7 +24,7 @@ namespace Phoenix.Project1.Client
         {
             var num = _Sn++;
             _Numbers.Add(num);
-            return _Sn;
+            return num;
         }
         public void Free(int token)
         {
@@ -33,14 +33,20 @@ namespace Phoenix.Project1.Client
 
         public bool Empty => _Numbers.Count == 0;
 
-        public IObservable<Unit> WaitEmpty()
+        public IObservable<int> WaitEmpty()
         {
-            return UniRx.Observable.FromCoroutineValue<Unit>(_Wait);
+            return UniRx.Observable.FromCoroutineValue<int>(_Wait);
         }
 
         private IEnumerator _Wait()
         {
-            return new WaitUntil(() => Empty == true);
+            yield return new WaitForEndOfFrame();
+            while (!Empty)
+            {
+                yield return new WaitForEndOfFrame();
+            }
+
+            yield break;
         }
     }
     public class SceneLoader 
@@ -49,6 +55,7 @@ namespace Phoenix.Project1.Client
         SceneInstance _Scene;
         internal void Open(string scene_name)
         {
+            
             var unloadObs = _Unload();
             var loadObs = from unloadDone in unloadObs
                           from handle in UnityEngine.AddressableAssets.Addressables.LoadSceneAsync(scene_name,UnityEngine.SceneManagement.LoadSceneMode.Additive).AsObserver()
@@ -65,7 +72,7 @@ namespace Phoenix.Project1.Client
         {
             if(_Scene.Scene.IsValid())
             {
-                return from empty in SceneHookers.Instance.WaitEmpty()                       
+                return from empty in SceneHookers.Instance.WaitEmpty().LastOrDefault()
                        from hnd in UnityEngine.AddressableAssets.Addressables.UnloadSceneAsync(_Scene).AsObserver()
                        where hnd.IsDone == true
                        select hnd.Result;
@@ -80,12 +87,14 @@ namespace Phoenix.Project1.Client
 
         private IObservable<Unit> _Percent(float percent)
         {
+            
             UnityEngine.Debug.Log($"{percent}");
             return UniRx.Observable.Return(Unit.Default);
         }
 
         private void _SetScene(SceneInstance scene)
         {
+            
             _Scene = scene;
         }
 

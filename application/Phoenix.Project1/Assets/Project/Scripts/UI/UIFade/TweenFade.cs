@@ -36,7 +36,16 @@ namespace Phoenix.Project1.Client.UI
                 }
             }
         }
-
+        public void OnEnable()
+        {
+            var observable = transform.FadeInAsObserver();
+            observable.Subscribe();
+        }
+        public void OnDisable()
+        {
+            var observable = transform.FadeOutAsObserver();
+            observable.Subscribe();
+        }
         public override IObservable<Unit> FadeIn()
         {            
             gameObject.SetActive(true);
@@ -63,13 +72,17 @@ namespace Phoenix.Project1.Client.UI
 
             return Observable.Create<Unit>(observer =>
             {
+                var token = SceneHookers.Instance.Allocate();
                 Observable.WhenAll(_Dotweens.Select(x => x.PlayBackwardsByIdAsObservable(_FadeId)))                                                               
                 .Subscribe(x =>
                 {
+                    SceneHookers.Instance.Free(token);
                     observer.OnNext(Unit.Default);
+                    gameObject.SetActive(!_IsFinishedDisable);
                     observer.OnCompleted();
 
-                    gameObject.SetActive(!_IsFinishedDisable);
+                    
+                    
                 })
                 .AddTo(this);
 
