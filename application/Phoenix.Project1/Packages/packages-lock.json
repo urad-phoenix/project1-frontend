@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.phoenix.pool": {
+      "version": "file:D:/urad/project1-frontend/application/PhoenixAddressables/Assets/Project/Scripts/Pool",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.unity.addressables": {
       "version": "1.8.5",
       "depth": 0,
