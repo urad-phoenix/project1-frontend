@@ -1,7 +1,10 @@
-﻿using Regulus.Remote;
-using Regulus.Remote.Ghost;
+﻿using Phoenix.Project1.Client.UI;
+using Regulus.Remote;
+using System;
+using System.Collections;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using UniRx;
 using UnityEngine;
 namespace Phoenix.Project1.Client
@@ -15,10 +18,33 @@ namespace Phoenix.Project1.Client
             return UnityEngine.GameObject.FindObjectOfType<Phoenix.Project1.Client.Agent>();
         }
 
+        
+
+        public static IObservable<Agent> ToObservable()
+        {
+            return UniRx.Observable.FromCoroutine<Agent>(_RunWaitAgent);
+        }
+        private static IEnumerator _RunWaitAgent(IObserver<Agent> observer)
+        {
+
+            while (Agent.Instance == null)
+            {
+                yield return new WaitForEndOfFrame();
+            }
+            observer.OnNext(Agent.Instance);
+            observer.OnCompleted();
+        }
+
         readonly  Regulus.Utility.StatusMachine _Machine;
         private  IProtocol _Protocol;
         private  Regulus.Remote.Ghost.IAgent _Agent;
-        public Regulus.Remote.INotifierQueryable Queryable => _Agent;        
+        public Regulus.Remote.INotifierQueryable Queryable => _Agent;
+        public bool Active => _Machine.Current != null;
+
+        internal void SetEmpty()
+        {
+            _ToReady();
+        }
 
         public Agent()
         {
@@ -26,7 +52,7 @@ namespace Phoenix.Project1.Client
             var type = Regulus.Remote.Protocol.ProtocolProvider.GetProtocols().Single();
             _Protocol = System.Activator.CreateInstance(type) as Regulus.Remote.IProtocol;
             _Agent = Regulus.Remote.Client.Provider.CreateAgent(_Protocol);
-            
+            _ToReady();
         }
 
         
@@ -56,9 +82,23 @@ namespace Phoenix.Project1.Client
 
         internal System.IObservable<bool> SetTcp(IPAddress ip_address, int port)
         {
-            var status = new TcpStatus(ip_address, port, _Agent);            
+            var status = new TcpStatus(ip_address, port, _Agent);
+            status.ErrorEvent += _TcpError;
             _Machine.Push(status);
             return status.Result;
+        }
+
+        private void _TcpError(SocketError error)
+        {
+            var box = MessageBoxProvider.Instance.Open($"與Server斷線:{error}", "","ok");
+            box.Buttons[0].OnClickAsObservable().Subscribe(_ => MessageBoxProvider.Instance.Close(box));
+            _ToReady();
+        }
+
+        private void _ToReady()
+        {
+
+            _Machine.Termination();
         }
     }
 }

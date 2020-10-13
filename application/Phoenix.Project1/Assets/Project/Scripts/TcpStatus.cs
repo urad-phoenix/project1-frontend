@@ -2,7 +2,9 @@
 using Regulus.Remote.Ghost;
 using Regulus.Utility;
 using System;
+using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using UniRx;
 
 namespace Phoenix.Project1.Client
@@ -18,6 +20,8 @@ namespace Phoenix.Project1.Client
         readonly UniRx.CompositeDisposable _Disposables;
         IOnlineable _Onlineable;
         public readonly System.IObservable<bool> Result;
+
+        public event System.Action<SocketError> ErrorEvent;
         public TcpStatus(IPAddress ip_address, int port, IAgent agent)
         {
             this._Ip = ip_address;
@@ -45,10 +49,21 @@ namespace Phoenix.Project1.Client
         private void _Result(IOnlineable onlineable)
         {
             _Onlineable = onlineable;
+            var errorObs = from error in Reactive.FromActionPattern<System.Net.Sockets.SocketError>(h => _Onlineable.ErrorEvent += h, h => _Onlineable.ErrorEvent -= h)
+                            select error;
+            errorObs.Subscribe(_Disconnect).AddTo(_Disposables);
+        }
+
+        private void _Disconnect(SocketError error)
+        {
+            _Onlineable = null;
+            ErrorEvent(error);
         }
 
         void IStatus.Leave()
         {
+            if (_Onlineable != null)
+                _Onlineable.Disconnect();
             _Disposables.Clear();
         }
 
@@ -56,7 +71,5 @@ namespace Phoenix.Project1.Client
         {
             _Agent.Update();
         }
-
- 
     }
 }
