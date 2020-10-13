@@ -14,6 +14,11 @@ namespace Phoenix.Project1.Client.UI
         public Phoenix.Project1.Client.UI.Verify Verify;
         public Phoenix.Project1.Client.UI.Lobby Lobby;
         readonly UniRx.CompositeDisposable _Disposables;
+
+        private Verify _Verify;
+
+        private Lobby _Lobby;
+
         public Gate()
         {
             _Disposables = new UniRx.CompositeDisposable();
@@ -32,29 +37,104 @@ namespace Phoenix.Project1.Client.UI
 
             NotifierRx.ToObservable().Supply<IPlayer>().Subscribe(_ShowLobby).AddTo(_Disposables);
             NotifierRx.ToObservable().Unsupply<IPlayer>().Subscribe(_HideLobby).AddTo(_Disposables);
+
+            _ShowVerify(null);
         }
 
         private void _HideLobby(IPlayer obj)
         {
-            Lobby.Hide();
+            _LobbyFadeOut();            
         }
 
         private void _ShowLobby(IPlayer obj)
         {
-            Lobby.Show();
+            if(_Lobby)
+            {
+                _LobbyFadeIn();
+
+                return;
+            }
+
+            var go = Instantiate(Lobby);
+
+            _Lobby = go.GetComponent<Lobby>();
+
+            if(_Lobby)
+            {
+                _Lobby.transform.SetTransformParent(this.transform);
+
+                _LobbyFadeIn();
+            }
+        }
+
+        private void _LobbyFadeIn()
+        {
+            var observable = _Lobby.transform.FadeInAsObserver();
+
+            observable.Subscribe(_ =>
+            {
+                _Lobby.Show();
+            });
+        }
+
+        private void _LobbyFadeOut()
+        {
+            var observable = _Lobby.transform.FadeOutAsObserver();
+
+            observable.Subscribe(_ =>
+            {
+                _Lobby.Hide();
+            });
+
         }
 
         private void _HideVerify(IVerifier obj)
         {
-            Verify.Hide();
+            _VerifyFadeOut();
         }
 
         private void _ShowVerify(IVerifier obj)
         {
-            Verify.Show();
+            if(_Verify)
+            {
+                _VerifyFadeIn();
+                return;
+            }
+
+            var go = Instantiate(Verify);
+
+            _Verify = go.GetComponent<Verify>();
+
+            if(_Verify)
+            {
+                _Verify.transform.SetTransformParent(this.transform);
+
+                _VerifyFadeIn();
+            }            
         }
 
-        
+
+        private void _VerifyFadeIn()
+        {
+            var observable = _Verify.transform.FadeInAsObserver();
+
+            observable.Subscribe(_ =>
+            {
+                _Verify.Show();
+            });
+        }
+
+        private void _VerifyFadeOut()
+        {
+            var observable = _Verify.transform.FadeOutAsObserver();
+
+            observable.Subscribe(_ =>
+            {
+                _Verify.Hide();
+            });
+
+        }
+
     }
 
 }

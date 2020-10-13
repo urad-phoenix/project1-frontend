@@ -42,7 +42,12 @@ namespace Phoenix.Project1.Client.UI
             return data?.Canvas;
         }
 
-        public T MoveToLayer<T>(UILayer order, T component) where T : Component
+        public T SetToLayer<T>(UILayer order, T component) where T : Component
+        {
+            return SetLayerAndRect(order, component);
+        }
+
+        private T SetLayerAndRect<T>(UILayer order, T component) where T : Component
         {
             if(component == null)
                 return default(T);
@@ -51,15 +56,33 @@ namespace Phoenix.Project1.Client.UI
 
             if(canvas != null)
             {
-                var rectTransform = component.GetComponent<RectTransform>();
-                rectTransform.SetParent(canvas.transform);
-                rectTransform.localPosition = Vector3.zero;
-                rectTransform.localRotation = Quaternion.identity;
-                rectTransform.sizeDelta = Vector2.zero;
-                rectTransform.SetAsLastSibling();
+                SetTransformParent(component.transform, canvas.transform);
             }
 
             return component;
+        }
+
+        public void SetToParent(Transform transform, Transform parent)
+        {
+            SetTransformParent(transform, parent);
+        }
+
+        private void SetTransformParent(Transform transform, Transform parent)
+        {
+            var rectTransform = transform.GetComponent<RectTransform>();
+
+            var localPosition = transform.localPosition;
+            var localRotation = transform.localRotation;
+            var localScale = transform.localScale;
+            var sizeDelta = rectTransform.sizeDelta;
+
+            rectTransform.SetParent(parent.transform);
+            rectTransform.localPosition = localPosition;
+            rectTransform.localRotation = localRotation;
+            rectTransform.localScale = localScale;
+            rectTransform.sizeDelta = sizeDelta;
+                
+            rectTransform.SetAsLastSibling();
         }
 
         public Camera GetUICamera(UILayer layer)

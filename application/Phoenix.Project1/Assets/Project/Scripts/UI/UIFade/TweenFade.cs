@@ -12,31 +12,40 @@ namespace Phoenix.Project1.Client.UI
         public DOTweenAnimation[] Anims;
 
         [SerializeField]
-        private string _FadeInId = "FadeIn";
+        private string _FadeId = "Fade";
 
-        [SerializeField]
-        private string _FadeOutId = "FadeOut";
-
-        private List<DOTweenAnimation> _Dotweens = new List<DOTweenAnimation>();
+        private List<DOTweenAnimation> _Dotweens;
 
         private void Start()
         {
-            if(Anims != null && Anims.Length != 0)
+            CheckDotween();
+        }
+
+        private void CheckDotween()
+        {
+            if(_Dotweens == null)
             {
-                foreach(var anim in Anims)
+                _Dotweens = new List<DOTweenAnimation>();
+
+                if(Anims != null && Anims.Length != 0)
                 {
-                    _Dotweens.AddRange(anim.GetComponents<DOTweenAnimation>().ToList());
+                    foreach(var anim in Anims)
+                    {
+                        _Dotweens.AddRange(anim.GetComponents<DOTweenAnimation>().ToList());
+                    }
                 }
             }
         }
 
         public override IObservable<Unit> FadeIn()
-        {
+        {            
             gameObject.SetActive(true);
+
+            CheckDotween();
 
             return Observable.Create<Unit>(observer =>
             {
-                Observable.WhenAll(_Dotweens.Select(x => x.PlayForwardByIdAsObservable(_FadeInId)))
+                Observable.WhenAll(_Dotweens.Select(x => x.PlayForwardByIdAsObservable(_FadeId)))
                 .Subscribe(x =>
                 {
                    observer.OnNext(Unit.Default);
@@ -50,9 +59,11 @@ namespace Phoenix.Project1.Client.UI
 
         public override IObservable<Unit> FadeOut()
         {
+            CheckDotween();
+
             return Observable.Create<Unit>(observer =>
             {
-                Observable.WhenAll(_Dotweens.Select(x => x.PlayBackwardsByIdAsObservable(_FadeInId)))                                                               
+                Observable.WhenAll(_Dotweens.Select(x => x.PlayBackwardsByIdAsObservable(_FadeId)))                                                               
                 .Subscribe(x =>
                 {
                     observer.OnNext(Unit.Default);
