@@ -31,7 +31,7 @@ namespace Phoenix.Project1.Client.UI
         void Start()
         {
 
-            ;
+            
             NotifierRx.ToObservable().Supply<IVerifier>().Subscribe(_ShowVerify).AddTo(_Disposables);
             NotifierRx.ToObservable().Unsupply<IVerifier>().Subscribe(_HideVerify).AddTo(_Disposables);
 
