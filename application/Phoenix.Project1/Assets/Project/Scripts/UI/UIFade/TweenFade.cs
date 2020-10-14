@@ -72,17 +72,13 @@ namespace Phoenix.Project1.Client.UI
 
             return Observable.Create<Unit>(observer =>
             {
-                var token = SceneHookers.Instance.Allocate();
-                Observable.WhenAll(_Dotweens.Select(x => x.PlayBackwardsByIdAsObservable(_FadeId)))                                                               
+             
+                Observable.WhenAll(_Dotweens.Select(x => x.PlayBackwardsByIdAsObservable(_FadeId)))
                 .Subscribe(x =>
-                {
-                    SceneHookers.Instance.Free(token);
+                {             
                     observer.OnNext(Unit.Default);
                     gameObject.SetActive(!_IsFinishedDisable);
                     observer.OnCompleted();
-
-                    
-                    
                 })
                 .AddTo(this);
 
