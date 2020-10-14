@@ -1,11 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Phoenix.Pool
 {
-    public class PoolManager : IDisposable
+    public class PoolManager : MonoBehaviour, IDisposable
     {
-        private Dictionary<object, IPool> _PoolMap = new Dictionary<object, IPool>();
+        static private PoolManager _Instance;
+
+        static public PoolManager Instance
+        {
+            get
+            {
+                if(_Instance == null)
+                {
+                    _Instance = FindObjectOfType<PoolManager>();
+
+                    if(_Instance == null)
+                    {
+                        GameObject go = new GameObject();
+
+                        go.name = "PoolManager";
+
+                        _Instance = go.AddComponent<PoolManager>();
+
+                        _Instance.Initialize();
+                    }
+                }
+                return _Instance;
+            }
+        }
+
+        public PoolManager()
+        {
+            _PoolMap = new Dictionary<object, IPool>();
+        }
+
+        private Dictionary<object, IPool> _PoolMap;
 
         private bool _IsInitialized;
 
@@ -49,7 +80,7 @@ namespace Phoenix.Pool
             }
         }
 
-        public IPool AddPool(IPool pool)
+        public T AddPool<T>(T pool) where T : IPool
         {
             _CheckNotInitialized();
             var poolKey = pool.GetKey();
