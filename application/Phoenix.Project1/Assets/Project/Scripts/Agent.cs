@@ -52,6 +52,7 @@ namespace Phoenix.Project1.Client
             var type = Regulus.Remote.Protocol.ProtocolProvider.GetProtocols().Single();
             _Protocol = System.Activator.CreateInstance(type) as Regulus.Remote.IProtocol;
             _Agent = Regulus.Remote.Client.Provider.CreateAgent(_Protocol);
+            
             _ToReady();
         }
 
@@ -97,7 +98,7 @@ namespace Phoenix.Project1.Client
 
         private void _ToReady()
         {
-
+            
             _Machine.Termination();
         }
     }

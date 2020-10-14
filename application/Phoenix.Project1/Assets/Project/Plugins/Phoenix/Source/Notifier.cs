@@ -18,7 +18,7 @@ namespace Phoenix.Project1
         public Notifier()
         {
             _Items = new System.Collections.Generic.List<T>();
-            Items = _Items;
+            Items = this;
 
             _UnsupplyEvent += _Empty;
             _SupplyEvent += _Empty;

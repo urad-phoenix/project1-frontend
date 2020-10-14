@@ -64,6 +64,7 @@ namespace Phoenix.Project1.Client
         {
             if (_Onlineable != null)
                 _Onlineable.Disconnect();
+            
             _Disposables.Clear();
         }
 

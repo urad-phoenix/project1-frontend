@@ -23,7 +23,7 @@ namespace Phoenix.Project1.Addressable
         {
             while (!async_operation.IsDone && !cancellationToken.IsCancellationRequested)
             {
-                observer.OnNext(async_operation);
+                observer.OnNext(async_operation); 
                 yield return null;
             }
             if (!cancellationToken.IsCancellationRequested)

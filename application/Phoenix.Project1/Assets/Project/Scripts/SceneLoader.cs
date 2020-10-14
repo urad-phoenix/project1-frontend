@@ -34,6 +34,7 @@ namespace Phoenix.Project1.Client
 
         private List<IObservable<AsyncOperationHandle<SceneInstance>>> _Load(string[] scene_names)
         {
+            
             var length = scene_names.Length;
             var instances = new List<IObservable<AsyncOperationHandle<SceneInstance>>>();
             for (int i = 0; i < length; i++)

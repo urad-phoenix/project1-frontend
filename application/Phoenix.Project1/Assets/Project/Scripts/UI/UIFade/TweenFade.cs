@@ -73,16 +73,12 @@ namespace Phoenix.Project1.Client.UI
             return Observable.Create<Unit>(observer =>
             {
              
-                Observable.WhenAll(_Dotweens.Select(x => x.PlayBackwardsByIdAsObservable(_FadeId)))                                                               
+                Observable.WhenAll(_Dotweens.Select(x => x.PlayBackwardsByIdAsObservable(_FadeId)))
                 .Subscribe(x =>
-                {
-             
+                {             
                     observer.OnNext(Unit.Default);
                     gameObject.SetActive(!_IsFinishedDisable);
                     observer.OnCompleted();
-
-                    
-                    
                 })
                 .AddTo(this);
 
