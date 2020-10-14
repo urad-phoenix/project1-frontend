@@ -13,17 +13,20 @@ namespace Phoenix.Project1.Client.UI
 
             return fade ? fade.FadeIn() : Observable.Return(Unit.Default);
         }
-
         public static IObservable<Unit> FadeOutAsObserver(this Component component)
         {
             var fade = component.GetComponent(typeof(UIFadeBase)) as UIFadeBase;
 
             return fade ? fade.FadeOut() : Observable.Return(Unit.Default);
         }
-
         public static void SetLayer(this Component component, UILayer layer)
         {
-            UILayerController.Instance.MoveToLayer(layer, component);
+            UILayerController.Instance.SetToLayer(layer, component);
         }
+        
+        public static void SetTransformParent(this Transform transform, Transform parent)
+        {
+            UILayerController.Instance.SetToParent(transform, parent);
+        }        
     }
 }
