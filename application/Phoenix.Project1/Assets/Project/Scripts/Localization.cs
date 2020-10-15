@@ -1,66 +1,30 @@
-﻿using Phoenix.Project1.Configs;
-using System.Collections;
-using System.Linq;
-using UniRx;
+﻿using UniRx;
 using UnityEngine;
-
 
 public class Localization : MonoBehaviour
 {
-    private Configuration _Resource;
-    public Cultures Culture;
-    public UnityEngine.TextAsset DatabaseJson;
+    public int Identify;
     
-    public static Localization Instance => _GetInstance();
+    readonly UniRx.CompositeDisposable _UIDisposables;
 
-    private static Localization _GetInstance()
+    public Localization()
     {
-        return UnityEngine.GameObject.FindObjectOfType<Localization>();
+        _UIDisposables = new UniRx.CompositeDisposable();
     }
-
-    public static System.IObservable<Localization> ToObservable()
+    private void OnDestroy()
     {
-        return UniRx.Observable.FromCoroutine<Localization>(_RunWaitAgent);
+        _UIDisposables.Clear();
     }
-
-    private static IEnumerator _RunWaitAgent(System.IObserver<Localization> observer)
-    {
-        while (Instance == null && Instance._IsReady())
-        {
-            yield return new WaitForEndOfFrame();
-        }
-        observer.OnNext(Instance);
-        observer.OnCompleted();
-    }
-
+    // Start is called before the first frame update
     void Start()
     {
-        _BuildResource();
+        Configuration.ToObservable().Subscribe(_Switch).AddTo(_UIDisposables);
     }
 
-    public void _BuildResource()
+    private void _Switch(Configuration configuration)
     {
-        var db = Phoenix.Project1.Configs.Database.DeserializeJson(DatabaseJson.text);
-        var database = new Regulus.RelationalTables.Database(db.Tables);
-        _Resource = new Configuration(database);
+        var Source = gameObject.GetComponent<UnityEngine.UI.Text>(); 
+        Source.text = configuration.GetText(Identify);
     }
-
-    public string GetText(int id, params string [] args)
-    {
-        var txt = from localization in _Resource.Localizations 
-                  where localization.Id == id
-                  select localization;
-        var str = txt.SingleOrDefault().GetText(Culture);
-        return string.Format(str, args);
-    }
-
-    private bool _IsReady()
-    {
-        return _Resource != null;
-    }
-
-    public Configuration GetResource()
-    {
-        return _Resource;
-    }
+    
 }
