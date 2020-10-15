@@ -56,6 +56,8 @@ namespace Phoenix.Project1.Client
 
         private void _Disconnect(SocketError error)
         {
+            if(_Onlineable != null)
+                _Onlineable.Disconnect();
             _Onlineable = null;
             ErrorEvent(error);
         }

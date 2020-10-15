@@ -14,14 +14,14 @@ namespace Phoenix.Project1.Game
     public class Configuration : IConfigurationDatabase
     {
         public readonly Regulus.RelationalTables.Database Database;
-        public readonly BuffInfo[] BuffInfos;
-        public readonly Localization[] Localizations;
+        public readonly Configs.BuffInfo[] BuffInfos;
+        public readonly Configs.Localization[] Localizations;
 
         public Configuration(Regulus.RelationalTables.Database database)
         {
             Database = database;
             //BuffInfos = Database.Query<BuffInfo>().ToArray();
-            Localizations = Database.Query<Localization>().ToArray();
+            Localizations = Database.Query<Configs.Localization>().ToArray();
         }
 
         public IEnumerable<T> Query<T>()
