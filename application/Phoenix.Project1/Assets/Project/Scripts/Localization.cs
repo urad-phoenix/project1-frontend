@@ -1,5 +1,6 @@
 ﻿using UniRx;
 using UnityEngine;
+using Phoenix.Project1.Client;
 
 public class Localization : MonoBehaviour
 {
