@@ -59,7 +59,7 @@ namespace Phoenix.Project1.Client
         private IObservable<bool> _SetStandalone(Phoenix.Project1.Game.Configuration resource)
         {            
             Common.ILobby lobby = new Phoenix.Project1.Users.Lobby();
-            var entry = new Phoenix.Project1.Users.Entry(lobby, localization.GetResource());
+            var entry = new Phoenix.Project1.Users.Entry(lobby, resource);
             var service = Regulus.Remote.Standalone.Provider.CreateService(_Protocol, entry);
             _Machine.Push(new StandaloneStatus(service, _Agent));       
             return UniRx.Observable.Return(true);
