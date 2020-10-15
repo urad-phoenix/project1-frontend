@@ -57,12 +57,13 @@ namespace Phoenix.Project1.Client
         }
 
         
-        private void _SetStandalone()
+        private IObservable<bool> _SetStandalone(Localization localization)
         {            
             Common.ILobby lobby = new Phoenix.Project1.Users.Lobby();
-            var entry = new Phoenix.Project1.Users.Entry(lobby);
+            var entry = new Phoenix.Project1.Users.Entry(lobby, localization.GetResource());
             var service = Regulus.Remote.Standalone.Provider.CreateService(_Protocol, entry);            
-            _Machine.Push(new StandaloneStatus(service, _Agent));            
+            _Machine.Push(new StandaloneStatus(service, _Agent));       
+            return UniRx.Observable.Return(true);
         }
 
         private void Update()
@@ -76,9 +77,10 @@ namespace Phoenix.Project1.Client
 
         internal System.IObservable<bool> SetStandalone()
         {
-            _SetStandalone();
-            return UniRx.Observable.Return(true);
-
+            return
+                from localization in Localization.ToObservable()
+                from result in _SetStandalone(localization)
+                select result;
         }
 
         internal System.IObservable<bool> SetTcp(IPAddress ip_address, int port)

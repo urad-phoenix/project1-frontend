@@ -25,7 +25,7 @@ public class Localization : MonoBehaviour
 
     private static IEnumerator _RunWaitAgent(System.IObserver<Localization> observer)
     {
-        while (Instance == null)
+        while (Instance == null && Instance._IsReady())
         {
             yield return new WaitForEndOfFrame();
         }
@@ -52,5 +52,15 @@ public class Localization : MonoBehaviour
                   select localization;
         var str = txt.SingleOrDefault().GetText(Culture);
         return string.Format(str, args);
+    }
+
+    private bool _IsReady()
+    {
+        return _Resource != null;
+    }
+
+    public Configuration GetResource()
+    {
+        return _Resource;
     }
 }
