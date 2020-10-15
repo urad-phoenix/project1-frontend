@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.phoenix.pool": "file:D:/urad/project1-frontend/application/PhoenixAddressables/Assets/Project/Scripts/Pool",
+    "com.phoenix.pool": "file:../../PhoenixAddressables/Assets/Project/Scripts/Pool",
     "com.unity.addressables": "1.8.5",
     "com.unity.collab-proxy": "1.2.16",
     "com.unity.ide.rider": "1.1.4",

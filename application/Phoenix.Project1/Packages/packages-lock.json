@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.phoenix.pool": {
-      "version": "file:D:/urad/project1-frontend/application/PhoenixAddressables/Assets/Project/Scripts/Pool",
+      "version": "file:../../PhoenixAddressables/Assets/Project/Scripts/Pool",
       "depth": 0,
       "source": "local",
       "dependencies": {}
