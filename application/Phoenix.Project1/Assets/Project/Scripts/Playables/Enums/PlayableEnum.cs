@@ -38,6 +38,7 @@
         UIVFX,
         BuffVFX,
         Audio,
+        SpineAnimation,
         Max
     }
     
