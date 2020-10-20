@@ -9,12 +9,12 @@ namespace Phoenix.Project1.Users
 {
     public class Entry : Regulus.Remote.IEntry
     {
-        readonly Configuration _Configs;
+        readonly Game.Configuration _Configs;
 
         readonly List<User> _Users;
         private readonly ILobby _Lobby;
 
-        public Entry(ILobby lobby, Configuration resource)
+        public Entry(ILobby lobby, Game.Configuration resource)
         {
             _Configs = resource;
 

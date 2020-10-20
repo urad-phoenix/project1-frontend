@@ -37,7 +37,7 @@ namespace Phoenix.Project1.Client
 
         readonly  Regulus.Utility.StatusMachine _Machine;
         private  IProtocol _Protocol;
-        private  Regulus.Remote.Ghost.IAgent _Agent;
+        private  readonly Regulus.Remote.Ghost.IAgent _Agent;
         public Regulus.Remote.INotifierQueryable Queryable => _Agent;
         public bool Active => _Machine.Current != null;
 
@@ -52,16 +52,15 @@ namespace Phoenix.Project1.Client
             var type = Regulus.Remote.Protocol.ProtocolProvider.GetProtocols().Single();
             _Protocol = System.Activator.CreateInstance(type) as Regulus.Remote.IProtocol;
             _Agent = Regulus.Remote.Client.Provider.CreateAgent(_Protocol);
-            
             _ToReady();
         }
 
         
-        private IObservable<bool> _SetStandalone(Localization localization)
+        private IObservable<bool> _SetStandalone(Phoenix.Project1.Game.Configuration resource)
         {            
             Common.ILobby lobby = new Phoenix.Project1.Users.Lobby();
-            var entry = new Phoenix.Project1.Users.Entry(lobby, localization.GetResource());
-            var service = Regulus.Remote.Standalone.Provider.CreateService(_Protocol, entry);            
+            var entry = new Phoenix.Project1.Users.Entry(lobby, resource);
+            var service = Regulus.Remote.Standalone.Provider.CreateService(_Protocol, entry);
             _Machine.Push(new StandaloneStatus(service, _Agent));       
             return UniRx.Observable.Return(true);
         }
@@ -78,8 +77,8 @@ namespace Phoenix.Project1.Client
         internal System.IObservable<bool> SetStandalone()
         {
             return
-                from localization in Localization.ToObservable()
-                from result in _SetStandalone(localization)
+                from config in Configuration.ToObservable()
+                from result in _SetStandalone(config.Resource)
                 select result;
         }
 
@@ -100,7 +99,7 @@ namespace Phoenix.Project1.Client
 
         private void _ToReady()
         {
-            
+
             _Machine.Termination();
         }
     }
