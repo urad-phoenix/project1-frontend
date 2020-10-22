@@ -59,7 +59,7 @@ namespace Phoenix.Project1.Client.UI
 
             var connectObs = 
                              from notifier in NotifierRx.ToObservable()
-                             from connecter in notifier.QueryNotifier<IConnecter>().SupplyEvent()
+                             from connecter in notifier.QueryNotifier<IConnecter>().SupplyEvent()                             
                              from msgBoxConnect in MessageBoxProvider.Instance.OpenObservable("提示", "連線中...")
                              from result in connecter.Connect(_GetIpAddress()).RemoteValue().ObserveOnMainThread()
                              from _ in MessageBoxProvider.Instance.Close(msgBoxConnect)
@@ -68,16 +68,14 @@ namespace Phoenix.Project1.Client.UI
             connectObs.DoOnError(_Error).Subscribe(_ConnectResult).AddTo(_LoginDisposables);
 
 
-            var loginObs =
-                    
+            var loginObs =                    
                     from notifier in NotifierRx.ToObservable()
                     from verifier in notifier.QueryNotifier<IVerifier>().SupplyEvent()
                     from msgBoxVerify in MessageBoxProvider.Instance.OpenObservable("提示", "驗證中...")
                     from result in verifier.Verify(Account.text).RemoteValue()
                     from _ in MessageBoxProvider.Instance.Close(msgBoxVerify)
-
                     select result;
-            loginObs.DefaultIfEmpty(VerifyResult.Fail).Subscribe(_LoginResult).AddTo(_LoginDisposables);
+            loginObs.Subscribe(_LoginResult).AddTo(_LoginDisposables);
 
         }
 

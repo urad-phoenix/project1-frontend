@@ -13,23 +13,29 @@ namespace Phoenix.Project1.Client
             readonly System.Collections.Generic.Queue<UnityEngine.UI.Text> _Items;
             public UnityEngine.GameObject ItemPrefab;
             public UnityEngine.Transform ItemParent;
+            public UnityEngine.GameObject Panel;
             public UnityEngine.UI.Button Send;
             public UnityEngine.UI.InputField Input;
             public UnityEngine.UI.ScrollRect Rect;
+            public KeyCode Trigger;
+            public int MessageLineCount;
             System.Action<string> _WriteLineHandle;
             System.Action<string> _WriteHandle;
             private Text _Current;
             readonly UniRx.CompositeDisposable _Disposables;
+            readonly System.Collections.Generic.Queue<string> _Temps;
             public Console()
             {
                 _Disposables = new CompositeDisposable();
                 _Items = new System.Collections.Generic.Queue<UnityEngine.UI.Text>();
                 _WriteLineHandle = _Empty;
                 _WriteHandle = _Empty;
+                _Temps = new Queue<string>();
             }
 
             private void _Empty(string obj)
             {
+                _Temps.Enqueue(obj);
             }
 
             void Start()
@@ -37,8 +43,18 @@ namespace Phoenix.Project1.Client
                 _NewItem();
                 Send.OnClickAsObservable().Subscribe(_Send).AddTo(_Disposables);
 
+                _EnableWriter();
+            }
+
+            private void _EnableWriter()
+            {
                 _WriteHandle = _Write;
                 _WriteLineHandle = _WriteLine;
+
+                while (_Temps.Count > 0)
+                {
+                    _WriteLineHandle(_Temps.Dequeue());
+                }
             }
 
             private void _Send(Unit obj)
@@ -76,7 +92,7 @@ namespace Phoenix.Project1.Client
             void Regulus.Utility.Console.IViewer.Write(string message)
             {
                 _WriteHandle(message);
-                //_Write(message);
+                _Write(message);
             }
 
             private void _Write(string message)
@@ -89,7 +105,6 @@ namespace Phoenix.Project1.Client
             void Regulus.Utility.Console.IViewer.WriteLine(string message)
             {
                 _WriteLineHandle(message);
-                //_WriteLine(message);
 
             }
 
@@ -109,15 +124,24 @@ namespace Phoenix.Project1.Client
                 _Items.Enqueue(itemText);
                 _Current = itemText;
                 _Dequeue();
-                Rect.verticalNormalizedPosition = 0;                
+                Rect.verticalNormalizedPosition = 1;                
             }
 
             private void _Dequeue()
             {
-                if(_Items.Count > 200)
+                if(_Items.Count > MessageLineCount)
                 {
                     var item= _Items.Dequeue();
                     GameObject.Destroy(item.gameObject);
+                }
+            }
+
+            void Update()
+            {
+                if(UnityEngine.Input.GetKeyDown(Trigger))
+                {
+
+                    Panel.SetActive(!Panel.activeSelf);
                 }
             }
         }
