@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Phoenix.Project1.Users
 {
-    class User
+    class User : System.IDisposable
     {
         private readonly IBinder _Binder;
         readonly Regulus.Utility.StageMachine _Machine;
@@ -32,6 +32,11 @@ namespace Phoenix.Project1.Users
             var stage = new UserLobby(_Binder, player,_Lobby);            
             _Machine.Push(stage);
 
+        }
+
+        void IDisposable.Dispose()
+        {
+            _Machine.Clean();
         }
     }
 }

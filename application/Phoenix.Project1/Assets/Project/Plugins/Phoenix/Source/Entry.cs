@@ -7,29 +7,46 @@ using System.Text;
 
 namespace Phoenix.Project1.Users
 {
-    public class Entry : Regulus.Remote.IEntry
+  
+    public class Entry : IUserEntry
     {
-        readonly Game.Configuration _Configs;
+        readonly IConfigurationDatabase _Configs;
 
-        readonly List<User> _Users;
+        readonly List<IDisposable> _Users;
         private readonly ILobby _Lobby;
 
-        public Entry(ILobby lobby, Game.Configuration resource)
+
+        // for standalone
+        public Entry() : this(new Lobby() ,new FakeConfiguration() )
+        {
+
+        }
+        // for remote
+        public Entry(ILobby lobby, IConfigurationDatabase resource)
         {
             _Configs = resource;
 
-            _Users = new List<User>();
+            _Users = new List<IDisposable>();
             this._Lobby = lobby;
         }
         void IBinderProvider.AssignBinder(IBinder binder, object state)
         {
-            
-            User user = new User(binder, _Lobby); 
+
+            IDisposable user = new User(binder, _Lobby); 
             _Users.Add(user);
 
             binder.BreakEvent += () => {
+                user.Dispose();
                 _Users.Remove(user);
             };
+        }
+
+        void IDisposable.Dispose()
+        {
+            foreach (var user in _Users)
+            {
+                user.Dispose();
+            }
         }
     }
 }

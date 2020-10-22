@@ -1,78 +1,41 @@
-﻿using Regulus.Remote.Client.Tcp;
-using Regulus.Remote.Ghost;
+﻿
+
+using Regulus.Utility.WindowConsoleStand;
 using Regulus.Utility;
-using System;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using UniRx;
+using System.Linq;
 
 namespace Phoenix.Project1.Client
 {
     internal class TcpStatus : IStatus 
     {
-        private IPAddress _Ip;
-        private int _Port;
-        private IAgent _Agent
-            ;
-        private readonly Connecter _Conecter;
-        private readonly IObservable<IOnlineable> _ConnectObs;
-        readonly UniRx.CompositeDisposable _Disposables;
-        IOnlineable _Onlineable;
-        public readonly System.IObservable<bool> Result;
+        private readonly IAgentProvider _Provider;
+        private readonly CommandConsole _Console;
+        public Regulus.Remote.INotifierQueryable Queryable;
 
-        public event System.Action<SocketError> ErrorEvent;
-        public TcpStatus(IPAddress ip_address, int port, IAgent agent)
+        public TcpStatus(Regulus.Remote.IProtocol protocol, Regulus.Utility.Console.IInput input, Regulus.Utility.Console.IViewer viewer)
         {
-            this._Ip = ip_address;
-            this._Port = port;
-            this._Agent = agent;
-            _Disposables = new CompositeDisposable();
-            _Conecter = new Regulus.Remote.Client.Tcp.Connecter(_Agent);
-            _ConnectObs = _Conecter.Connect(new IPEndPoint(_Ip, _Port)).ToObservable().ObserveOnMainThread();
-            
-
-            Result = _ConnectObs.ContinueWith<IOnlineable , bool>(_ContinueWith );
-        }
-
-        private IObservable<bool> _ContinueWith(IOnlineable arg)
-        {
-            return UniRx.Observable.Return(arg != null);
+            _Provider = new TcpAgentProvider(protocol);
+            _Console = new Phoenix.Project1.Client.CommandConsole(protocol, _Provider, input, viewer);
+            _Console.Launch();
+            var ret = _Console.Command.Run("create-agent", new string[0]).Single() as Regulus.Remote.Value<Regulus.Remote.INotifierQueryable>;
+            Queryable = ret.GetValue();            
         }
 
         void IStatus.Enter()
         {
-            _ConnectObs.Subscribe(_Result).AddTo(_Disposables);
             
-        }
-
-        private void _Result(IOnlineable onlineable)
-        {
-            _Onlineable = onlineable;
-            var errorObs = from error in Reactive.FromActionPattern<System.Net.Sockets.SocketError>(h => onlineable.ErrorEvent += h, h => onlineable.ErrorEvent -= h).ObserveOnMainThread()
-                            select error;
-            errorObs.Subscribe(_Disconnect).AddTo(_Disposables);
-        }
-
-        private void _Disconnect(SocketError error)
-        {
-            if(_Onlineable != null)
-                _Onlineable.Disconnect();
-            _Onlineable = null;
-            ErrorEvent(error);
         }
 
         void IStatus.Leave()
         {
-            if (_Onlineable != null)
-                _Onlineable.Disconnect();
-            
-            _Disposables.Clear();
+            _Console.Shutdown();
+
         }
 
         void IStatus.Update()
         {
-            _Agent.Update();
+            _Console.Update();
+
         }
     }
 }

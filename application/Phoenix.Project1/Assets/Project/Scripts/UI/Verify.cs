@@ -16,7 +16,6 @@ namespace Phoenix.Project1.Client.UI
         public UnityEngine.UI.InputField Account;
         public UnityEngine.UI.InputField IpAddress;
         public UnityEngine.UI.InputField Port;
-        public UnityEngine.UI.Toggle Standalone;
         IPAddress _IpAddress;
         private int _Port;
         readonly UniRx.CompositeDisposable _UIDisposables;
@@ -31,7 +30,6 @@ namespace Phoenix.Project1.Client.UI
             Account.OnValueChangedAsObservable().Subscribe(_ => _Check()).AddTo(_UIDisposables);
             IpAddress.OnValueChangedAsObservable().Subscribe(_ => _Check()).AddTo(_UIDisposables);
             Port.OnValueChangedAsObservable().Subscribe(_ => _Check()).AddTo(_UIDisposables);
-            Standalone.OnValueChangedAsObservable().Subscribe(_ => _Check()).AddTo(_UIDisposables);
             Login.OnClickAsObservable().Subscribe(_ => _Login() ).AddTo(_UIDisposables);
 
             
@@ -49,44 +47,60 @@ namespace Phoenix.Project1.Client.UI
 
         private void _Login()
         {
-            IObservable<bool> connectResult;
-            if (Standalone.isOn)
-            {
-                connectResult = Agent.Instance.SetStandalone();
-            }
-            else
-            {
-                connectResult = Agent.Instance.SetTcp(_IpAddress , _Port);
-            }
-
-            _Verify(connectResult);
+            
+            _Verify();
 
 
         }
-        void _Verify(IObservable<bool> connect_obs)
+        void _Verify()
         {
             _LoginDisposables.Clear();
 
-            var obs =
-                    from msgBoxConnect in MessageBoxProvider.Instance.OpenObservable("提示", "連線中...")                        
-                    from connectResult in connect_obs
-                    from connectCloseDone in MessageBoxProvider.Instance.Close(msgBoxConnect)
-                    where connectResult == true
-                    from msgBoxLogin in MessageBoxProvider.Instance.OpenObservable("提示", "登入中...")
+
+            var connectObs = 
+                             from notifier in NotifierRx.ToObservable()
+                             from connecter in notifier.QueryNotifier<IConnecter>().SupplyEvent()
+                             from msgBoxConnect in MessageBoxProvider.Instance.OpenObservable("提示", "連線中...")
+                             from result in connecter.Connect(_GetIpAddress()).RemoteValue().ObserveOnMainThread()
+                             from _ in MessageBoxProvider.Instance.Close(msgBoxConnect)
+                             select result;
+
+            connectObs.DoOnError(_Error).Subscribe(_ConnectResult).AddTo(_LoginDisposables);
+
+
+            var loginObs =
+                    
                     from notifier in NotifierRx.ToObservable()
-                    from verify in notifier.QueryNotifier<IVerifier>().SupplyEvent()
-                    from result in _VerifyAccount(verify)                      
-                    from closeDone in MessageBoxProvider.Instance.Close(msgBoxLogin)
+                    from verifier in notifier.QueryNotifier<IVerifier>().SupplyEvent()
+                    from msgBoxVerify in MessageBoxProvider.Instance.OpenObservable("提示", "驗證中...")
+                    from result in verifier.Verify(Account.text).RemoteValue()
+                    from _ in MessageBoxProvider.Instance.Close(msgBoxVerify)
+
                     select result;
-            obs.DefaultIfEmpty(VerifyResult.Fail).Subscribe(_LoginResult).AddTo(_LoginDisposables);
-            
+            loginObs.DefaultIfEmpty(VerifyResult.Fail).Subscribe(_LoginResult).AddTo(_LoginDisposables);
+
         }
 
-        System.IObservable<VerifyResult> _VerifyAccount(IVerifier verifier)
+        private void _Error(Exception obj)
         {
-            verifier.Verify(Account.text);
-            return UniRx.Observable.Return(VerifyResult.Success);
+            throw new NotImplementedException();
         }
+
+        private void _ConnectResult(bool result)
+        {
+            if (!result )
+            {
+                var msgBox = MessageBoxProvider.Instance.Open("提示", $"連線失敗", "確定");
+                msgBox.Buttons[0].OnClickAsObservable().Subscribe(_ => MessageBoxProvider.Instance.Close(msgBox)).AddTo(_LoginDisposables);
+            }
+        }
+
+        private IPEndPoint _GetIpAddress()
+        {
+            return new IPEndPoint(_IpAddress, _Port);
+        }
+
+        
 
         private void _LoginResult(VerifyResult result)
         {
@@ -104,11 +118,8 @@ namespace Phoenix.Project1.Client.UI
             {
                 return;
             }
-
-            if (!Standalone.isOn && !_CheckIp())
-            {
+            if (!_CheckIp())
                 return;
-            }
 
             Login.interactable = true;
         }

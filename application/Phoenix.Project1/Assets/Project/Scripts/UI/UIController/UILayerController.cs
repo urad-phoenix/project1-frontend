@@ -9,6 +9,7 @@ namespace Phoenix.Project1.Client.UI
         Main = 0,
         Mask = 1,
         MessageBox = 2,
+        Console
     }
 
     [Serializable]
@@ -32,7 +33,7 @@ namespace Phoenix.Project1.Client.UI
         {
             new UILayerData(){ Oder = UILayer.Main },
             new UILayerData(){ Oder = UILayer.Mask },
-            new UILayerData(){ Oder = UILayer.MessageBox },
+            new UILayerData(){ Oder = UILayer.MessageBox },            
         };
 
         public Canvas GetCanvas(UILayer layer)
