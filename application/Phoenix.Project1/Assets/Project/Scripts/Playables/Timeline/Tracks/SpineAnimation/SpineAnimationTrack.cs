@@ -35,7 +35,7 @@ namespace Phoenix.Playables
 
 			var behaviour = playable.GetBehaviour();
 			
-			behaviour.Receiver = new PlayableReceiver();
+			behaviour.Receiver = new SpinePlayableReceiver();
 			
 			if(director != null)
 			{

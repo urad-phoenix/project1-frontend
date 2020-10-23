@@ -3,7 +3,7 @@ using UnityEngine.Playables;
 
 namespace Phoenix.Playables.Markers
 {
-    public class PlayableReceiver : INotificationReceiver
+    public class SpinePlayableReceiver : INotificationReceiver
     {        
         public void OnNotify(Playable origin, INotification notification, object context)
         {                            

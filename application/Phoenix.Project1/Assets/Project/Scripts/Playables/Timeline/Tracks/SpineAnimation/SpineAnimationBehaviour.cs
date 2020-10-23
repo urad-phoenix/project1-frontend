@@ -19,7 +19,7 @@ namespace Phoenix.Playables
         private float _NormalTime;
         private string _ReturnName;
         private bool _IsReset;       
-        public PlayableReceiver Receiver;
+        public SpinePlayableReceiver Receiver;
         
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
@@ -145,42 +145,7 @@ namespace Phoenix.Playables
             
             _Animator.Update(time);
             _Animator.LateUpdate();
-        }
-
-        public override void OnPlayableDestroy(Playable playable)
-        {
-            if(_IsFirstFrameHappened == false)
-                return;
-            
-            Debug.Log("Destroy");
-            
-            int inputCount = playable.GetInputCount();
-
-            for(int i = 0; i < inputCount; ++i)
-            {
-                var inputPlayable = (ScriptPlayable<SpineAnimationData>)playable.GetInput(i);
-
-                var behaviour = inputPlayable.GetBehaviour();
-
-                if (behaviour != null)
-                {
-                    behaviour.IsFirstFrameHappened = false;
-                    behaviour.RemoveNotification(playable);
-                }
-            }
-            
-            _IsFirstFrameHappened = false;
-            
-            if(!_IsReset)
-                return;
-
-            _IsReset = false;
-
-            if(_Animator != null)
-            {
-                _Animator.AnimationState.SetAnimation(0, _ReturnName, true);               
-            }
-        }
+        }      
         
         public override void OnGraphStart(Playable playable)
         {           
@@ -200,9 +165,7 @@ namespace Phoenix.Playables
         }
 
         public override void OnGraphStop(Playable playable)
-        {  
-            Debug.Log("Stop");
-            
+        {                          
             int inputCount = playable.GetInputCount();
 
             for(int i = 0; i < inputCount; ++i)
