@@ -8,11 +8,11 @@ namespace Phoenix.Playables
     
     public class VFXBehaviour : PlayableBehaviour
     {
-        private bool m_FirstFrame;
+        private bool _FirstFrame;
 
         //private Transform m_Binding;
 
-        private bool m_IsFirstFrameHappened;
+        private bool _IsFirstFrameHappened;
 
         //private Quaternion m_Rotation;
 
@@ -20,57 +20,56 @@ namespace Phoenix.Playables
 
         //private Vector3 m_Position;
         
-        private float m_LastTime = -1f;
-        private uint m_RandomSeed = 1;
+        private float _LastTime = -1f;
+        private uint _RandomSeed = 1;
         private const float kUnsetTime = -1f;
-        private float m_SystemTime;
-        private string m_Key;
-        private List<Transform> m_VFXList = new List<Transform>();
-        private Transform m_DefaultParent;
+        private float _SystemTime;
+        private string _Key;
+        private List<Transform> _VFXList = new List<Transform>();
+        private Transform _DefaultParent;
         
         public class ParticleData
         {
-            public ParticleSystem ParticleSystem;
-            public float RandomSeed;
-            private float m_LastTime = -1f;
-            private uint m_RandomSeed = 1;
+            public ParticleSystem ParticleSystem;            
+            private float _LastTime = -1f;
+            private uint _RandomSeed = 1;
             private const float kUnsetTime = -1f;
-            private float m_SystemTime;
+            private float _SystemTime;
             
             public void Simulate(float time)
             {
                 if ((UnityEngine.Object) ParticleSystem != (UnityEngine.Object) null)
                 {
                     // float time = (float) playable.GetTime<Playable>();
-                    if (!Mathf.Approximately(m_LastTime, -1f) && Mathf.Approximately(m_LastTime, time))
+                    if (!Mathf.Approximately(_LastTime, -1f) && Mathf.Approximately(_LastTime, time))
                         return;
                     float num1 = Time.fixedDeltaTime * 0.5f;
                     float t1 = time;
-                    float num2 = t1 - this.m_LastTime;
+                    float num2 = t1 - this._LastTime;
                     float num3 =ParticleSystem.main.startDelay.Evaluate((float) ParticleSystem.randomSeed);
                     float num4 = ParticleSystem.main.duration + num3;
-                    float num5 = (double) t1 <= (double) num4 ? this.m_SystemTime - num3 : this.m_SystemTime;
-                    if ((double) t1 < (double) this.m_LastTime || (double) t1 < (double) num1 ||
-                        Mathf.Approximately(this.m_LastTime, -1f) ||
+                    float num5 = (double) t1 <= (double) num4 ? this._SystemTime - num3 : this._SystemTime;
+                    if ((double) t1 < (double) this._LastTime || (double) t1 < (double) num1 ||
+                        Mathf.Approximately(this._LastTime, -1f) ||
                         (double) num2 > (double) ParticleSystem.main.duration ||
                         (double) Mathf.Abs(num5 - ParticleSystem.time) >= (double) Time.maximumParticleDeltaTime)
                     {
                         ParticleSystem.Simulate(0.0f, true, true);
                         ParticleSystem.Simulate(t1, true, false);
-                        this.m_SystemTime = t1;
+                        this._SystemTime = t1;
                     }
                     else
                     {
                         float num6 = (double) t1 <= (double) num4 ? num4 : ParticleSystem.main.duration;
                         float num7 = t1 % num6;
-                        float t2 = num7 - this.m_SystemTime;
+                        float t2 = num7 - this._SystemTime;
                         if ((double) t2 < -(double) num1)
-                            t2 = num7 + num4 - this.m_SystemTime;
+                            t2 = num7 + num4 - this._SystemTime;
                         ParticleSystem.Simulate(t2, true, false);
-                        this.m_SystemTime += t2;
+                        this._SystemTime += t2;
                     }
 
-                    this.m_LastTime = time;    
+                    this._LastTime = time;    
                 } 
             }
             
@@ -79,32 +78,19 @@ namespace Phoenix.Playables
                 if (ParticleSystem == null)
                     return;
                 ParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-                /*ParticleSystem[] componentsInChildren = m_ParticleSystem.gameObject.GetComponentsInChildren<ParticleSystem>();
-                uint randomSeed = this.m_RandomSeed;
-                foreach (ParticleSystem particleSystem in componentsInChildren)
-                {
-                    if (particleSystem.useAutoRandomSeed)
-                    {
-                        particleSystem.useAutoRandomSeed = false;
-                        particleSystem.randomSeed = randomSeed;
-                        ++randomSeed;
-                    }
-                }*/
             }
             
             public void Initialize()
             {
-                m_SystemTime = 0.0f;
+                _SystemTime = 0.0f;
                 SetRandomSeed();
             }
         }
-        //public ParticleSystem m_ParticleSystem { get; private set; }
-                
+      
         public void Initialize(ParticleSystem ps, uint randomSeed)
         {
-            this.m_RandomSeed = Math.Max(1U, randomSeed);
-            //m_ParticleSystem = ps;
-            this.m_SystemTime = 0.0f;
+            this._RandomSeed = Math.Max(1U, randomSeed);
+            this._SystemTime = 0.0f;
             this.SetRandomSeed(ps);
         }
 
@@ -112,32 +98,21 @@ namespace Phoenix.Playables
         {
             if (system == null)
                 return;
-            system.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            /*ParticleSystem[] componentsInChildren = m_ParticleSystem.gameObject.GetComponentsInChildren<ParticleSystem>();
-            uint randomSeed = this.m_RandomSeed;
-            foreach (ParticleSystem particleSystem in componentsInChildren)
-            {
-                if (particleSystem.useAutoRandomSeed)
-                {
-                    particleSystem.useAutoRandomSeed = false;
-                    particleSystem.randomSeed = randomSeed;
-                    ++randomSeed;
-                }
-            }*/
+            system.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);           
         }
 
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {          
             var count =  playable.GetInputCount();
 
-            if (!m_IsFirstFrameHappened)
+            if (!_IsFirstFrameHappened)
             {
-                m_IsFirstFrameHappened = true;
-                m_Key = "";
+                _IsFirstFrameHappened = true;
+                _Key = "";
             
-                m_DefaultParent = null;
+                _DefaultParent = null;
             
-                m_VFXList.Clear();
+                _VFXList.Clear();
             }
 
             for (int i = 0; i < count; ++i)
@@ -157,15 +132,15 @@ namespace Phoenix.Playables
                     
                     if (data.IsFirstFrameHappened == false)
                     {
-                        if(string.IsNullOrEmpty(m_Key))
-                            m_Key = data.RuntimeKey;
+                        if(string.IsNullOrEmpty(_Key))
+                            _Key = data.RuntimeKey;
                         
-                        if(m_DefaultParent == null)
-                            m_DefaultParent = data.DefaultParent;
+                        if(_DefaultParent == null)
+                            _DefaultParent = data.DefaultParent;
                                                 
                         data.IsFirstFrameHappened = true;
                         data.Init();
-                        m_VFXList.Add(data.VFX);
+                        _VFXList.Add(data.VFX);
                     }
 
                     EditorMod(time, data);
@@ -203,7 +178,7 @@ namespace Phoenix.Playables
                     if (data.IsFirstFrameHappened)
                     {  
                         data.IsFirstFrameHappened = false;
-                        m_VFXList.Remove(data.VFX);
+                        _VFXList.Remove(data.VFX);
                         data.Finished();
                     }
                 }
@@ -221,33 +196,31 @@ namespace Phoenix.Playables
 
         public override void OnGraphStop(Playable playable)
         {           
-            m_IsFirstFrameHappened = false;
+            _IsFirstFrameHappened = false;
             Finished();
         }
 
         public override void OnBehaviourPlay(Playable playable, FrameData info)
         {
-            this.m_LastTime = -1f;
+            this._LastTime = -1f;
         }
 
         public override void OnBehaviourPause(Playable playable, FrameData info)
         {
-            this.m_LastTime = -1f;
+            this._LastTime = -1f;
         }
         
         public void Finished()
-        {
-            
-            
-            for (int i = 0; i < m_VFXList.Count; ++i)
+        {                        
+            for (int i = 0; i < _VFXList.Count; ++i)
             {
-                var vfx = m_VFXList[i];
+                var vfx = _VFXList[i];
                 if(vfx == null)
                     continue;
                 
                 vfx.gameObject.SetActive(false);
                 
-                vfx.parent = m_DefaultParent;
+                vfx.parent = _DefaultParent;
                 vfx.localPosition = Vector3.zero;
                 vfx.localRotation = Quaternion.identity;              
                 vfx.localScale = Vector3.one;
@@ -270,11 +243,11 @@ namespace Phoenix.Playables
                 //    }    
                 //}                
             }
-            m_Key = "";
+            _Key = "";
             
-            m_DefaultParent = null;
+            _DefaultParent = null;
             
-            m_VFXList.Clear();
+            _VFXList.Clear();
         }
     }
 }

@@ -1,17 +1,26 @@
-﻿using UnityEngine.Playables;
+﻿using System;
+using System.Collections.Generic;
+using Phoenix.Playables.Markers;
+using Spine.Unity;
+using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
 
 namespace Phoenix.Playables
 {
-    public class SpineAnimationData : PlayableBehaviour
+    [Serializable]
+    public class SpineAnimationData : BaseBehaviour
     {
         public string Name;
         public int Track;
-        public float StartBlendingTime;
-        public float EndBlendingTime;
-        public float Duration;
         public bool IsLoop;
+        [HideInInspector]
+        public float Duration;
+        [HideInInspector]
         public bool IsFirstFrameHappened;
+        [HideInInspector]
         public string ReturnName;
-        public bool IsReturnToSpecifyState;
+        [HideInInspector]
+        public bool IsReturnToSpecifyState;      
     }    
 }

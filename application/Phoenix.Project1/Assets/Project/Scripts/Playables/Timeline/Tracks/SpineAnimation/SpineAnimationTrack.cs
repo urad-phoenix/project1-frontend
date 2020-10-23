@@ -1,90 +1,71 @@
-﻿using Phoenix.Playables.Attribute;
+﻿using System.Linq;
+using Phoenix.Playables.Attribute;
+using Phoenix.Playables.Markers;
 using Spine.Unity;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
+using Object = UnityEngine.Object;
+
 
 namespace Phoenix.Playables
 {
     [Binding(typeof(IAnimationBinding), BindingCategory.Animator)]
     [TrackColor(0f, 0, 0.5187078f)]
     [TrackClipType(typeof(SpineAnimationClip))]
-    [TrackBindingType(typeof(SkeletonAnimation))]
-
-    public class SpineAnimationTrack : TrackAsset, ITrackRuntimeBinding
+    [TrackBindingType(typeof(SkeletonAnimation))]	
+    public class SpineAnimationTrack : BaseTrack, ITrackRuntimeBinding
     {
 		public BindingTrackType BindingType;
-		public bool IsReturnToSpecifyState;
+		public bool IsReturnToSpecifyState = true;
 		[Tooltip("播放完回到某個動畫")]
 		public string ReturnName = "idle";
+	    
+#pragma warning disable 0649
+	    [SerializeField] private SpineAnimationBehaviour template;
+#pragma warning restore 0649
+	    
 		public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
 		{
-
 			var director = go.GetComponent<PlayableDirector>();
 
 			SkeletonAnimation animator = null;
 
+			var playable = ScriptPlayable<SpineAnimationBehaviour>.Create(graph, template, inputCount);
+
+			var behaviour = playable.GetBehaviour();
+			
+			behaviour.Receiver = new PlayableReceiver();
+			
 			if(director != null)
 			{
-				animator = director.GetGenericBinding(this) as SkeletonAnimation;
-			}
+				animator = director.GetGenericBinding(this) as SkeletonAnimation;								
+			}		
+			
 			foreach(var clip in GetClips())
 			{
 				var c = clip.asset as SpineAnimationClip;
-				c.IsReturnToSpecifyState = IsReturnToSpecifyState;
-				c.TimeClip = clip;
-				c.TimeClip.displayName = c.name;
-				c.ReturnName = ReturnName;
+								
+				c.template.IsReturnToSpecifyState = IsReturnToSpecifyState;					
+				
+				c.template.ReturnName = ReturnName;
 #if UNITY_EDITOR
-				c.Animator = animator;
+				
+				//c.template.Animator = animator;
 
-				c.SetAnimator(c, animator, clip);
-
-				/*var states = Editor.Utility.TimelineEditorUtility.GetStates(animator, c.Layer);
-
-				if (states != null && states.Length != 0)
-				{
-					List<string> names = new List<string>();
-					for (int i = 0; i < states.Length; ++i)
-					{
-						names.Add(states[i].state.name);
-					}
-
-					if (names.Count > 0)
-					{
-						if (string.IsNullOrEmpty(c.StateKey))
-						{
-							c.StateKey = states[0].state.name;
-						}
-						c.Names = names;
-					}
-				} 
-
-				var anim = Editor.Utility.TimelineEditorUtility.GetAnimation(animator, c.Layer, c.StateKey);
-
-				if (anim != null)
-				{
-					c.IsLoop = anim.isLooping;                    
-					c.AnimationLength = anim.length;
-					c.StartBlendingTime = (float) clip.blendInDuration > 0 ? (float) clip.blendInDuration : 0;
-					c.EndBlendingTime = (float) clip.blendOutDuration > 0 ? (float) clip.blendOutDuration : 0;
-				}*/
+				c.SetAnimator(c, animator);
+				
+				clip.displayName = c.template.Name;   
+				
+				SetMarker(clip, c.template);
 			}
-
-			foreach(var clip in GetClips())
-			{
-				var c = clip.asset as SpineAnimationClip;
-				c.StartBlendingTime = (float)clip.blendInDuration > 0 ? (float)clip.blendInDuration : 0;
-				c.EndBlendingTime = (float)clip.blendOutDuration > 0 ? (float)clip.blendOutDuration : 0;
+#else				
 			}
-#else
-			}
-#endif			
-			//animator.
+#endif
 
-			return ScriptPlayable<SpineAnimationBehaviour>.Create(graph, inputCount);
-		}		
-
+			return playable;
+		}
+	    
 		public Object GetBindingKey()
 		{
 			return this;
