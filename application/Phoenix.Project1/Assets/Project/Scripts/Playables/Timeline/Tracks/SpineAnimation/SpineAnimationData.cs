@@ -9,7 +9,7 @@ using UnityEngine.Timeline;
 namespace Phoenix.Playables
 {
     [Serializable]
-    public class SpineAnimationData : BaseBehaviour
+    public class SpineAnimationData : PlayableBehaviour
     {
         public string Name;
         public int Track;

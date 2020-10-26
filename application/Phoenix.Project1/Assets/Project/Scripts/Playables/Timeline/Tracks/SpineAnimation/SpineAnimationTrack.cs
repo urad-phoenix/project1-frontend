@@ -14,7 +14,7 @@ namespace Phoenix.Playables
     [TrackColor(0f, 0, 0.5187078f)]
     [TrackClipType(typeof(SpineAnimationClip))]
     [TrackBindingType(typeof(SkeletonAnimation))]	
-    public class SpineAnimationTrack : BaseTrack, ITrackRuntimeBinding
+    public class SpineAnimationTrack : BaseTrack
     {
 		public BindingTrackType BindingType;
 		public bool IsReturnToSpecifyState = true;
@@ -35,7 +35,9 @@ namespace Phoenix.Playables
 
 			var behaviour = playable.GetBehaviour();
 			
-			behaviour.Receiver = new SpinePlayableReceiver();
+			behaviour.Receiver = new SpinePlayableReceiver();					
+			
+			SetMarker(behaviour);
 			
 			if(director != null)
 			{
@@ -55,30 +57,13 @@ namespace Phoenix.Playables
 
 				c.SetAnimator(c, animator);
 				
-				clip.displayName = c.template.Name;   
-				
-				SetMarker(clip, c.template);
-			}
+				clip.displayName = c.template.Name;   							
+			}					
 #else				
 			}
 #endif
 
 			return playable;
-		}
-	    
-		public Object GetBindingKey()
-		{
-			return this;
-		}
-
-		public BindingCategory GetBindingType()
-		{
-			return BindingCategory.SpineAnimation;
-		}
-
-		public BindingTrackType GetTrackType()
-		{
-			return BindingType;
-		}
+		}	    		
 	}
 }

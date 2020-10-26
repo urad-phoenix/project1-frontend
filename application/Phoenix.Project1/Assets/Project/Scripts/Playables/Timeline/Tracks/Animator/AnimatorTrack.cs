@@ -9,7 +9,7 @@ namespace Phoenix.Playables
     [TrackColor(0f, 0.4866645f, 1f)]
     [TrackClipType(typeof(AnimatorClip))]
     [TrackBindingType(typeof(Animator))]
-    public class AnimatorTrack : TrackAsset, ITrackRuntimeBinding
+    public class AnimatorTrack : TrackAsset
 	{
         public BindingTrackType BindingType;
 		public bool IsReturnToSpecifyState;
@@ -83,21 +83,6 @@ namespace Phoenix.Playables
 
 		public void GetBindingData(PlayableDirector playableDirector, GameObject gameObject)
 		{
-		}
-
-		public Object GetBindingKey()
-		{
-			return this;
-		}
-
-		public BindingCategory GetBindingType()
-		{
-			return BindingCategory.Animator;
-		}
-
-		public BindingTrackType GetTrackType()
-		{
-		    return BindingType;
-		}
+		}	
 	}
 }

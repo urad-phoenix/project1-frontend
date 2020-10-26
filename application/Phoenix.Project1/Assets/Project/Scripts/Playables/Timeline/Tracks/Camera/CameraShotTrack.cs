@@ -12,7 +12,7 @@ namespace Phoenix.Playables
     [TrackClipType(typeof(CameraShotClip))]
     [TrackBindingType(typeof(CinemachineBrain))]
     [TrackColor(0.53f, 0.0f, 0.08f)]
-    public class CameraShotTrack : TrackAsset, ITrackRuntimeBinding
+    public class CameraShotTrack : TrackAsset
     {        
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {            
@@ -27,21 +27,6 @@ namespace Phoenix.Playables
             var mixer = ScriptPlayable<CameraShotBehaviour>.Create(graph);
             mixer.SetInputCount(inputCount);
             return mixer;
-        }
-
-		public UnityEngine.Object GetBindingKey()
-		{
-			return this;
-		}
-
-		public BindingCategory GetBindingType()
-        {
-            return BindingCategory.Camera;
-        }
-
-        public BindingTrackType GetTrackType()
-        {
-            return BindingTrackType.None;
-        }
+        }	
     }
 }

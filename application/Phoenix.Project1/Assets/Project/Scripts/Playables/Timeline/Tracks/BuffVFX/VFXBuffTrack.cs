@@ -9,7 +9,7 @@ namespace Phoenix.Playables
     [Binding(typeof(IVFXBuffBinding), BindingCategory.BuffVFX)]
     [TrackClipType(typeof (VFXBuffClip))]
     [TrackColor(0.2f, 0.4866645f, 0.2f)]
-    public class VFXBuffTrack :  TrackAsset, ITrackRuntimeBinding
+    public class VFXBuffTrack :  TrackAsset
     {
         public string BuffVFXKey;
 
@@ -26,21 +26,6 @@ namespace Phoenix.Playables
                 c.IsRestart = IsRestart;
             }
             return ScriptPlayable<VFXBuffBehaviour>.Create(graph, inputCount);
-        }
-
-        public Object GetBindingKey()
-        {
-            return null;
-        }
-
-        public BindingCategory GetBindingType()
-        {
-            return BindingCategory.BuffVFX;
-        }
-
-        public BindingTrackType GetTrackType()
-        {
-            return BindingTrackType.Actor;
-        }
+        }    
     }
 }

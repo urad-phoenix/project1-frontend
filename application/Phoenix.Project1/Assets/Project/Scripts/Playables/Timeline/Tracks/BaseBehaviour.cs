@@ -13,23 +13,18 @@ namespace Phoenix.Playables
 {
     public abstract class BaseTrack : TrackAsset
     {        
-        public void SetMarker(TimelineClip clip, BaseBehaviour behaviour)
+        public void SetMarker(BaseBehaviour behaviour)
         {                        
             var markers = GetMarkers();
             
             List<BasePlayableMarker> clipMarkers = new List<BasePlayableMarker>();
             
             foreach (var marker in markers)
-            {
-                if (marker.time <= clip.end && marker.time >= clip.start)
+            {                                    
+                if (marker is BasePlayableMarker)
                 {
-                    //Debug.Log($"Time {marker.time}");
-
-                    if (marker is BasePlayableMarker)
-                    {
-                        clipMarkers.Add(marker as BasePlayableMarker);
-                    }
-                }       
+                    clipMarkers.Add(marker as BasePlayableMarker);
+                }                
             }
 
             behaviour.SetMarkers(clipMarkers);
@@ -41,6 +36,7 @@ namespace Phoenix.Playables
     {
         public List<BasePlayableMarker> Markers;
         
+        private List<BasePlayableMarker> _ReadyMarkers = new List<BasePlayableMarker>();
         private List<BasePlayableMarker> _UsedMarkers = new List<BasePlayableMarker>();
 
         private INotificationReceiver _Receiver;               
@@ -52,18 +48,13 @@ namespace Phoenix.Playables
             if(_Receiver == null)
                 return;
             
-            var marker = Markers.Find(x => x.time < time);
-
-            if (_UsedMarkers.Exists(x => x == marker))
-            {
-                return;
-            }
+            var marker = _ReadyMarkers.Find(x => x.time < time);                                             
 
             if (marker)
-            {
-                //Debug.Log("Time" + time + " marker time " + marker.time);
-                
+            {             
                 _UsedMarkers.Add(marker);
+                
+                _ReadyMarkers.Remove(marker);
 
                 notification = _Binding(notification, marker);
                 
@@ -79,7 +70,9 @@ namespace Phoenix.Playables
             if(receiver == null)
                 return;
             
-            _Receiver = receiver;                       
+            _Receiver = receiver;   
+            
+            _ReadyMarkers.AddRange(Markers);
 
             var count = playable.GetGraph().GetOutputCount();
 
@@ -105,6 +98,8 @@ namespace Phoenix.Playables
             var count = playable.GetGraph().GetOutputCount();
 
             _UsedMarkers.Clear();
+            
+            _ReadyMarkers.Clear();
             
             for (int i = 0; i < count; ++i)
             {

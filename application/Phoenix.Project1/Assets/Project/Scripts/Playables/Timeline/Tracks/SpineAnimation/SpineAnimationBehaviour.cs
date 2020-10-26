@@ -12,7 +12,8 @@ using UnityEngine.Timeline;
 
 namespace Phoenix.Playables
 {
-    public class SpineAnimationBehaviour : PlayableBehaviour
+    [Serializable]
+    public class SpineAnimationBehaviour : BaseBehaviour
     {
         private SkeletonAnimation _Animator;
         private bool _IsFirstFrameHappened;
@@ -31,8 +32,8 @@ namespace Phoenix.Playables
             }
             
             int inputCount = playable.GetInputCount();    
-
-            var time = playable.GetTime();                       
+            
+            var time = playable.GetTime();                                 
             
             for(int i = 0; i < inputCount; ++i)
             {
@@ -42,6 +43,8 @@ namespace Phoenix.Playables
                 
                 var behaviour = inputPlayable.GetBehaviour();
 
+                SendNotification(new SpineAnimationNotification(), playable, info.output, time);
+                
                 if(inputWeight > 0)
                 {                                        
                     
@@ -51,9 +54,7 @@ namespace Phoenix.Playables
                         _NormalTime = 0f;
                         _IsReset = behaviour.IsReturnToSpecifyState;
                         _ReturnName = behaviour.ReturnName;                       
-                    }
-                                                           
-                    behaviour.SendNotification(new SpineAnimationNotification(), playable, info.output, time);
+                    }                                                                            
 
                     if(!Application.isPlaying)
                     {
@@ -149,38 +150,14 @@ namespace Phoenix.Playables
         
         public override void OnGraphStart(Playable playable)
         {           
-            int inputCount = playable.GetInputCount();
-
-            for(int i = 0; i < inputCount; ++i)
-            {
-                var inputPlayable = (ScriptPlayable<SpineAnimationData>)playable.GetInput(i);
-
-                var behaviour = inputPlayable.GetBehaviour();
-
-                if (behaviour != null && behaviour.HasMarkers())
-                {                    
-                    behaviour.AddNotification(playable, Receiver);
-                }
-            }            
+            if(HasMarkers())
+                AddNotification(playable, Receiver);
         }
 
         public override void OnGraphStop(Playable playable)
-        {                          
-            int inputCount = playable.GetInputCount();
-
-            for(int i = 0; i < inputCount; ++i)
-            {
-                var inputPlayable = (ScriptPlayable<SpineAnimationData>)playable.GetInput(i);
-
-                var behaviour = inputPlayable.GetBehaviour();
-
-                if (behaviour != null)
-                {
-                    behaviour.IsFirstFrameHappened = false;
-                    behaviour.RemoveNotification(playable);
-                }
-            }
-
+        {
+            RemoveNotification(playable);
+            
             _IsFirstFrameHappened = false;
 
             if(!_IsReset)

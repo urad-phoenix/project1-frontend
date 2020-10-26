@@ -1,4 +1,6 @@
-﻿namespace Phoenix.Playables
+﻿using Phoenix.Playables.Markers;
+
+namespace Phoenix.Playables
 {    
     using UnityEngine;
     using UnityEngine.Playables;
@@ -8,7 +10,7 @@
     [Binding(typeof(IVFXBinding), BindingCategory.VFX)]
     [TrackClipType(typeof (VFXClip))]
     [TrackColor(0.2f, 0.4866645f, 0.2f)]
-    public class VFXTrack : TrackAsset, ITrackRuntimeBinding
+    public class VFXTrack : BaseTrack
     {
         public BindingTrackType StartBindingType;        
         public BindingTrackType EndBindingType;
@@ -24,7 +26,13 @@
         public int TargetDummyKey = 5;
 
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
-        {                       
+        {          
+            var playable = ScriptPlayable<VFXBehaviour>.Create(graph, inputCount);
+            
+            var behaviour = playable.GetBehaviour();
+            
+            behaviour.Receiver = new VFXPlayableReceiver();
+            SetMarker(behaviour);
             foreach (var clip in GetClips())
             {
                 var c = clip.asset as VFXClip;
@@ -37,22 +45,7 @@
                 c.IsSetEndToVfxHitDummy = IsSetEndToVfxHitDummy;
             }
 
-            return ScriptPlayable<VFXBehaviour>.Create(graph, inputCount);
-        }
-
-		public Object GetBindingKey()
-		{
-			return this;
-		}
-
-		public BindingCategory GetBindingType()
-        {
-            return BindingCategory.VFX;
-        }
-
-        public BindingTrackType GetTrackType()
-        {
-            return BindingTrackType.None;
+            return playable;
         }
     }
 }

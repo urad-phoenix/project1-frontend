@@ -9,7 +9,7 @@ namespace Phoenix.Playables
     [TrackColor(0.855f, 0.8623f, 0.870f)]
     [TrackClipType(typeof(TransformTweenClip))]
     [TrackBindingType(typeof(Transform))]
-    public class TransformTweenTrack : TrackAsset, ITrackRuntimeBinding
+    public class TransformTweenTrack : TrackAsset
     {        
         public BindingTrackType StartBindingType;    
         
@@ -36,21 +36,6 @@ namespace Phoenix.Playables
             }
 #endif
             base.GatherProperties(director, driver);
-        }
-
-		public Object GetBindingKey()
-		{
-			return this;
-		}
-
-		public BindingCategory GetBindingType()
-        {
-            return BindingCategory.Transform;
-        }
-
-        public BindingTrackType GetTrackType()
-        {
-            return StartBindingType;
         }
     }
 }

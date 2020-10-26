@@ -1,39 +1,28 @@
 using System;
 using System.Collections.Generic;
+using Phoenix.Playables.Markers;
 
 namespace Phoenix.Playables
 {
     using UnityEngine;
     using UnityEngine.Playables;
     
-    public class VFXBehaviour : PlayableBehaviour
+    [Serializable]
+    public class VFXBehaviour : BaseBehaviour
     {
         private bool _FirstFrame;
-
-        //private Transform m_Binding;
-
         private bool _IsFirstFrameHappened;
-
-        //private Quaternion m_Rotation;
-
-        //private Transform m_Parent;
-
-        //private Vector3 m_Position;
-        
-        private float _LastTime = -1f;
-        private uint _RandomSeed = 1;
-        private const float kUnsetTime = -1f;
-        private float _SystemTime;
+        public VFXPlayableReceiver Receiver;            
         private string _Key;
         private List<Transform> _VFXList = new List<Transform>();
         private Transform _DefaultParent;
         
+#if UNITY_EDITOR
         public class ParticleData
         {
             public ParticleSystem ParticleSystem;            
             private float _LastTime = -1f;
             private uint _RandomSeed = 1;
-            private const float kUnsetTime = -1f;
             private float _SystemTime;
             
             public void Simulate(float time)
@@ -85,21 +74,17 @@ namespace Phoenix.Playables
                 _SystemTime = 0.0f;
                 SetRandomSeed();
             }
-        }
-      
-        public void Initialize(ParticleSystem ps, uint randomSeed)
+        }                       
+        
+        private void EditorMod(float time, VFXBehaviourData data)
         {
-            this._RandomSeed = Math.Max(1U, randomSeed);
-            this._SystemTime = 0.0f;
-            this.SetRandomSeed(ps);
-        }
-
-        private void SetRandomSeed(ParticleSystem system)
-        {
-            if (system == null)
-                return;
-            system.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);           
-        }
+            if (!Application.isPlaying)
+            {
+                if (data != null)
+                    data.ParticleData.Simulate(time);
+            }
+        }      
+#endif
 
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {          
@@ -113,8 +98,8 @@ namespace Phoenix.Playables
                 _DefaultParent = null;
             
                 _VFXList.Clear();
-            }
-
+            }                                     
+            
             for (int i = 0; i < count; ++i)
             {
                 var weight = playable.GetInputWeight(i);
@@ -122,6 +107,8 @@ namespace Phoenix.Playables
                 var input = (ScriptPlayable<VFXBehaviourData>)playable.GetInput(i);
 
                 var data = input.GetBehaviour();
+                
+                SendNotification(new VFXNotification(), playable, info.output, playable.GetTime());
                 
                 if (weight > 0)
                 {
@@ -143,7 +130,9 @@ namespace Phoenix.Playables
                         _VFXList.Add(data.VFX);
                     }
 
+#if UNITY_EDITOR
                     EditorMod(time, data);
+#endif                   
 
                     if (data.Projectile == null)
                     {
@@ -185,29 +174,20 @@ namespace Phoenix.Playables
             }
         }
 
-        private void EditorMod(float time, VFXBehaviourData data)
-        {
-            if (!Application.isPlaying)
+        public override void OnGraphStart(Playable playable)
+        {           
+            if (HasMarkers())
             {
-                if (data != null)
-                    data.ParticleData.Simulate(time);
+                AddNotification(playable, Receiver);
             }
-        }      
+        }
 
         public override void OnGraphStop(Playable playable)
-        {           
+        {                                   
+            RemoveNotification(playable);
+            
             _IsFirstFrameHappened = false;
             Finished();
-        }
-
-        public override void OnBehaviourPlay(Playable playable, FrameData info)
-        {
-            this._LastTime = -1f;
-        }
-
-        public override void OnBehaviourPause(Playable playable, FrameData info)
-        {
-            this._LastTime = -1f;
         }
         
         public void Finished()
@@ -223,25 +203,7 @@ namespace Phoenix.Playables
                 vfx.parent = _DefaultParent;
                 vfx.localPosition = Vector3.zero;
                 vfx.localRotation = Quaternion.identity;              
-                vfx.localScale = Vector3.one;
-               // vfx.gameObject.SetActive(false);
-                
-                //if (Application.isPlaying && Entry.IsInitialized)
-                //{
-                //    if (m_PoolManager == null)
-                //    {
-                //        m_PoolManager = Entry.GetModule<PoolManager>();
-                //    }
-                //    
-                //    if (m_PoolManager.IsContainsPool(m_Key))
-                //    {
-                //        m_PoolManager.Recycle(m_Key, vfx.gameObject);                      
-                //    }
-                //    else
-                //    {
-                //        Debug.LogError("Finished VFX key not found " + m_Key);
-                //    }    
-                //}                
+                vfx.localScale = Vector3.one;           
             }
             _Key = "";
             

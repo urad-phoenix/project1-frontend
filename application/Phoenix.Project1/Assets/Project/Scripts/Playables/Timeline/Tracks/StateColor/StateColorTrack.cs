@@ -9,7 +9,7 @@ namespace Phoenix.Playables
     [TrackColor(0.855f, 0.8623f, 0.87f)]
     [TrackClipType(typeof(StateColorClip))]
     [TrackBindingType(typeof(GameObject))]
-    public class StateColorTrack : TrackAsset, ITrackRuntimeBinding
+    public class StateColorTrack : TrackAsset
     {
         public BindingTrackType BindingType;
         public string Key;
@@ -31,21 +31,6 @@ namespace Phoenix.Playables
 
 #endif
             base.GatherProperties(director, driver);
-        }
-
-		public Object GetBindingKey()
-		{
-			return this;
-		}
-
-		public BindingCategory GetBindingType()
-        {
-            return BindingCategory.Material;
-        }
-
-        public BindingTrackType GetTrackType()
-        {
-            return BindingType;
         }
     }
 }
