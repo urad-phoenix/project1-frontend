@@ -46,12 +46,7 @@ namespace Phoenix.Project1.Client.Audio
                 {
                     _Instance = FindObjectOfType<AudioManager>();
 
-                    if(_Instance == null)
-                    {
-                        GameObject go = new GameObject();
-                        go.name = "AudioManager";
-                        _Instance = go.AddComponent<AudioManager>();
-                    }
+                    DontDestroyOnLoad(_Instance);
                 }
                 return _Instance;
             }

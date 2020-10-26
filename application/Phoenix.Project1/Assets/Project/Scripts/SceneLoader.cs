@@ -82,10 +82,12 @@ namespace Phoenix.Project1.Client
         {
             Open("scene-dashboard","scene-test2");
         }
-
         
-
         
+        internal void OpenBattle()
+        {
+            Open("scene-battle");
+        }
 
         internal void OpenLogin()
         {

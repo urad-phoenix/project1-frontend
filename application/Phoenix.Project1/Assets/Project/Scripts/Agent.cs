@@ -95,9 +95,7 @@ namespace Phoenix.Project1.Client
             _Queryable = status.Queryable;
             _Machine.Push(status);
             return UniRx.Observable.Return(true);
-        }
-
-       
+        }       
 
         private void _ToReady()
         {

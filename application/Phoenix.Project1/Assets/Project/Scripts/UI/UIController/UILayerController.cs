@@ -20,12 +20,22 @@ namespace Phoenix.Project1.Client.UI
     }
     public class UILayerController : MonoBehaviour
     {
-        public static UILayerController Instance => _GetInstance();
-
-        private static UILayerController _GetInstance()
+        public static UILayerController Instance
         {
-            return FindObjectOfType<UILayerController>();
+            get
+            {
+                if(_Instance == null)
+                {
+                    _Instance = FindObjectOfType<UILayerController>();
+
+                    DontDestroyOnLoad(_Instance);
+                }
+                return _Instance;
+            }
         }
+
+        static private UILayerController _Instance;
+            
 
         //default setting
         [SerializeField]
@@ -91,10 +101,6 @@ namespace Phoenix.Project1.Client.UI
             var canvas = GetCanvas(layer);
 
             return canvas.worldCamera;
-        }
-
-        public static void SetLayer()
-        {
-        }
+        }     
     }       
 }
