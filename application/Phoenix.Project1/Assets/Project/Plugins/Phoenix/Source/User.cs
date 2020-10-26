@@ -29,9 +29,17 @@ namespace Phoenix.Project1.Users
 
         private void _ToLobby(IPlayer player)
         {
-            var stage = new UserLobby(_Binder, player,_Lobby);            
+            var stage = new UserDashboard(_Binder, player,_Lobby);
+            stage.BattleEvent += ()=> _ToBattle(player);
             _Machine.Push(stage);
 
+        }
+
+        private void _ToBattle(IPlayer player)
+        {
+            var stage = new UserBattle(_Binder);
+            stage.DoneEvent += ()=> _ToLobby(player);
+            _Machine.Push(stage);
         }
 
         void IDisposable.Dispose()

@@ -25,7 +25,7 @@ namespace Phoenix.Project1.Client
                                 select agent;
             disconnectObs.Subscribe(_ToLogin).AddTo(_Disposables);
 
-            var playerObs = from player in NotifierRx.ToObservable().Supply<IPlayer>()
+            var playerObs = from player in NotifierRx.ToObservable().Supply<IDashboard>()
                             select player;
             playerObs.Subscribe(_ToDashboard).AddTo(_Disposables);
 
@@ -33,7 +33,7 @@ namespace Phoenix.Project1.Client
 
         }
 
-        private void _ToDashboard(IPlayer player)
+        private void _ToDashboard(IDashboard player)
         {
             _Loader.OpenDashboard();
         }
