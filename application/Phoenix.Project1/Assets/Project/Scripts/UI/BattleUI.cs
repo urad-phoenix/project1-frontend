@@ -1,34 +1,47 @@
-using Phoenix.Project1.Common;
 using Phoenix.Project1.Common.Battles;
 using UniRx;
-using UnityEditor.VersionControl;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Phoenix.Project1.Client.UI
 {
     public class BattleUI : MonoBehaviour
-    {        
-        private readonly UniRx.CompositeDisposable _SendDisposables;               
+    {
+        private readonly UniRx.CompositeDisposable _SendDisposables;
+        private readonly UniRx.CompositeDisposable _SendRequestDisposables;
 
-        private IBattle _Battle;     
-
-        public void _ShowBattle(IBattle battle)
+        public BattleUI()
         {
-            _Battle = battle;
-        }       
-        
-        private void _Send()
-        {            
-            _Battle.Exit();
+            _SendDisposables = new CompositeDisposable();
+            _SendRequestDisposables = new CompositeDisposable();
         }
-        
-        public void ToBattle()
+
+        private void Start()
         {
-            var battleObs = from dash in NotifierRx.ToObservable().Supply<IBattle>()
-                select dash;
+            var battleObs = from battle in NotifierRx.ToObservable().Supply<IBattle>()
+                select battle;
+
+            battleObs.Subscribe(_RequestBattle).AddTo(_SendRequestDisposables);
+        }
+
+        private void _RequestBattle(IBattle battle)
+        {
+           var values =  battle.RequestBattleResult();
+           var results = values.GetValue();
+            Debug.Log(results);
+        }
+
+        public void ToDashboard()
+        {
+            var battleObs = from battle in NotifierRx.ToObservable().Supply<IBattle>()
+                select battle;
             
-            battleObs.Subscribe(_ToDashboard).AddTo(_SendDisposables);
+            battleObs.Subscribe(_ToDashboard).AddTo(_SendDisposables); 
+        }
+
+        private void OnDestroy()
+        {
+            _SendDisposables.Clear();
+            _SendRequestDisposables.Clear();
         }
 
         private void _ToDashboard(IBattle battle)

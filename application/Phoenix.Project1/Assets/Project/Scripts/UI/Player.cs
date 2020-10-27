@@ -34,6 +34,7 @@ namespace Phoenix.Project1.Client.UI
         {
             _Disposables.Clear();
             _SendDisposables.Clear();
+            _SendBattleDisposables.Clear();
         }
 
         private void _Hide(IPlayer obj)
