@@ -8,30 +8,31 @@ namespace Phoenix.Project1.Game
     public class Battle
     {
         private bool _IsFinished;
-        private BattleActors _Teams;
+        private Camps _Camps;
         private Recorder _Recorder;
-        private readonly int _TeamSize = 6;
-
-        public Battle(BattleActors teams)
+        private readonly int _CampSize = 6;
+        private BattleStatus _Status;
+        public Battle(Camps teams)
         {
-            _Teams = teams;
+            _Camps = teams;
             _Recorder = new Recorder();
         }
         public BattleResult GetResult()
         {
-            while (!_CastAction(_Teams.AttackTeam, _Teams.DefendTeam))
+            while (!_CastAction(_Camps.AttackCamp, _Camps.DefendCamp))
             {
                 _Recorder.Next();
             }
 
             var result = _Recorder.GenerateResult();
-            result.Teams = _Teams;
+            result.Camps = _Camps;
+            result.Status = _Status;
             return result;
         }
 
         private bool _CastAction(BattleActor[] attack_team, BattleActor[] defend_team)
         {
-            for (int pos = 0;  pos < _TeamSize;  pos++)
+            for (int pos = 0;  pos < _CampSize;  pos++)
             {
                 var caster = attack_team[pos];
                 var action = _Recorder.GenerateAction();
@@ -39,11 +40,13 @@ namespace Phoenix.Project1.Game
                 if (defender == null)
                 {
                     _IsFinished = true;
+                    _Status = BattleStatus.Success;
                     break;
                 }
                 var realDamage = attack_team[pos].Damage(defender);
-                action.Caster = caster.Id;
-                action.Target = defender.Id;
+                action.Caster = caster.CombatId;
+                action.Camp = CampType.Attack;
+                action.Target = defender.CombatId;
                 action.SkillId = caster.PickAbility();
                 action.Effect.Type = EffectType.Hit;
                 action.Effect.Value = realDamage;
@@ -54,11 +57,13 @@ namespace Phoenix.Project1.Game
                 if (defender == null)
                 {
                     _IsFinished = true;
+                    _Status = BattleStatus.Fail;
                     break;
                 }
                 realDamage = defend_team[pos].Damage(defender);
-                action.Caster = caster.Id;
-                action.Target = defender.Id;
+                action.Caster = caster.CombatId;
+                action.Target = defender.CombatId;
+                action.Camp = CampType.Defend;
                 action.SkillId = caster.PickAbility();
                 action.Effect.Type = EffectType.Hit;
                 action.Effect.Value = realDamage;

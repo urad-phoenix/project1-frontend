@@ -15,6 +15,7 @@ namespace Phoenix.Project1.Users
         private readonly IBinder _Binder;
         private readonly IPlayer _Self;
         private readonly ILobby _Lobby;
+        private readonly ICombat _Fight;
         readonly INotifier<IActor> _Actors;
 
         
@@ -29,7 +30,11 @@ namespace Phoenix.Project1.Users
             _Actors = new Phoenix.Project1.GhostNotifier<IPlayer,IActor>(_Lobby.Players);
             _Disposables = new UniRx.CompositeDisposable();
         }
-        
+        private ICombat _GetFightFromRemote()
+        {
+            //todo: get fight service from remote
+            return new Combat();
+        }
 
         void IBootable.Launch()
         {

@@ -2,6 +2,7 @@ using Phoenix.Project1.Common.Battles;
 using Regulus.Utility;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Playables;
 
 namespace Phoenix.Project1.Client.Battles
 {
@@ -21,29 +22,40 @@ namespace Phoenix.Project1.Client.Battles
         }
 
         private void _GetBattle(IBattle battle)
-        {
-            var result = battle.RequestBattleResult();
-
-            var battleResult = result.GetValue();
-
-            if (battleResult != null && battleResult.Status == BattleStatus.Success)
-            {
-                var teams = battleResult.Teams;
-
-                //TODO
-                //產生角色對應到站位
-
+        {            
+            //TODO
+            //關卡資訊, 之後要移到關卡腳本
+            var stage = battle.GetCampsByStageId(1);
+            var stageResult = stage.GetValue();                        
+            
+            //關卡初始化, 產生角色, 定位
+            
+            //拿整場戰鬥的結果
+            var fight = battle.ToFight(1);            
                 
-                var actions = battleResult.Actions;
+            var battleResult = fight.GetValue();
+
+            //BattleStatus.Success贏  BattleStatus.Fail 輸
+            if (battleResult != null && battleResult.Status == BattleStatus.Success)
+            {                
+                var actions = battleResult.Actions;                
 
                 for (int i = 0; i < actions.Length; ++i)
                 {
-                    var action = actions[i];                    
+                    var action = actions[i];
                     
-                    //_StateMachine.AddState(new BattleActState());    
-                }
-                
-                
+                    var handle = new BindingHandle();
+                    
+                    handle.SetReferenceObject(this);
+                    
+                    var state = new BattleActState(action.SkillId.ToString(), action);
+                    
+                    state.AddBehaviour(TimelienBehaviour.Create(handle));                                        
+                        
+                   // handle.SetReferenceObject(this);
+                    
+                    //_StateMachine.AddState(new BattleActState(action.SkillId.ToString(), handle, action));    
+                }                               
             }
         }
 
@@ -52,14 +64,19 @@ namespace Phoenix.Project1.Client.Battles
             //_StateMachine.AddState();
         }
 
-        public void GetUnit(string id)
+        public Role GetRole(string id)
         {
-            
+            return null;
         }
 
-        public void GetCamera(string id)
+        public CameraUnit GetCamera(string id)
         {
-            
+            return null;
+        }
+
+        public PlayableDirector GetPlayableDirector(string skillId)
+        {
+            return null;
         }
 
         private void _Finished()

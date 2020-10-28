@@ -5,31 +5,28 @@ namespace Phoenix.Project1.Client.Battles
 {
     public class BattleActState : BattleStateBase
     {
-        private Action[] _Actions;
-
-        private BehaviourHandle _BehaviourHandle;
+        private Action _Action;        
         
-        public BattleActState(string name, BehaviourHandle behaviourHandle, Action[] actions) : base(name)
+        public BattleActState(string name, Action action) : base(name)
         {
-            _Actions = actions;
-            _BehaviourHandle = behaviourHandle;
+            _Action = action;
+            
+        }
+
+        public void AddBehaviour(IStateBehaviour behaviour)
+        {
+            
         }
 
         public override void Start()
         {
-            if (_Actions == null)
+            if (_Action == null)
             {
                 _Finished();
                 return;
             }
-
-            var controller = _BehaviourHandle.GetReferenceObject() as BattleController;
             
-            for (int i = 0; i < _Actions.Length; ++i)
-            {
-                var action = _Actions[i];
-                
-            }
+                        
         }
 
         private void _Finished()

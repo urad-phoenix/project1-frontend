@@ -1,6 +1,6 @@
 namespace Phoenix.Project1.Client.Battles
 {
-    public abstract class StateBehaviour
+    public class Role : Unit
     {
         
     }

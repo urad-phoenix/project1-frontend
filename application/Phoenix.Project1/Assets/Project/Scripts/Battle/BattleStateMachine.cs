@@ -9,10 +9,13 @@ namespace Phoenix.Project1.Client.Battles
         private List<BattleStateBase> _States = new List<BattleStateBase>();
 
         private BattleStateBase _CurrentState;
+
+        public List<BattleStateMachine> _SubStateMachines;
         
         public BattleStateMachine()
         {
             _States = new List<BattleStateBase>();
+            _SubStateMachines = new List<BattleStateMachine>();
         }
 
         public void Update()
@@ -21,6 +24,11 @@ namespace Phoenix.Project1.Client.Battles
             {
                 state.Update();
             }
+        }
+
+        public void AddSubStateMachine(BattleStateMachine machine)
+        {
+            _SubStateMachines.Add(machine);
         }
 
         public void AddState(BattleStateBase state)
