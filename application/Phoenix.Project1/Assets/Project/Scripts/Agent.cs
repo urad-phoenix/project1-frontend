@@ -10,7 +10,7 @@ using UnityEngine;
 namespace Phoenix.Project1.Client
 {
 
-    public class Agent : MonoBehaviour
+    public class Agent : MonoBehaviour 
     {
         public  static Agent Instance => _GetInstance();
         
@@ -36,9 +36,8 @@ namespace Phoenix.Project1.Client
         public Phoenix.Project1.Client.UI.Console Console;
         readonly  Regulus.Utility.StatusMachine _Machine;
         private  IProtocol _Protocol;
-        private  INotifierQueryable _Queryable;
-        public Regulus.Remote.INotifierQueryable Queryable => _Queryable;
-        public bool Active => _Machine.Current != null;
+        IServiceStatus _Status;
+        public Regulus.Remote.INotifierQueryable Queryable => _Status.Queryable;
         
 
         public Agent()
@@ -55,8 +54,8 @@ namespace Phoenix.Project1.Client
         private IObservable<bool> _SetStandalone(Phoenix.Project1.Game.Configuration resource)
         {
 
-            var status = new StandaloneStatus(_Protocol, resource, Console, Console);
-            _Queryable =  status.Queryable;
+            IServiceStatus status = new StandaloneStatus(_Protocol, resource, Console, Console);
+            _Status = status;
             _Machine.Push(status); 
             return UniRx.Observable.Return(true);
         }
@@ -91,16 +90,17 @@ namespace Phoenix.Project1.Client
 
         System.IObservable<bool> _SetTcp()
         {
-            var status = new TcpStatus(_Protocol, Console , Console);
-            _Queryable = status.Queryable;
+            IServiceStatus status = new TcpStatus(_Protocol, Console , Console);
+            _Status = status;
             _Machine.Push(status);
             return UniRx.Observable.Return(true);
         }       
 
         private void _ToReady()
         {
-
-            _Machine.Termination();
+            IServiceStatus status = new IdleStatus();
+            _Status = status;
+            _Machine.Push(status);            
         }
     }
 }

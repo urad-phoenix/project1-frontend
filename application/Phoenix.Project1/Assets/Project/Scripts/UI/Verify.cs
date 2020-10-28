@@ -65,7 +65,7 @@ namespace Phoenix.Project1.Client.UI
                              from _ in MessageBoxProvider.Instance.Close(msgBoxConnect)
                              select result;
 
-            connectObs.DoOnError(_Error).Subscribe(_ConnectResult).AddTo(_LoginDisposables);
+            connectObs.First().DoOnError(_Error).Subscribe(_ConnectResult).AddTo(_LoginDisposables);
 
 
             var loginObs =                    
@@ -75,7 +75,7 @@ namespace Phoenix.Project1.Client.UI
                     from result in verifier.Verify(Account.text).RemoteValue()
                     from _ in MessageBoxProvider.Instance.Close(msgBoxVerify)
                     select result;
-            loginObs.Subscribe(_LoginResult).AddTo(_LoginDisposables);
+            loginObs.First().Subscribe(_LoginResult).AddTo(_LoginDisposables);
 
         }
 

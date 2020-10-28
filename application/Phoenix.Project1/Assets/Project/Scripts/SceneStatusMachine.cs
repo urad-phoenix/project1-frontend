@@ -20,11 +20,8 @@ namespace Phoenix.Project1.Client
         }
         void Start()
         {
-            var disconnectObs = from agent in Agent.ToObservable()
-                                from change in agent.ObserveEveryValueChanged(a => a.Active)
-                                where change == false
-                                select agent;
-            disconnectObs.Subscribe(_ToLogin).AddTo(_Disposables);
+            NotifierRx.ToObservable().Supply<IVerifier>().Subscribe(_ToLogin).AddTo(_Disposables);
+            NotifierRx.ToObservable().Supply<IConnecter>().Subscribe(_ToLogin).AddTo(_Disposables);
 
             var playerObs = from player in NotifierRx.ToObservable().Supply<IDashboard>()
                             select player;
