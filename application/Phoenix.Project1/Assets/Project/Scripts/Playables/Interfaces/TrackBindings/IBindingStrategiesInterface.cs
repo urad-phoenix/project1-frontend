@@ -34,4 +34,8 @@
     
     public interface IAudioBinding : IBindingStrategies
     {}
+
+    public interface ISpineAnimationBinding : IBindingStrategies
+    {
+    }
 }

@@ -2,7 +2,7 @@ namespace Phoenix.Project1.Client.Battles
 {
     public class StateBinding : IStateBinding
     {
-        private BindingHandle _Handle;
+        private BindingHandle _Handle;                
         
         static readonly StateBinding m_NullPlayable = new StateBinding(BindingHandle.Null);
         

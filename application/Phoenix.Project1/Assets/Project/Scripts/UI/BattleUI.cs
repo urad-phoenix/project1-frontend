@@ -13,22 +13,7 @@ namespace Phoenix.Project1.Client.UI
         {
             _SendDisposables = new CompositeDisposable();
             _SendRequestDisposables = new CompositeDisposable();
-        }
-
-        private void Start()
-        {
-            var battleObs = from battle in NotifierRx.ToObservable().Supply<IBattle>()
-                select battle;
-
-            battleObs.Subscribe(_RequestBattle).AddTo(_SendRequestDisposables);
-        }
-
-        private void _RequestBattle(IBattle battle)
-        {
-           var values =  battle.RequestBattleResult();
-           var results = values.GetValue();
-            Debug.Log(results);
-        }
+        }        
 
         public void ToDashboard()
         {

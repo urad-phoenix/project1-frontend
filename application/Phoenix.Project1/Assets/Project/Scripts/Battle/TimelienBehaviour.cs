@@ -2,35 +2,26 @@ namespace Phoenix.Project1.Client.Battles
 {
     public class TimelienBehaviour : IStateBehaviour
     {
-        public static TimelienBehaviour Create(BindingHandle handle)
+        public static TimelienBehaviour Create()
         {
-            var behaviour = new TimelienBehaviour();
-            
-            behaviour.SetHandle(handle);
+            var behaviour = new TimelienBehaviour();                       
             
             return behaviour;
         }
 
-        public void Star(StateBinding binding)
+        public void Start(StateBinding binding)
         {
-            throw new System.NotImplementedException();
+            var controller = binding.GetHandle().GetReferenceObject() as BattleController;
+            
+            //controller.GetRole()
         }
 
         public void Stop(StateBinding binding)
-        {
-            throw new System.NotImplementedException();
+        {            
         }
 
         public void Update(StateBinding binding)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetHandle(BindingHandle bindingHandle)
-        {
-            _BindingHandle = bindingHandle;
-        }
-
-        private BindingHandle _BindingHandle;
+        {           
+        }     
     }
 }
