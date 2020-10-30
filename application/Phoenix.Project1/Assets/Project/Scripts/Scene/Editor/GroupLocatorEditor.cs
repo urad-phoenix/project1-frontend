@@ -39,6 +39,12 @@ namespace TP.Scene.Locators.Editor
             for (int i = 0; i < _Locators.Count; ++i)
             {
                 var locator = _Locators[i];
+                if (locator == null)
+                {
+                    _Locators.RemoveAt(i);
+                    
+                    return;
+                }
                 Drawing(locator);
             }
         }
