@@ -43,12 +43,12 @@ public class TestBattle : MonoBehaviour
 
     private void _GetRsult()
     {
-        var r = from notifier in NotifierRx.ToObservable()
-                from battle in notifier.QueryNotifier<IBattle>().SupplyEvent()
-                from result in battle.RequestBattleResult().RemoteValue()
-                select result;
+        //var r = from notifier in NotifierRx.ToObservable()
+        //        from battle in notifier.QueryNotifier<IBattle>().SupplyEvent()
+        //        from result in battle.ToFight(123)
+        //        select result;
 
-        r.DefaultIfEmpty(new BattleResult()).Subscribe(_PrintResult).AddTo(_BattleDisposables);
+        //r.DefaultIfEmpty(new BattleResult()).Subscribe(_PrintResult).AddTo(_BattleDisposables);
     }
 
     private void _PrintResult(BattleResult result)
