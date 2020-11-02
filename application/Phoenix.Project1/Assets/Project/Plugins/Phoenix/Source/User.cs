@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Phoenix.Project1.Users
 {
-    class User
+    class User : System.IDisposable
     {
         private readonly IBinder _Binder;
         readonly Regulus.Utility.StageMachine _Machine;
@@ -13,6 +13,7 @@ namespace Phoenix.Project1.Users
 
         public User(IBinder binder,ILobby lobby)
         {
+            
             _Lobby = lobby;
             this._Binder = binder;
             _Machine = new Regulus.Utility.StageMachine();
@@ -23,15 +24,28 @@ namespace Phoenix.Project1.Users
         private void _ToVerify()
         {
             var stage = new UserVerify(_Binder,_Lobby);
-            stage.DoneEvent += _ToLobby;
+            stage.DoneEvent += _ToDashboard;
             _Machine.Push(stage);
         }
 
-        private void _ToLobby(IPlayer player)
+        private void _ToDashboard(IPlayer player)
         {
-            var stage = new UserLobby(_Binder, player,_Lobby);            
+            var stage = new UserDashboard(_Binder, player,_Lobby);
+            stage.BattleEvent += ()=> _ToBattle(player);
             _Machine.Push(stage);
 
+        }
+
+        private void _ToBattle(IPlayer player)
+        {
+            var stage = new UserBattle(_Binder);
+            stage.DoneEvent += ()=> _ToDashboard(player);
+            _Machine.Push(stage);
+        }
+
+        void IDisposable.Dispose()
+        {
+            _Machine.Clean();
         }
     }
 }

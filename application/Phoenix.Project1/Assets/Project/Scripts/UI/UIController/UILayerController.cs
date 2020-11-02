@@ -9,6 +9,7 @@ namespace Phoenix.Project1.Client.UI
         Main = 0,
         Mask = 1,
         MessageBox = 2,
+        Console
     }
 
     [Serializable]
@@ -19,12 +20,22 @@ namespace Phoenix.Project1.Client.UI
     }
     public class UILayerController : MonoBehaviour
     {
-        public static UILayerController Instance => _GetInstance();
-
-        private static UILayerController _GetInstance()
+        public static UILayerController Instance
         {
-            return FindObjectOfType<UILayerController>();
+            get
+            {
+                if(_Instance == null)
+                {
+                    _Instance = FindObjectOfType<UILayerController>();
+
+                    DontDestroyOnLoad(_Instance);
+                }
+                return _Instance;
+            }
         }
+
+        static private UILayerController _Instance;
+            
 
         //default setting
         [SerializeField]
@@ -32,7 +43,7 @@ namespace Phoenix.Project1.Client.UI
         {
             new UILayerData(){ Oder = UILayer.Main },
             new UILayerData(){ Oder = UILayer.Mask },
-            new UILayerData(){ Oder = UILayer.MessageBox },
+            new UILayerData(){ Oder = UILayer.MessageBox },            
         };
 
         public Canvas GetCanvas(UILayer layer)
@@ -90,10 +101,6 @@ namespace Phoenix.Project1.Client.UI
             var canvas = GetCanvas(layer);
 
             return canvas.worldCamera;
-        }
-
-        public static void SetLayer()
-        {
-        }
+        }     
     }       
 }

@@ -30,7 +30,11 @@ namespace Phoenix.Project1.Client
             {
                 yield return new WaitForEndOfFrame();          
             }
-            observer.OnNext(Agent.Instance.Queryable);
+            while (Agent.Instance.Queryable == null)
+            {
+                yield return new WaitForEndOfFrame();
+            }
+                observer.OnNext(Agent.Instance.Queryable);
             observer.OnCompleted();
         }
 

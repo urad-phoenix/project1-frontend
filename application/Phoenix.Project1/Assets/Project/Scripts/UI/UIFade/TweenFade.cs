@@ -16,6 +16,15 @@ namespace Phoenix.Project1.Client.UI
 
         private List<DOTweenAnimation> _Dotweens;
 
+        private CompositeDisposable _FadeInDisposable;
+        private CompositeDisposable _FadeOutDisposable;
+
+        public TweenFade()
+        {
+            _FadeInDisposable = new CompositeDisposable();
+            _FadeOutDisposable = new CompositeDisposable();
+        }
+
         private void Start()
         {
             CheckDotween();
@@ -60,9 +69,9 @@ namespace Phoenix.Project1.Client.UI
                    observer.OnNext(Unit.Default);
                    observer.OnCompleted();                     
                 })
-                .AddTo(this);
+                .AddTo(_FadeInDisposable);
 
-                return Disposable.Empty;
+                return _FadeInDisposable;
             });
         }
 
@@ -80,10 +89,17 @@ namespace Phoenix.Project1.Client.UI
                     gameObject.SetActive(!_IsFinishedDisable);
                     observer.OnCompleted();
                 })
-                .AddTo(this);
+                .AddTo(_FadeOutDisposable);
 
-                return Disposable.Empty;
+                return _FadeOutDisposable;
             });
+        }
+
+        private void OnDestroy()
+        {
+            _FadeOutDisposable.Clear();
+            
+            _FadeInDisposable.Clear();
         }
     }
 

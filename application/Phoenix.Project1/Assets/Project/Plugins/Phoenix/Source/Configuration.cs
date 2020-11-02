@@ -6,11 +6,6 @@ using System.Text;
 
 namespace Phoenix.Project1.Game
 {
-    public interface IConfigurationDatabase
-    {
-        IEnumerable<T> Query<T>();
-    }
-
     public class Configuration : IConfigurationDatabase
     {
         public readonly Regulus.RelationalTables.Database Database;

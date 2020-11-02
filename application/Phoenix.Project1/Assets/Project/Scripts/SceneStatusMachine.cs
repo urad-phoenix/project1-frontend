@@ -2,6 +2,7 @@
 using UnityEngine;
 using UniRx;
 using Phoenix.Project1.Common;
+using Phoenix.Project1.Common.Battles;
 using Phoenix.Project1.Common.Users;
 
 namespace Phoenix.Project1.Client
@@ -19,21 +20,21 @@ namespace Phoenix.Project1.Client
         }
         void Start()
         {
-            var disconnectObs = from agent in Agent.ToObservable()
-                                from change in agent.ObserveEveryValueChanged(a => a.Active)
-                                where change == false
-                                select agent;
-            disconnectObs.Subscribe(_ToLogin).AddTo(_Disposables);
+            NotifierRx.ToObservable().Supply<IVerifier>().Subscribe(_ToLogin).AddTo(_Disposables);
+            NotifierRx.ToObservable().Supply<IConnecter>().Subscribe(_ToLogin).AddTo(_Disposables);
 
-            var playerObs = from player in NotifierRx.ToObservable().Supply<IPlayer>()
+            var playerObs = from player in NotifierRx.ToObservable().Supply<IDashboard>()
                             select player;
+            
             playerObs.Subscribe(_ToDashboard).AddTo(_Disposables);
 
+            var battleObs = from player in NotifierRx.ToObservable().Supply<IBattle>()
+                select player;
             
-
+            battleObs.Subscribe(_ToBattle).AddTo(_Disposables);
         }
 
-        private void _ToDashboard(IPlayer player)
+        private void _ToDashboard(IDashboard player)
         {
             _Loader.OpenDashboard();
         }
@@ -41,6 +42,12 @@ namespace Phoenix.Project1.Client
         private void _ToLogin(object obj)
         {
             _Loader.OpenLogin();
+        }
+
+
+        private void _ToBattle(IBattle player)
+        {
+            _Loader.OpenBattle();
         }
 
         private void OnDestroy()

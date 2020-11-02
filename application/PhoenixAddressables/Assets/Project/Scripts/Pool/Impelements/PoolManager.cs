@@ -14,18 +14,9 @@ namespace Phoenix.Pool
             {
                 if(_Instance == null)
                 {
-                    _Instance = FindObjectOfType<PoolManager>();
-
-                    if(_Instance == null)
-                    {
-                        GameObject go = new GameObject();
-
-                        go.name = "PoolManager";
-
-                        _Instance = go.AddComponent<PoolManager>();
-
-                        _Instance.Initialize();
-                    }
+                    _Instance = FindObjectOfType<PoolManager>();    
+                    
+                    DontDestroyOnLoad(_Instance);
                 }
                 return _Instance;
             }
