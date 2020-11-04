@@ -10,13 +10,12 @@ using UniRx;
 
 namespace Phoenix.Project1.Users
 {
-    internal class UserDashboard : Regulus.Utility.IBootable  , IDashboard
+    internal class UserDashboard : Regulus.Utility.IStatus, IDashboard
     {
         private readonly IBinder _Binder;
         private readonly IPlayer _Self;
         private readonly ILobby _Lobby;
-        private readonly ICombat _Fight;
-        readonly INotifier<IActor> _Actors;
+        readonly INotifier<Phoenix.Project1.Common.Users.IActor> _Actors;
 
         
         readonly UniRx.CompositeDisposable _Disposables;
@@ -27,45 +26,28 @@ namespace Phoenix.Project1.Users
             this._Binder = binder;
             this._Self = self;
             this._Lobby = lobby;
-            _Actors = new Phoenix.Project1.GhostNotifier<IPlayer,IActor>(_Lobby.Players);
+            _Actors = new Phoenix.Project1.GhostNotifier<IPlayer, Phoenix.Project1.Common.Users.IActor>(_Lobby.Players);
             _Disposables = new UniRx.CompositeDisposable();
         }
-        private ICombat _GetFightFromRemote()
+       /* private ICombat _GetFightFromRemote()
         {
             //todo: get fight service from remote
             return new Combat();
-        }
+        }*/
 
-        void IBootable.Launch()
+        
+
+        private void _UnbindActor(Phoenix.Project1.Common.Users.IActor actor)
         {
-
-            _Disposables.Add(_Actors.SupplyEvent().Subscribe(_BindActor));
-            _Disposables.Add(_Actors.UnsupplyEvent().Subscribe(_UnbindActor));
-
-            
-            _Binder.Bind<IPlayer>(_Self);
-            _Binder.Bind<IDashboard>(this);
-            
+            _Binder.Unbind<Phoenix.Project1.Common.Users.IActor>(actor); 
         }
 
-        private void _UnbindActor(IActor actor)
+        private void _BindActor(Phoenix.Project1.Common.Users.IActor actor)
         {
-            _Binder.Unbind<IActor>(actor); 
+            _Binder.Bind<Phoenix.Project1.Common.Users.IActor>(actor);
         }
 
-        private void _BindActor(IActor actor)
-        {
-            _Binder.Bind<IActor>(actor);
-        }
-
-        void IBootable.Shutdown()
-        {
-            _Binder.Unbind<IDashboard>(this);
-            _Binder.Unbind<IPlayer>(_Self);
-
-
-            _Disposables.Clear();
-        }
+        
 
        
 
@@ -74,6 +56,28 @@ namespace Phoenix.Project1.Users
             BattleEvent();
         }
 
-        
+        void IStatus.Enter()
+        {
+            _Disposables.Add(_Actors.SupplyEvent().Subscribe(_BindActor));
+            _Disposables.Add(_Actors.UnsupplyEvent().Subscribe(_UnbindActor));
+
+
+            _Binder.Bind<IPlayer>(_Self);
+            _Binder.Bind<IDashboard>(this);
+        }
+
+        void IStatus.Leave()
+        {
+            _Binder.Unbind<IDashboard>(this);
+            _Binder.Unbind<IPlayer>(_Self);
+
+
+            _Disposables.Clear();
+        }
+
+        void IStatus.Update()
+        {
+            
+        }
     }
 }

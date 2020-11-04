@@ -30,7 +30,7 @@ namespace Phoenix.Project1.Client.Battles
         void Start()
         {
             var battleObs = from battle in NotifierRx.ToObservable().Supply<IBattle>()
-                select battle;
+                select battle;                                         
 
             battleObs.Subscribe(_GetBattle).AddTo(_disposable);
         } 
@@ -45,11 +45,12 @@ namespace Phoenix.Project1.Client.Battles
 
         private void _ExitBattle(IBattle battle)
         {
-            battle.Exit();
+            //battle.Exit();
         }    
 
         private void _GetBattle(IBattle battle)
-        {            
+        {   
+            /*
             //TODO
             //關卡資訊, 之後要移到關卡腳本
             var stage = battle.GetCampsByStageId(1);
@@ -89,7 +90,7 @@ namespace Phoenix.Project1.Client.Battles
                 }
 
                 _SetBattleFinished();
-            }                        
+            }                       */ 
         }
 
         void _SetBattleFinished()

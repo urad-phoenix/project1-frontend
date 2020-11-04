@@ -1,23 +1,25 @@
 ﻿using Phoenix.Project1.Common;
 using Regulus.Remote;
+using Regulus.Utility;
 using System;
 using System.Collections.Generic;
 
 namespace Phoenix.Project1.Users
 {
-    class User : System.IDisposable
+    class User : Regulus.Utility.IUpdatable
     {
         private readonly IBinder _Binder;
-        readonly Regulus.Utility.StageMachine _Machine;
+        readonly Regulus.Utility.StatusMachine _Machine;
         private readonly ILobby _Lobby;
-
+        bool _Enable;
         public User(IBinder binder,ILobby lobby)
         {
             
             _Lobby = lobby;
             this._Binder = binder;
-            _Machine = new Regulus.Utility.StageMachine();
-
+            _Machine = new Regulus.Utility.StatusMachine();
+            _Enable = true;
+            binder.BreakEvent += ()=>_Enable = false;
             _ToVerify();
         }
 
@@ -43,9 +45,22 @@ namespace Phoenix.Project1.Users
             _Machine.Push(stage);
         }
 
-        void IDisposable.Dispose()
+        
+        bool IUpdatable.Update()
         {
-            _Machine.Clean();
+            _Machine.Update();
+
+            return _Enable;
+        }
+
+        void IBootable.Launch()
+        {
+            
+        }
+
+        void IBootable.Shutdown()
+        {
+            _Machine.Termination();
         }
     }
 }

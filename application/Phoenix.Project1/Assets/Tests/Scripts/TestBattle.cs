@@ -51,11 +51,5 @@ public class TestBattle : MonoBehaviour
         //r.DefaultIfEmpty(new BattleResult()).Subscribe(_PrintResult).AddTo(_BattleDisposables);
     }
 
-    private void _PrintResult(BattleResult result)
-    {
-        foreach (var act in result.Actions)
-        {
-            Debug.Log(act.ToString());
-        }
-    }
+   
 }

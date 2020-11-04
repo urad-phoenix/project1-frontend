@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Phoenix.Project1
 {
-    public class Notifier<T> : INotifier<T> , ICollection<T>
+    public class NotifierCollection<T> : INotifier<T> , ICollection<T>
     {
         readonly System.Collections.Generic.List<T> _Items;
         T[] INotifier<T>.Ghosts => _Items.ToArray();
@@ -15,15 +15,16 @@ namespace Phoenix.Project1
         bool ICollection<T>.IsReadOnly => Items.IsReadOnly;
 
         public readonly ICollection<T> Items;
-        public Notifier()
+        public readonly INotifier<T> Notifier;
+        public NotifierCollection()
         {
             _Items = new System.Collections.Generic.List<T>();
             Items = this;
-
+            Notifier = this;
             _UnsupplyEvent += _Empty;
             _SupplyEvent += _Empty;
         }
-        public Notifier(IEnumerable<T> items)
+        public NotifierCollection(IEnumerable<T> items)
         {
             _Items = new System.Collections.Generic.List<T>(items);
             Items = _Items;

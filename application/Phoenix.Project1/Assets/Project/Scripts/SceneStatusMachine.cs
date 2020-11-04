@@ -28,7 +28,7 @@ namespace Phoenix.Project1.Client
             
             playerObs.Subscribe(_ToDashboard).AddTo(_Disposables);
 
-            var battleObs = from player in NotifierRx.ToObservable().Supply<IBattle>()
+            var battleObs = from player in NotifierRx.ToObservable().Supply<IBattleStatus>()
                 select player;
             
             battleObs.Subscribe(_ToBattle).AddTo(_Disposables);
@@ -45,7 +45,7 @@ namespace Phoenix.Project1.Client
         }
 
 
-        private void _ToBattle(IBattle player)
+        private void _ToBattle(IBattleStatus player)
         {
             _Loader.OpenBattle();
         }

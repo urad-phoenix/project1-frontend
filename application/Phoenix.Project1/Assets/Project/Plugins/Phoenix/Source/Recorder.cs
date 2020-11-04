@@ -40,7 +40,7 @@ namespace Phoenix.Project1.Game
             return action;
         }
 
-        public BattleResult GenerateResult()
+       /* public BattleResult GenerateResult()
         {
             var result = new BattleResult();
             var actions = from round in _Rounds
@@ -48,7 +48,7 @@ namespace Phoenix.Project1.Game
                         select action;
             result.Actions = actions.ToArray();
             return result;
-        }
+        }*/
         
     }
 }

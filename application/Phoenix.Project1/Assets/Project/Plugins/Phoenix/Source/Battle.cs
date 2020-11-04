@@ -5,7 +5,7 @@ using Regulus.Remote;
 
 namespace Phoenix.Project1.Game
 {
-    public class Battle
+    /*public class Battle
     {
         private bool _IsFinished;
         private Camps _Camps;
@@ -49,7 +49,7 @@ namespace Phoenix.Project1.Game
                 action.Target = defender.CombatId;
                 action.SkillId = caster.PickAbility();
                 action.Effect.Type = EffectType.Hit;
-                action.Effect.Value = realDamage;
+                action.Effect.Value = (int)realDamage;
 
                 caster = defend_team[pos];
                 action = _Recorder.GenerateAction();
@@ -66,26 +66,10 @@ namespace Phoenix.Project1.Game
                 action.Camp = CampType.Defend;
                 action.SkillId = caster.PickAbility();
                 action.Effect.Type = EffectType.Hit;
-                action.Effect.Value = realDamage;
+                action.Effect.Value = (int)realDamage;
             }
 
             return _IsFinished;
-            //foreach (var attacker in attack_team)
-            //{
-            //    var action = _Recorder.GenerateAction();
-            //    var defender = attacker.PickDefender(defend_team);
-            //    if (defender == null)
-            //    {
-            //        _IsFinished = true;
-            //        return;
-            //    }
-            //    var realDamage = attacker.Damage(defender);
-            //    action.Caster = attacker.Id;
-            //    action.Target = defender.Id;
-            //    action.SkillId = attacker.PickAbility();
-            //    action.Effect.Type = EffectType.Hit;
-            //    action.Effect.Value = realDamage;
-            //}
         }
-    }
+    }*/
 }

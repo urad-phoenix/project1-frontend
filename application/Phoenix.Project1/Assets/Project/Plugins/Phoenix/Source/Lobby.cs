@@ -8,13 +8,13 @@ namespace Phoenix.Project1.Users
 {
     public class Lobby : ILobby
     {
-        readonly Notifier<IPlayer> _Players;
+        readonly NotifierCollection<IPlayer> _Players;
         INotifier<IPlayer> ILobby.Players => _Players;
 
 
         public Lobby()
         {
-            _Players = new Notifier<IPlayer>();
+            _Players = new NotifierCollection<IPlayer>();
         }
         Value<Guid> ILobby.LoadPlayer(string account)
         {

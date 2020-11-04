@@ -1,62 +1,55 @@
-﻿using Phoenix.Project1.Common;
+﻿using Phoenix.Project1.Battles;
+using Phoenix.Project1.Common;
 using Phoenix.Project1.Common.Battles;
 using Regulus.Remote;
 using Regulus.Utility;
+using System;
 
+namespace Phoenix.Project1.Battles
+{
+}
 namespace Phoenix.Project1.Users
 {
-    internal class UserBattle : IBattle , Regulus.Utility.IBootable
+
+    internal class UserBattle : Regulus.Utility.IStatus , IBattleStatus
     {
-        private IBinder _Binder;
-        private readonly ICombat _Combat;
+        private readonly IBinder _Binder;
+        readonly Battles.Battle _Battle;
 
         public event System.Action DoneEvent;
         public UserBattle(IBinder binder)
         {
             _Binder = binder;
-            this._Combat = _GetFightFromRemote();
-
-
-            
-
+            _Battle = new Battles.Battle(_BuildDemoStage());
+        }
+        private Stage _BuildDemoStage()
+        {
+            return Stage.GetDemo();
         }
 
-        void IBattle.Exit()
+        void IStatus.Enter()
+        {
+
+            _Battle.Start();
+            _Binder.Bind<IBattleStatus>(this);
+            _Binder.Bind<IBattle>(_Battle);
+        }
+
+        void IStatus.Leave()
+        {
+            _Binder.Unbind<IBattle>(_Battle);
+            _Binder.Unbind<IBattleStatus>(this);
+            _Battle.End();
+        }
+
+        void IStatus.Update()
+        {
+            _Battle.Step();
+        }
+
+        void IBattleStatus.Exit()
         {
             DoneEvent();
         }
-
-        public Value<BattleInfo> GetCampsByStageId(int stage_id)
-        {
-            return _Combat.GetCampsByStageId(stage_id);
-        }
-
-        public Value<BattleInfo> GetCampsByOpponentId(int opponent_id)
-        {
-            return _Combat.GetCampsByOpponentId(opponent_id);
-        }
-
-        public Value<BattleResult> ToFight(int battle_id)
-        {
-            return _Combat.ToFight(battle_id);
-        }
-
-        private ICombat _GetFightFromRemote()
-        {
-            //todo: get fight service from remote
-            return new Game.Combat();
-        }
-
-        void IBootable.Launch()
-        {
-            _Binder.Bind<IBattle>(this);
-        }
-
-        void IBootable.Shutdown()
-        {
-            _Binder.Unbind<IBattle>(this);
-        }
-
-        
     }
 }

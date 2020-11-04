@@ -12,10 +12,11 @@ namespace Phoenix.Project1.Users
     {
         readonly IConfigurationDatabase _Configs;
 
-        readonly List<IDisposable> _Users;
+        
         private readonly ILobby _Lobby;
-
-
+        readonly Regulus.Utility.Updater _Updater;
+        readonly System.Threading.Tasks.Task _Runner;
+        bool _RunnerEnable;
         // for standalone
         public Entry() : this(new Lobby() ,new FakeConfiguration() )
         {
@@ -26,27 +27,40 @@ namespace Phoenix.Project1.Users
         {
             _Configs = resource;
 
-            _Users = new List<IDisposable>();
             this._Lobby = lobby;
+            _Updater = new Regulus.Utility.Updater();
+            _RunnerEnable = true;
+            _Runner = new System.Threading.Tasks.Task(_Run , System.Threading.Tasks.TaskCreationOptions.LongRunning );
+            _Runner.Start();
         }
+
+        private void _Run()
+        {
+            var ar = new Regulus.Utility.AutoPowerRegulator(new Regulus.Utility.PowerRegulator());
+            while(_RunnerEnable)
+            {
+                _Updater.Working();
+                ar.Operate();
+            }
+
+            _Updater.Shutdown();
+        }
+
         void IBinderProvider.AssignBinder(IBinder binder, object state)
         {
 
-            IDisposable user = new User(binder, _Lobby); 
-            _Users.Add(user);
+            var user = new User(binder, _Lobby);
+            _Updater.Add(user);
 
-            binder.BreakEvent += () => {
-                user.Dispose();
-                _Users.Remove(user);
-            };
+
+
         }
 
         void IDisposable.Dispose()
         {
-            foreach (var user in _Users)
-            {
-                user.Dispose();
-            }
+            
+            _RunnerEnable = false;
+            _Runner.Wait();
         }
     }
 }

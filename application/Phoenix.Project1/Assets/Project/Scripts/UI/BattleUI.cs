@@ -19,7 +19,7 @@ namespace Phoenix.Project1.Client.UI
 
         public void ToDashboard()
         {
-            var battleObs = from battle in NotifierRx.ToObservable().Supply<IBattle>()
+            var battleObs = from battle in NotifierRx.ToObservable().Supply<IBattleStatus>()
                             select battle;
 
             battleObs.Subscribe(_ToDashboard).AddTo(_SendDisposables);
@@ -31,7 +31,7 @@ namespace Phoenix.Project1.Client.UI
             _SendRequestDisposables.Clear();
         }
 
-        private void _ToDashboard(IBattle battle)
+        private void _ToDashboard(IBattleStatus battle)
         {
             battle.Exit();
         }

@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Phoenix.Project1.Game
 {
-    public class Combat : ICombat
+   /* public class Combat : ICombat
     {
         private Dictionary<int, Camps> BattleMap;
 
@@ -69,98 +69,86 @@ namespace Phoenix.Project1.Game
 
         private Camps _GetTestBattleTeam()
         {
-            Camps teams = new Camps();
+            Camps camps = new Camps();
 
-            var attackTeam = new List<BattleActor>();
+            var attackCamp = new List<BattleActor>();
             var attacker1 = new BattleActor();
             attacker1.Id = 1;
-            attacker1.CombatId = 0;
-            attacker1.Hp = 500;
-            attacker1.Atk = 100;
-            attackTeam.Add(attacker1);
+            attacker1.Hp.SetCurrent(500);
+            attacker1.Atk.SetCurrent(100);
+            attackCamp.Add(attacker1);
 
             var attacker2 = new BattleActor();
             attacker2.Id = 2;
-            attacker2.CombatId = 1;
-            attacker2.Hp = 666;
-            attacker2.Atk = 450;
-            attackTeam.Add(attacker2);
+            attacker2.Hp.SetCurrent(666);
+            attacker2.Atk.SetCurrent(450);
+            attackCamp.Add(attacker2);
 
             var attacker3 = new BattleActor();
             attacker3.Id = 3;
-            attacker3.CombatId = 2;
-            attacker3.Hp = 700;
-            attacker3.Atk = 600;
-            attackTeam.Add(attacker3);
+            attacker3.Hp.SetCurrent(700);
+            attacker3.Atk.SetCurrent(600);
+            attackCamp.Add(attacker3);
 
             var attacker4 = new BattleActor();
             attacker4.Id = 4;
-            attacker4.CombatId = 3;
-            attacker4.Hp = 400;
-            attacker4.Atk = 1100;
-            attackTeam.Add(attacker4);
+            attacker4.Hp.SetCurrent(400);
+            attacker4.Atk.SetCurrent(1100);
+            attackCamp.Add(attacker4);
 
             var attacker5 = new BattleActor();
             attacker5.Id = 5;
-            attacker5.CombatId = 4;
-            attacker5.Hp = 200;
-            attacker5.Atk = 1100;
-            attackTeam.Add(attacker5);
+            attacker5.Hp.SetCurrent(200);
+            attacker5.Atk.SetCurrent(1100);
+            attackCamp.Add(attacker5);
 
             var attacker6 = new BattleActor();
             attacker6.Id = 6;
-            attacker6.CombatId = 5;
-            attacker6.Hp = 560;
-            attacker6.Atk = 130;
-            attackTeam.Add(attacker6);
+            attacker6.Hp.SetCurrent(560);
+            attacker6.Atk.SetCurrent(130);
+            attackCamp.Add(attacker6);
 
-            teams.AttackCamp = attackTeam.ToArray();
+            camps.AttackCamp = attackCamp.ToArray();
 
-            var defendTeam = new List<BattleActor>();
+            var defendCamp = new List<BattleActor>();
             var defender1 = new BattleActor();
             defender1.Id = 1;
-            defender1.CombatId = 0;
-            defender1.Hp = 550;
-            defender1.Atk = 100;
-            defendTeam.Add(defender1);
+            defender1.Hp.SetCurrent(550);
+            defender1.Atk.SetCurrent(100);
+            defendCamp.Add(defender1);
 
             var defender2 = new BattleActor();
             defender2.Id = 2;
-            defender1.CombatId = 1;
-            defender2.Hp = 660;
-            defender2.Atk = 50;
-            defendTeam.Add(defender2);
+            defender2.Hp.SetCurrent(660);
+            defender2.Atk.SetCurrent(200);
+            defendCamp.Add(defender2);
 
             var defender3 = new BattleActor();
             defender3.Id = 3;
-            defender1.CombatId = 2;
-            defender3.Hp = 770;
-            defender3.Atk = 600;
-            defendTeam.Add(defender3);
+            defender3.Hp.SetCurrent(770);
+            defender3.Atk.SetCurrent(600);
+            defendCamp.Add(defender3);
 
             var defender4 = new BattleActor();
             defender4.Id = 4;
-            defender1.CombatId = 3;
-            defender4.Hp = 400;
-            defender4.Atk = 110;
-            defendTeam.Add(defender4);
+            defender4.Hp.SetCurrent(400);
+            defender4.Atk.SetCurrent(20);
+            defendCamp.Add(defender4);
 
             var defender5 = new BattleActor();
             defender5.Id = 5;
-            defender1.CombatId = 4;
-            defender5.Hp = 230;
-            defender5.Atk = 120;
-            defendTeam.Add(defender5);
+            defender5.Hp.SetCurrent(230);
+            defender5.Atk.SetCurrent(120);
+            defendCamp.Add(defender5);
 
             var defender6 = new BattleActor();
             defender6.Id = 6;
-            defender1.CombatId = 5;
-            defender6.Hp = 560;
-            defender6.Atk = 130;
-            defendTeam.Add(defender6);
-            teams.DefendCamp = defendTeam.ToArray();
+            defender6.Hp.SetCurrent(560);
+            defender6.Atk.SetCurrent(130);
+            defendCamp.Add(defender6);
+            camps.DefendCamp = defendCamp.ToArray();
 
-            return teams;
+            return camps;
         }
-    }
+    }*/
 }
