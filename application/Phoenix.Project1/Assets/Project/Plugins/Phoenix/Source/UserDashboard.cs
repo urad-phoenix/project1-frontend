@@ -67,8 +67,6 @@ namespace Phoenix.Project1.Users
             _Disposables.Clear();
         }
 
-       
-
         void IDashboard.RequestBattle()
         {
             BattleEvent();

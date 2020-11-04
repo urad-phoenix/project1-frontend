@@ -11,15 +11,18 @@ namespace Phoenix.Project1.Client.UI
     public class Player : MonoBehaviour
     {
         public UnityEngine.GameObject Root;
-        public UnityEngine.UI.Text Message;
-        public UnityEngine.UI.Button Send;
+        public UnityEngine.GameObject Income;
+        public UnityEngine.GameObject StagePreview;
+
+        //public UnityEngine.UI.Text Message;
+        //public UnityEngine.UI.Button Send;
         readonly UniRx.CompositeDisposable _Disposables;
-        readonly UniRx.CompositeDisposable _SendDisposables;
+        //readonly UniRx.CompositeDisposable _SendDisposables;
         readonly UniRx.CompositeDisposable _SendBattleDisposables;
         public Player()
         {
             _Disposables = new CompositeDisposable();
-            _SendDisposables = new CompositeDisposable();
+            //_SendDisposables = new CompositeDisposable();
             _SendBattleDisposables = new CompositeDisposable();
         }
         // Start is called before the first frame update
@@ -33,7 +36,7 @@ namespace Phoenix.Project1.Client.UI
         private void OnDestroy()
         {
             _Disposables.Clear();
-            _SendDisposables.Clear();
+            //_SendDisposables.Clear();
             _SendBattleDisposables.Clear();
         }
 
@@ -45,19 +48,35 @@ namespace Phoenix.Project1.Client.UI
         private void _Show(IPlayer player)
         {
             Root.SetActive(true);
-            _SendDisposables.Clear();
-            Send.OnClickAsObservable().Subscribe(_=> _Send(player) ).AddTo(_SendDisposables);
+            //_SendDisposables.Clear();
+            //Send.OnClickAsObservable().Subscribe(_=> _Send(player) ).AddTo(_SendDisposables);
         }
 
-        private void _Send(IPlayer player)
+        public void ToStagePreview()
         {
-            player.SetMessage(Message.text);
+            // using rx get stage info.
+            StagePreview.SetActive(true);
         }
+
+        public void ToIncome()
+        {
+            Income.SetActive(true);
+        }
+
+        public void Return(GameObject go)
+        {
+            go.SetActive(!go.activeSelf);
+        }
+
+        //private void _Send(IPlayer player)
+        //{
+        //    player.SetMessage(Message.text);
+        //}
 
         public void ToBattle()
         {
             var dashObs = from dash in NotifierRx.ToObservable().Supply<IDashboard>()
-                select dash;
+                          select dash;
 
             dashObs.Subscribe(_Tobattl).AddTo(_SendBattleDisposables);
         }
@@ -65,7 +84,7 @@ namespace Phoenix.Project1.Client.UI
         private void _Tobattl(IDashboard dash)
         {
             dash.RequestBattle();
-        }       
+        }
     }
 
 }
