@@ -19,11 +19,13 @@ namespace Phoenix.Project1.Client.UI
         readonly UniRx.CompositeDisposable _Disposables;
         //readonly UniRx.CompositeDisposable _SendDisposables;
         readonly UniRx.CompositeDisposable _SendBattleDisposables;
+        readonly UniRx.CompositeDisposable _SendTeamDisposables;
         public Player()
         {
             _Disposables = new CompositeDisposable();
             //_SendDisposables = new CompositeDisposable();
             _SendBattleDisposables = new CompositeDisposable();
+            _SendTeamDisposables = new CompositeDisposable();
         }
         // Start is called before the first frame update
         void Start()
@@ -38,6 +40,7 @@ namespace Phoenix.Project1.Client.UI
             _Disposables.Clear();
             //_SendDisposables.Clear();
             _SendBattleDisposables.Clear();
+            _SendTeamDisposables.Clear();
         }
 
         private void _Hide(IPlayer obj)
@@ -84,6 +87,19 @@ namespace Phoenix.Project1.Client.UI
         private void _Tobattl(IDashboard dash)
         {
             dash.RequestBattle();
+        }
+        
+        public void ToTeam()
+        {
+            var dashObs = from dash in NotifierRx.ToObservable().Supply<IDashboard>()
+                          select dash;
+
+            dashObs.Subscribe(_ToTeam).AddTo(_SendTeamDisposables);
+        }
+
+        private void _ToTeam(IDashboard dash)
+        {
+            dash.RequestTeam();
         }
     }
 

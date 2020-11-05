@@ -271,4 +271,16 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7086120651266362729}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6467654605085750871, guid: 54c08548dec8c5549aea02b00d3ba8b6,
+          type: 3}
+        m_MethodName: ShowMasterSpellPreview
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

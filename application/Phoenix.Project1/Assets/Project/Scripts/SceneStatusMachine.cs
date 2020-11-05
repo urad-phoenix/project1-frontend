@@ -32,6 +32,11 @@ namespace Phoenix.Project1.Client
                 select player;
             
             battleObs.Subscribe(_ToBattle).AddTo(_Disposables);
+
+            var teamObs = from player in NotifierRx.ToObservable().Supply<ITeamStatus>()
+                            select player;
+
+            teamObs.Subscribe(_ToTeam).AddTo(_Disposables);
         }
 
         private void _ToDashboard(IDashboard player)
@@ -48,6 +53,11 @@ namespace Phoenix.Project1.Client
         private void _ToBattle(IBattleStatus player)
         {
             _Loader.OpenBattle();
+        }
+
+        private void _ToTeam(ITeamStatus player)
+        {
+            _Loader.OpenTeam();
         }
 
         private void OnDestroy()

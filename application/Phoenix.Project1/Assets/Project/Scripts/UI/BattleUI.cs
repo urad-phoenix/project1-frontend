@@ -1,10 +1,11 @@
 using Phoenix.Project1.Common.Battles;
+using System.Security.Permissions;
 using UniRx;
 using UnityEngine;
 
 namespace Phoenix.Project1.Client.UI
 {
-    public class BattleUI : MonoBehaviour
+    public partial class BattleUI : MonoBehaviour
     {
         public GameObject PauseMask;
 
