@@ -246,7 +246,7 @@ MonoBehaviour:
   endLocation:
     exposedName: 38fc8e55f19268249bfac4f39dd85284
     defaultValue: {fileID: 0}
-  Step_away_Targeter: 0
+  Step_away_Targeter: 1.5
   endScale: {x: 1, y: 1, z: 1}
   StartTransform:
     Position: {x: 0, y: 0, z: 0}
