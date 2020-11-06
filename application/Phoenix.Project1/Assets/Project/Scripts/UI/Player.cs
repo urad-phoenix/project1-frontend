@@ -101,6 +101,32 @@ namespace Phoenix.Project1.Client.UI
         {
             dash.RequestTeam();
         }
+
+        public void ToHero()
+        {
+            var dashObs = from dash in NotifierRx.ToObservable().Supply<IDashboard>()
+                          select dash;
+
+            dashObs.Subscribe(_ToHero).AddTo(_SendTeamDisposables);
+        }
+
+        private void _ToHero(IDashboard dash)
+        {
+            dash.RequestHero();
+        }
+
+        public void ToStore()
+        {
+            var dashObs = from dash in NotifierRx.ToObservable().Supply<IDashboard>()
+                          select dash;
+
+            dashObs.Subscribe(_ToStore).AddTo(_SendTeamDisposables);
+        }
+
+        private void _ToStore(IDashboard dash)
+        {
+            dash.RequestStore();
+        }
     }
 
 }

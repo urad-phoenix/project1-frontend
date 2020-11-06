@@ -37,6 +37,16 @@ namespace Phoenix.Project1.Client
                             select player;
 
             teamObs.Subscribe(_ToTeam).AddTo(_Disposables);
+
+            var storeObs = from player in NotifierRx.ToObservable().Supply<IStoreStatus>()
+                          select player;
+
+            storeObs.Subscribe(_ToStore).AddTo(_Disposables);
+
+            var heroObs = from player in NotifierRx.ToObservable().Supply<IHeroStatus>()
+                          select player;
+
+            heroObs.Subscribe(_ToHero).AddTo(_Disposables);
         }
 
         private void _ToDashboard(IDashboard player)
@@ -58,6 +68,16 @@ namespace Phoenix.Project1.Client
         private void _ToTeam(ITeamStatus player)
         {
             _Loader.OpenTeam();
+        }
+
+        private void _ToHero(IHeroStatus player)
+        {
+            _Loader.OpenHero();
+        }
+
+        private void _ToStore(IStoreStatus player)
+        {
+            _Loader.OpenStore();
         }
 
         private void OnDestroy()
