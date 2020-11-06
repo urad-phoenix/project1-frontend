@@ -10,9 +10,9 @@ namespace Phoenix.Playables
     public class TransformTweenClip : PlayableAsset, ITimelineClipAsset
     {
 	    public bool IsInvert;
-        [Tooltip("¾ã­ÓTimelineªíºt§¹«áReset")]
+        [Tooltip("æ•´å€‹Timelineè¡¨æ¼”å®Œå¾ŒReset")]
 	    public bool IsFullEndReset = false;
-        [Tooltip("Clipªíºt§¹«áReset")]
+        [Tooltip("Clipè¡¨æ¼”å®Œå¾ŒReset")]
         public bool IsClipEndReset = false;
         public TransformTweenBehaviourData template = new TransformTweenBehaviourData();
         public ExposedReference<Transform> startLocation;

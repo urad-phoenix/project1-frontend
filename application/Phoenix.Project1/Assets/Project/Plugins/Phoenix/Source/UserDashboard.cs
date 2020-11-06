@@ -20,6 +20,9 @@ namespace Phoenix.Project1.Users
         
         readonly UniRx.CompositeDisposable _Disposables;
         public event System.Action BattleEvent;
+        public event System.Action TeamEvent;
+        public event System.Action HeroEvent;
+        public event System.Action StoreEvent;
 
         public UserDashboard(IBinder binder, IPlayer self, ILobby lobby)
         {
@@ -78,6 +81,21 @@ namespace Phoenix.Project1.Users
         void IStatus.Update()
         {
             
+        }
+
+        void IDashboard.RequestTeam()
+        {
+            TeamEvent();
+        }
+
+        void IDashboard.RequestHero()
+        {
+            HeroEvent();
+        }
+
+        void IDashboard.RequestStore()
+        {
+            StoreEvent();
         }
     }
 }

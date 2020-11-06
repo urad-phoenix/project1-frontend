@@ -49,14 +49,15 @@
               
                 float inputWeight = playable.GetInputWeight(i);
 
-                Vector3 startPoint = input.IsInvert ? input.TargetTransform.Position : input.StartTransform.Position;
+                Vector3 startPoint = input.IsInvert ? input.TargetTransform.Position - (( input.TargetTransform.Position -  input.StartTransform.Position).normalized) * input.Step_away_Targeter : 
+                    input.StartTransform.Position;
+
                 Quaternion startRotation = input.IsInvert ? input.TargetTransform.Rotation : input.StartTransform.Rotation;
                 Vector3 startScale = input.IsInvert ? input.endScale : input.StartTransform.Scale;
-                Vector3 endPoint = input.IsInvert ? input.StartTransform.Position : input.TargetTransform.Position;
+                Vector3 endPoint = input.IsInvert ? input.StartTransform.Position : input.TargetTransform.Position - ((input.TargetTransform.Position - startPoint).normalized) * input.Step_away_Targeter;;
                 Quaternion endRotation = input.IsInvert ? input.StartTransform.Rotation : input.TargetTransform.Rotation;
                 Vector3 endScale = input.IsInvert ? input.StartTransform.Scale : input.endScale;
-                    
-                Vector3 endPosition  = endPoint - ((endPoint - startPoint).normalized) * input.Step_away_Targeter;
+                                    
                 //Quaternion endQuaternion = Quaternion.Euler(startRotation.eulerAngles + input.endeulerAngles);
                 
                 /*Vector3 blendedPosition = startPoint;
@@ -71,7 +72,7 @@
                         if(!input.IsClipEndReset)
                         {
                             if(input.tweenPosition)
-                                m_TrackBinding.position = endPosition;
+                                m_TrackBinding.position = endPoint;
 
                             if(input.IsLockAt)
                                 m_TrackBinding.rotation = endRotation;
@@ -121,7 +122,7 @@
                 {
                     //positionTotalWeight += inputWeight;
 
-                    blendedPosition = Vector3.Lerp(startPoint, endPosition, (float) tweenProgress);// * inputWeight;
+                    blendedPosition = Vector3.Lerp(startPoint, endPoint, (float) tweenProgress);// * inputWeight;
                     
                 }
                 if (input.tweenScale)
