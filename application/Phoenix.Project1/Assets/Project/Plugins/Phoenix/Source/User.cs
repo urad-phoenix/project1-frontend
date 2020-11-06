@@ -34,6 +34,9 @@ namespace Phoenix.Project1.Users
         {
             var stage = new UserDashboard(_Binder, player,_Lobby);
             stage.BattleEvent += ()=> _ToBattle(player);
+            stage.HeroEvent += () => _ToHero(player);
+            stage.TeamEvent += () => _ToTeam(player);
+            stage.StoreEvent += () => _ToStore(player);
             _Machine.Push(stage);
 
         }
@@ -45,7 +48,27 @@ namespace Phoenix.Project1.Users
             _Machine.Push(stage);
         }
 
-        
+        private void _ToTeam(IPlayer player)
+        {
+            var stage = new UserTeam(_Binder);
+            stage.DoneEvent += () => _ToDashboard(player);
+            _Machine.Push(stage);
+        }
+
+        private void _ToStore(IPlayer player)
+        {
+            var stage = new UserStore(_Binder);
+            stage.DoneEvent += () => _ToDashboard(player);
+            _Machine.Push(stage);
+        }
+
+        private void _ToHero(IPlayer player)
+        {
+            var stage = new UserHero(_Binder);
+            stage.DoneEvent += () => _ToDashboard(player);
+            _Machine.Push(stage);
+        }
+
         bool IUpdatable.Update()
         {
             _Machine.Update();

@@ -94,6 +94,16 @@ namespace Phoenix.Project1.Client
             Open("scene-team");
         }
 
+        internal void OpenStore()
+        {
+            Open("scene-store");
+        }
+
+        internal void OpenHero()
+        {
+            Open("scene-hero");
+        }
+
         internal void OpenLogin()
         {
             Open("scene-login", "scene-test1");

@@ -4435,7 +4435,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7677668446642793639}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8592462617083409715}
+        m_MethodName: ToDashboard
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7677668446652161385
 GameObject:
   m_ObjectHideFlags: 0
@@ -4635,6 +4646,7 @@ GameObject:
   - component: {fileID: 7677668446664295141}
   - component: {fileID: 7677668446664295143}
   - component: {fileID: 7677668446664295140}
+  - component: {fileID: 8592462617083409715}
   m_Layer: 5
   m_Name: HeroUI
   m_TagString: Untagged
@@ -4701,6 +4713,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8592462617083409715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7677668446664295138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fada561158017b54d8508f48024e5226, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7677668446676010306
 GameObject:
   m_ObjectHideFlags: 0
@@ -4819,7 +4843,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7677668446676010311}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8592462617083409715}
+        m_MethodName: Return
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 7677668447635650040}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7677668446699599516
 GameObject:
   m_ObjectHideFlags: 0
@@ -7126,7 +7161,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -0.000006976253}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &7677668447264121385
