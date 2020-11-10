@@ -12,7 +12,8 @@ public interface IUIQueryable
 }
 
 namespace Phoenix.Project1.Client.UI
-{
+{   
+    
     public class UILoader : MonoBehaviour, IUIQueryable
     {       
         [Serializable]
@@ -37,10 +38,13 @@ namespace Phoenix.Project1.Client.UI
 
         private CompositeDisposable _Disposable;
 
-        public event Action<IUIQueryable> LoadCompletedEvent;
+        public event Action LoadCompletedEvent;
+
+        public readonly IUIQueryable Queryable;
             
         public UILoader()
         {
+            Queryable = this;
             _UIContainer = new System.Collections.Generic.List<GameObject>();
             _LoadHandles = new System.Collections.Generic.List<IObservable<AsyncOperationHandle<GameObject>>>();
             _Disposable = new CompositeDisposable();
@@ -54,7 +58,7 @@ namespace Phoenix.Project1.Client.UI
                 {
                     Debug.Log("loaded");
                     
-                    LoadCompletedEvent?.Invoke(this);
+                    LoadCompletedEvent?.Invoke();
                 });
         }
 

@@ -8,13 +8,18 @@ namespace Phoenix.Project1.Client.UI
         protected UILoader _Loader;
 
         protected IUIQueryable _Queryable;
-        
-        protected virtual void Start()
-        {
+
+        private void Awake()
+        {    
             _Loader.LoadCompletedEvent += LoadCompleted;
         }
 
-        private void LoadCompleted(IUIQueryable uiQueryable)
+        private void LoadCompleted()
+        {
+            _LoadCompleted(_Loader);
+        }
+
+        private void _LoadCompleted(IUIQueryable uiQueryable)
         {
             _Queryable = uiQueryable;
             
@@ -22,5 +27,10 @@ namespace Phoenix.Project1.Client.UI
         }
 
         protected abstract void _Loaded();
+
+        private void OnDestroy()
+        {
+            _Loader.LoadCompletedEvent -= LoadCompleted;
+        }
     }
 }

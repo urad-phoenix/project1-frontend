@@ -9,9 +9,13 @@ namespace Phoenix.Project1.Client.UI
     {
         private GameObject _Verify;
 
-        private void Awake()
-        {
+        private void Start()
+        {            
             _Loader.Load();                        
+        }
+
+        public void Loaded(GameObject queryable)
+        {
         }
 
         protected override void _Loaded()

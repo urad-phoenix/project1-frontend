@@ -7,8 +7,8 @@ namespace Phoenix.Project1.Client.UI
     {
         private GameObject _Dashboard;
 
-        private void Awake()
-        {
+        private void Start()
+        {            
             _Loader.Load();                        
         }
         
