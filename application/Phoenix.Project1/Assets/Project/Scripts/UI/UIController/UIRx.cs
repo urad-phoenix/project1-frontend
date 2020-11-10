@@ -23,7 +23,15 @@ namespace Phoenix.Project1.Client.UI
         {
             UILayerController.Instance.SetToLayer(layer, component);
         }
-        
+
+        public static Transform GetLayer(UILayer layer)
+        {
+            if (UILayerController.Instance == null)
+                return null;
+            
+            return UILayerController.Instance.GetCanvas(layer).transform;
+        }
+
         public static void SetTransformParent(this Transform transform, Transform parent)
         {
             UILayerController.Instance.SetToParent(transform, parent);

@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: UI
+  m_EditorClassIdentifier: 
+  m_GroupName: UI
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 6bdeb5e30fc1c234eb93c58806cb6552
+  m_SerializeEntries:
+  - m_GUID: 644fe52f45d2a0749ae170480b1eab2b
+    m_Address: BattleUI
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 8095320745985343809, guid: 644fe52f45d2a0749ae170480b1eab2b,
+      type: 3}
+    m_TargetAsset: {fileID: 8095320745985343809, guid: 644fe52f45d2a0749ae170480b1eab2b,
+      type: 3}
+  - m_GUID: 67e0ccb051f54dd488a15cdef81cf12b
+    m_Address: DashboardUI
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 9059615133573088222, guid: 67e0ccb051f54dd488a15cdef81cf12b,
+      type: 3}
+    m_TargetAsset: {fileID: 9059615133573088222, guid: 67e0ccb051f54dd488a15cdef81cf12b,
+      type: 3}
+  - m_GUID: 773c4b823f220fd4cb1905c9d57d3259
+    m_Address: Verify
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 8114343734136293728, guid: 773c4b823f220fd4cb1905c9d57d3259,
+      type: 3}
+    m_TargetAsset: {fileID: 8114343734136293728, guid: 773c4b823f220fd4cb1905c9d57d3259,
+      type: 3}
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 83abaeb8ec8384d4db3cea6c06383109, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 6493778c52eda0c4ea626f167dace6ec, type: 2}
+    - {fileID: 11400000, guid: e594d622aab084e4ab89d93872434fd4, type: 2}

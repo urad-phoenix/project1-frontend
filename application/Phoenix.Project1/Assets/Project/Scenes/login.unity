@@ -425,6 +425,66 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 773c4b823f220fd4cb1905c9d57d3259, type: 3}
+--- !u!1 &1615174475
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1615174478}
+  - component: {fileID: 1615174477}
+  - component: {fileID: 1615174476}
+  m_Layer: 0
+  m_Name: LoadingUIController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1615174476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1615174475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69ba83293a14b774b883c5386edda1dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _Loader: {fileID: 1615174477}
+--- !u!114 &1615174477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1615174475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e64f18947c784644b23ff6b96b6516fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _UIs:
+  - Name: Verify
+    Layer: 0
+--- !u!4 &1615174478
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1615174475}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 640, y: 380, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1620035602
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -541,6 +601,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: CommonCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 8109352525564370907, guid: f5d238c2b0a3a314899ebe90f36410e7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f5d238c2b0a3a314899ebe90f36410e7, type: 3}

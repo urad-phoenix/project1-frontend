@@ -21,8 +21,8 @@ MonoBehaviour:
     m_Address: scene-test1
     m_ReadOnly: 0
     m_SerializedLabels: []
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
+    m_MainAsset: {fileID: 102900000, guid: 0225b51335e48a047855676a57f79bef, type: 3}
+    m_TargetAsset: {fileID: 102900000, guid: 0225b51335e48a047855676a57f79bef, type: 3}
   - m_GUID: 1bdbe8a8463c0d64da581cab5a45a072
     m_Address: scene-dashboard
     m_ReadOnly: 0
@@ -33,14 +33,14 @@ MonoBehaviour:
     m_Address: scene-test2
     m_ReadOnly: 0
     m_SerializedLabels: []
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
+    m_MainAsset: {fileID: 102900000, guid: 21584c0e9880069408003c038bbd3043, type: 3}
+    m_TargetAsset: {fileID: 102900000, guid: 21584c0e9880069408003c038bbd3043, type: 3}
   - m_GUID: 24affba2b52ec6441bef26965f0d6628
     m_Address: scene-hero
     m_ReadOnly: 0
     m_SerializedLabels: []
-    m_MainAsset: {fileID: 102900000, guid: 24affba2b52ec6441bef26965f0d6628, type: 3}
-    m_TargetAsset: {fileID: 102900000, guid: 24affba2b52ec6441bef26965f0d6628, type: 3}
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   - m_GUID: 43113db160b29b5428a0b73e873fd550
     m_Address: scene-login
     m_ReadOnly: 0
@@ -57,8 +57,8 @@ MonoBehaviour:
     m_Address: scene-battle
     m_ReadOnly: 0
     m_SerializedLabels: []
-    m_MainAsset: {fileID: 0}
-    m_TargetAsset: {fileID: 0}
+    m_MainAsset: {fileID: 102900000, guid: b457d7a302227094a8c8df9fe9e30ad5, type: 3}
+    m_TargetAsset: {fileID: 102900000, guid: b457d7a302227094a8c8df9fe9e30ad5, type: 3}
   - m_GUID: c6e5bee5b6702b741b7e8bd57faeb022
     m_Address: scene-store
     m_ReadOnly: 0

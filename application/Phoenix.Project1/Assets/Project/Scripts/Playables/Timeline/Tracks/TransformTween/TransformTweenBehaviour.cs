@@ -20,11 +20,7 @@
                 return;
 
             int inputCount = playable.GetInputCount();
-
-            //float positionTotalWeight = 0f;
-            //float rotationTotalWeight = 0f;
-            //float scaleTotalWeight = 1f;
-
+    
             if (!m_FirstFrameHappened)
             {
                 m_FirstFrameHappened = true;
@@ -56,13 +52,7 @@
                 Vector3 startScale = input.IsInvert ? input.endScale : input.StartTransform.Scale;
                 Vector3 endPoint = input.IsInvert ? input.StartTransform.Position : input.TargetTransform.Position - ((input.TargetTransform.Position - startPoint).normalized) * input.Step_away_Targeter;;
                 Quaternion endRotation = input.IsInvert ? input.StartTransform.Rotation : input.TargetTransform.Rotation;
-                Vector3 endScale = input.IsInvert ? input.StartTransform.Scale : input.endScale;
-                                    
-                //Quaternion endQuaternion = Quaternion.Euler(startRotation.eulerAngles + input.endeulerAngles);
-                
-                /*Vector3 blendedPosition = startPoint;
-                Vector3 blendedScale = startScale;
-                Quaternion blendedRotation = startRotation;*/
+                Vector3 endScale = input.IsInvert ? input.StartTransform.Scale : input.endScale;                                                  
                 
                 if (inputWeight < 1)
                 {
@@ -104,8 +94,7 @@
                     
                     if (input.IsLockAt)
                     {
-                        var dir = endPoint -  m_TrackBinding.position;                       
-                        //Quaternion endQuaternion = Quaternion.Euler(startRotation.eulerAngles + input.endeulerAngles);
+                        var dir = endPoint -  m_TrackBinding.position;                                               
                         var rotation = Quaternion.LookRotation(dir, Vector3.up);
                         m_TrackBinding.rotation = rotation;
                     }
@@ -114,68 +103,27 @@
                         m_IsReset = true;
                 }
 
-                double normalisedTime = (playableInput.GetTime() / playableInput.GetDuration());
-                //Debug.Log(normalisedTime);
+                double normalisedTime = (playableInput.GetTime() / playableInput.GetDuration());            
                 float tweenProgress = input.EvaluateCurrentCurve((float)normalisedTime);
                 if (tweenProgress > 0.96f) { tweenProgress = 1.0f;}
                 if (input.tweenPosition)
-                {
-                    //positionTotalWeight += inputWeight;
-
+                {         
                     blendedPosition = Vector3.Lerp(startPoint, endPoint, (float) tweenProgress);// * inputWeight;
                     
                 }
                 if (input.tweenScale)
-                {
-                    //scaleTotalWeight = inputWeight;
+                {                 
                     blendedScale = (Vector3.Lerp(startScale, endScale, (float)tweenProgress));
 
                 }
-                /*if (input.tweenRotation)
-                {
-                    rotationTotalWeight += inputWeight;
-
-                    Quaternion desiredRotation = Quaternion.Lerp(startRotation, endQuaternion, (float)tweenProgress);
-                    desiredRotation = NormalizeQuaternion(desiredRotation);
-
-                    if (Quaternion.Dot(blendedRotation, desiredRotation) < 0f)
-                    {
-                        desiredRotation = ScaleQuaternion(desiredRotation, -1f);
-                    }
-
-                    desiredRotation = ScaleQuaternion(desiredRotation, inputWeight);
-
-                    blendedRotation = AddQuaternions(blendedRotation, desiredRotation);
-                }*/
                 
-                //blendedPosition += m_DefaultPosition * (1f - positionTotalWeight);
-                //blendedScale = defaultScale * (scaleTotalWeight);
-                //Quaternion weightedDefaultRotation = m_DefaultRotation;// ScaleQuaternion(m_DefaultRotation, 1f - rotationTotalWeight);
-                //blendedRotation = AddQuaternions(blendedRotation, weightedDefaultRotation);
                 m_TrackBinding.position = blendedPosition;
-            
-                //trackBinding.position = new Vector3(0,0,5.7f) ;
-                //m_TrackBinding.rotation = blendedRotation;
+                         
                 m_TrackBinding.localScale = blendedScale;
             }  
 
            // m_FirstFrameHappened = true;
-        }
-
-        public override void OnGraphStop(Playable playable)
-        {
-            Debug.Log("OnGraphStop");
-        }
-
-        public override void OnBehaviourPause(Playable playable, FrameData info)
-        {
-            Debug.Log("OnBehaviourPause");
-        }
-
-        public override void OnBehaviourPlay(Playable playable, FrameData info)
-        {
-            Debug.Log("OnGraphStop");
-        }        
+        }           
 
         public override void OnPlayableDestroy(Playable playable)
         {          
