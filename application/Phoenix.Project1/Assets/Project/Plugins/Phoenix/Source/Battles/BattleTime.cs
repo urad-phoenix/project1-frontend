@@ -1,4 +1,5 @@
 ﻿using Phoenix.Project1.Common.Battles;
+using Regulus.Remote;
 using Regulus.Utility;
 using System;
 
@@ -8,21 +9,33 @@ namespace Phoenix.Project1.Battles
     {
         readonly TimePusher _Pusher;
         readonly TimeCounter _Counter;
-        int _Frames;
+
+        Property<int> _Frames;
         public BattleTime()
         {
             _Counter = new TimeCounter();
             _Pusher = new TimePusher();
+            _Frames = new Property<int>();
         }
         int IBattleTime.Frame => _Frames;
-        
+
+        public Property<int> Frames => _Frames;
 
         int IBattleTime.Advance()
         {
             var frames = _Pusher.Advance(_Counter.Second);
-            _Frames += frames;
-            _Counter.Reset();
+            if(frames > 0)
+            {
+                _Frames.Value += frames;
+                _Counter.Reset();
+            }            
             return frames;
+        }
+
+        internal void Reset()
+        {
+            _Counter.Reset();
+            _Frames.Value = 0;
         }
     }
 }

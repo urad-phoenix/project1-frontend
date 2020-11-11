@@ -18,18 +18,13 @@ namespace Phoenix.Project1.Battles
             _Stage = stage;
             _Time = new BattleTime();
             _Machine = new StatusMachine();
-
             _StageProperty = new Property<int>(_Stage.Id);
-            _Frames = new Property<int>();
-
+            
             _Entrances = new NotifierCollection<ActorEntranceTimestamp>();            
             _ActorPerforms = new NotifierCollection<ActorPerformTimestamp>();
-            _MasterPerforms = new NotifierCollection<MasterPerformTimestamp>();
+        
             _Finishs = new NotifierCollection<BattleResult>();
-
-
             _Actors = new NotifierCollection<IActor>();
-            _Masters = new NotifierCollection<IMaster>();
         
         }
 
@@ -42,15 +37,13 @@ namespace Phoenix.Project1.Battles
         public void Start()
         {
             _Actors.Items.Clear();
-            _Masters.Items.Clear();
-            
 
             _ActorPerforms.Items.Clear();
-            _MasterPerforms.Items.Clear();
+        
             _Finishs.Items.Clear();            
             _Entrances.Items.Clear();
 
-            _Frames.Value = 0;
+            _Time.Reset();
             _Battleing = true;
 
             _ToEntrance();
@@ -111,11 +104,9 @@ namespace Phoenix.Project1.Battles
         readonly Phoenix.Project1.NotifierCollection<IActor> _Actors;
         INotifier<IActor> IBattle.Actors => _Actors;
 
-        readonly Regulus.Remote.Property<int> _Frames;
-        Regulus.Remote.Property<int> IBattle.Frames => _Frames;
+        
+        Regulus.Remote.Property<int> IBattle.Frames => _Time.Frames;
 
-        Phoenix.Project1.NotifierCollection<IMaster> _Masters;
-        INotifier<IMaster> IBattle.Masters => _Masters;
 
         readonly Phoenix.Project1.NotifierCollection<ActorEntranceTimestamp> _Entrances;
 
@@ -146,19 +137,7 @@ namespace Phoenix.Project1.Battles
             }
         }
 
-        readonly Phoenix.Project1.NotifierCollection<MasterPerformTimestamp> _MasterPerforms;
-        event Action<MasterPerformTimestamp> IBattle.MasterPerformEvent
-        {
-            add
-            {
-                _MasterPerforms.Notifier.Supply += value;
-            }
-
-            remove
-            {
-                _MasterPerforms.Notifier.Supply -= value;
-            }
-        }
+        
         readonly Phoenix.Project1.NotifierCollection<BattleResult> _Finishs;
         event Action<BattleResult> IBattle.FinishEvent
         {
