@@ -24,8 +24,11 @@ namespace Phoenix.Project1.Client
             private Text _Current;
             readonly UniRx.CompositeDisposable _Disposables;
             readonly System.Collections.Generic.Queue<string> _Temps;
+
+            readonly System.Collections.Concurrent.ConcurrentQueue<string> _Messages;
             public Console()
             {
+                _Messages = new System.Collections.Concurrent.ConcurrentQueue<string>();
                 _Disposables = new CompositeDisposable();
                 _Items = new System.Collections.Generic.Queue<UnityEngine.UI.Text>();
                 _WriteLineHandle = _Empty;
@@ -99,7 +102,8 @@ namespace Phoenix.Project1.Client
             {
                 if (string.IsNullOrWhiteSpace(message))
                     return;
-                _Current.text += message;
+
+                _Messages.Enqueue(message);
             }
 
             void Regulus.Utility.Console.IViewer.WriteLine(string message)
@@ -112,8 +116,8 @@ namespace Phoenix.Project1.Client
             {
                 if (string.IsNullOrWhiteSpace(message))
                     return;
-                _Current.text += message;
-                _NewItem();
+
+                _Messages.Enqueue(message);                
             }
 
             private void _NewItem()
@@ -143,6 +147,14 @@ namespace Phoenix.Project1.Client
 
                     Panel.SetActive(!Panel.activeSelf);
                 }
+
+                string msg;
+                if(_Messages.TryDequeue(out msg))
+                {
+                    _Current.text += msg;
+                    _NewItem();                    
+                }
+                
             }
         }
     }
