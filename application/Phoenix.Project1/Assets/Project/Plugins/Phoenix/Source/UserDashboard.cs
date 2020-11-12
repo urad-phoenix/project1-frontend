@@ -50,6 +50,10 @@ namespace Phoenix.Project1.Users
             _Binder.Bind<Phoenix.Project1.Common.Users.IActor>(actor);
         }
 
+        
+
+       
+
         void IDashboard.RequestBattle()
         {
             BattleEvent();
@@ -69,6 +73,8 @@ namespace Phoenix.Project1.Users
         {
             _Binder.Unbind<IDashboard>(this);
             _Binder.Unbind<IPlayer>(_Self);
+
+
             _Disposables.Clear();
         }
 

@@ -14,13 +14,10 @@ namespace Phoenix.Project1.Battles
         public event System.Action<Common.Battles.Winner> VictoryEvent;
         public event System.Action<Actor> PerformEvent;
 
-        readonly CircularQueue<Actor> _ActorCircular;
 
         public BattleReferee(Battles.Stage stage)
         {           
-            this._Stage = stage;
-            var actors = stage.Attacker.Actors.Union(stage.Defender.Actors);
-            _ActorCircular = new CircularQueue<Actor>(actors);
+            this._Stage = stage;            
         }
 
         void IStatus.Enter()
@@ -36,14 +33,9 @@ namespace Phoenix.Project1.Battles
         {
 
 
-            Actor actor;
-            do
-            {
-                actor = _ActorCircular.GetCurrentAndNext();
-            }
-            while (actor.Hp == 0);
+            
 
-            PerformEvent(actor);
+            PerformEvent(_Stage.NextPerformer());
             return true;
         }
 

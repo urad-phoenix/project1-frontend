@@ -36,12 +36,15 @@ namespace Phoenix.Project1.Battles
 
         Property<int> IActor.Hp => Hp;
 
+        internal bool IsMovable()
+        {
+            return Hp == 0;
+        }
+
         public Project1.Battles.Spell CastSpell()
         {
             return new Project1.Battles.Spell();
         }
-
-        
 
         public Motion GetMotion(MotionType type)
         {

@@ -4,6 +4,7 @@ dotnet publish ..\..\backend\Regulus.Remote\Regulus.Remote.Standalone\Regulus.Re
 dotnet publish ..\..\backend\Phoneix.Project1\Phoenix.Project1.Protocol\Phoenix.Project1.Protocol.csproj -o .\Assets\Project\Plugins\Phoenix
 dotnet publish ..\..\backend\Phoneix.Project1\Phoenix.Project1.Configs\Phoenix.Project1.Configs.csproj -o .\Assets\Project\Plugins\Phoenix
 dotnet publish ..\..\backend\Phoneix.Project1\Phoenix.Project1.Client\Phoenix.Project1.Client.csproj -o .\Assets\Project\Plugins\Phoenix
+
 rem dotnet publish ..\..\backend\Phoneix.Project1\Phoenix.Project1.Game\Phoenix.Project1.Game.csproj -o .\Assets\Project\Plugins\Phoenix
 del .\Assets\Project\Plugins\Phoenix\*.nupkg
 mkdir .\Assets\Project\Plugins\Phoenix\Source
