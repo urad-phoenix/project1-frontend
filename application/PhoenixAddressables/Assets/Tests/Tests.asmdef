@@ -6,7 +6,8 @@
         "Unity.Addressables",
         "Unity.ResourceManager",
         "UniRx",
-        "Phoenix.Pool"
+        "Phoenix.Pool",
+        "Phoenix.DataConvertTool"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
