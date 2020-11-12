@@ -4,9 +4,9 @@ namespace Phoenix.Project1.DataConvertTool
     using System.IO;
     using OfficeOpenXml;
     
-    public class ExcelGenerator : IGenerator
+    public class ExcelGenerator
     {
-        public void Generate(TableData tableData)
+        public static void Generate(TableData tableData)
         {
             var path = CheckFilePath(tableData.OutputPath);
             
@@ -17,17 +17,20 @@ namespace Phoenix.Project1.DataConvertTool
 
             if (CheckFile(path))
             {
-                File.Delete(path);       
-            }
-
+                File.Delete(path); 
+            }                        
+            
             using (var file = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
             {
                 var wb = new ExcelPackage(file);
-                        
+                    
                 _ParseWorkbook(tableData, wb);                        
-                         
-                wb.Save();
+                     
+                wb.Save();                
             }
+            
+
+            
 
             //wb.Write(memoryStream);
             
@@ -38,14 +41,14 @@ namespace Phoenix.Project1.DataConvertTool
             //System.IO.File.WriteAllBytes(path, byteArray);           
         }                    
 
-        public string CheckFilePath(string path)
+        public static string CheckFilePath(string path)
         {
             path = path.Replace("/", @"\");                        
 
             return path;
         }
 
-        private void _ParseWorkbook(TableData tableData, ExcelPackage wb)
+        private static void _ParseWorkbook(TableData tableData, ExcelPackage wb)
         {                                  
             for (int i = 0; i < tableData.Sheets.Count; ++i)
             {
@@ -57,7 +60,7 @@ namespace Phoenix.Project1.DataConvertTool
             }        
         }
 
-        private void _ParseSheetData(SheetData sheetData, ExcelWorksheet sheet)
+        private static void _ParseSheetData(SheetData sheetData, ExcelWorksheet sheet)
         {
             for (int i = 0; i < sheetData.Rows.Count; ++i)
             {
@@ -72,14 +75,13 @@ namespace Phoenix.Project1.DataConvertTool
             }
         }
 
-        private bool CheckFile(string path)
+        private static bool CheckFile(string path)
         {
             return File.Exists(path);
         }
 
-        private bool CheckDirectory(string path)
-        {
-            
+        private static bool CheckDirectory(string path)
+        {            
             return Directory.Exists(path);
         }
     }

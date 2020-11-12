@@ -18,8 +18,6 @@ namespace Tests
         [SetUp]
         public void SetupTestPoolManager()
         {
-            _ExcelGenerator = new ExcelGenerator();
-
             _TableData = new TableData();
 
             _TableData.OutputPath = @"D:/urad/project1-configs/戰鬥表現流程.xlsx";
@@ -54,7 +52,7 @@ namespace Tests
         [TestCase("D:/urad/project1-configs")]
         public void TestPathConvert(string testPath)
         {
-            var path = _ExcelGenerator.CheckFilePath(testPath);
+            var path = ExcelGenerator.CheckFilePath(testPath);
                                    
             Assert.IsTrue(Directory.Exists(path));
         }
@@ -62,7 +60,7 @@ namespace Tests
         [Test]
         public void TestWorkbookData()
         {
-            _ExcelGenerator.Generate(_TableData);           
+            ExcelGenerator.Generate(_TableData);           
             
             Assert.IsTrue(File.Exists(_TableData.OutputPath));
         }
