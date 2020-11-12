@@ -10,7 +10,7 @@ namespace Phoenix.Project1.Battles
         readonly TimePusher _Pusher;
         readonly TimeCounter _Counter;
 
-        Property<int> _Frames;
+        readonly Property<int> _Frames;
         public BattleTime()
         {
             _Counter = new TimeCounter();
@@ -24,11 +24,9 @@ namespace Phoenix.Project1.Battles
         int IBattleTime.Advance()
         {
             var frames = _Pusher.Advance(_Counter.Second);
-            if(frames > 0)
-            {
-                _Frames.Value += frames;
-                _Counter.Reset();
-            }            
+            _Counter.Reset();
+            _Frames.Value += frames;
+            
             return frames;
         }
 

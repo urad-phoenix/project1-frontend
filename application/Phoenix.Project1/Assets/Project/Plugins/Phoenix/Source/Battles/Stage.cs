@@ -44,6 +44,11 @@ namespace Phoenix.Project1.Battles
             return stage;
         }
 
+        internal Actor[] GetActors()
+        {
+            return _Actors;
+        }
+
         public Actor GetActor(int actor)  
         {
             return _Actors.Where(a => a.Id == actor).Single();

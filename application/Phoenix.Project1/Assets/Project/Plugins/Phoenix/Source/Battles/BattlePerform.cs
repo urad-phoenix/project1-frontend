@@ -24,7 +24,9 @@ namespace Phoenix.Project1.Battles
         private readonly Stage _Stage;
         private readonly IBattleTime _Time;
         
-        int _EndFrame;
+        int _EndFrames;
+        int _CurrentFrames;
+
 
         private readonly System.Collections.Generic.List<ActorFrameEffect> _Effects;
 
@@ -50,7 +52,8 @@ namespace Phoenix.Project1.Battles
             
             int location = spell.GetLocation(_Actor , _Stage);
             var motion = _Actor.GetMotion(spell.Motion);
-            _EndFrame = motion.Frames;
+            _EndFrames = motion.Frames + startFrame;
+            _CurrentFrames = startFrame;
             for (int i = 0; i < motion.HitFrames.Length; i++)
             {
                 var hitFrame = motion.HitFrames[i];
@@ -79,19 +82,29 @@ namespace Phoenix.Project1.Battles
         {
             var frames = _Time.Advance();
 
+            bool done = false;
             for (int i = 0; i < frames; i++)
             {
-                _Advance();
+                if (_Advance())
+                {
+                    continue;                    
+                }
+
+                done = true;
             }
+            if (done)
+                DoneEvent();
         }
 
-        private void _Advance()
-        {            
+        private bool _Advance()
+        {
+            _CurrentFrames++;
             _HitEffect(_CheckHitFrame());
             if (_CheckEndFrame())
-            {
-                DoneEvent();
+            {                
+                return false;
             }
+            return true;
         }
 
         private void _HitEffect(System.Collections.Generic.IEnumerable<Effect> effects)
@@ -119,15 +132,12 @@ namespace Phoenix.Project1.Battles
 
         private bool _CheckEndFrame()
         {
-            if (_EndFrame == 0)
-                return true;
-            _EndFrame--;
-            return false;
+            return _CurrentFrames >= _EndFrames;
         }
 
         private System.Collections.Generic.IEnumerable<Effect> _CheckHitFrame()
-        {
-            var now = _Time.Frame;
+        {            
+            var now = _CurrentFrames;
             var frameEffects = from e in _Effects
                           where e.Frames == now
                           select e;

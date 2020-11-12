@@ -25,7 +25,8 @@ namespace Phoenix.Project1.Battles
         
             _Finishs = new NotifierCollection<BattleResult>();
             _Actors = new NotifierCollection<IActor>();
-        
+            
+            
         }
 
         
@@ -45,6 +46,11 @@ namespace Phoenix.Project1.Battles
 
             _Time.Reset();
             _Battleing = true;
+
+            foreach (var actor in _Stage.GetActors())
+            {
+                _Actors.Items.Add(actor);
+            }
 
             _ToEntrance();
         }
