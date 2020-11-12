@@ -31,6 +31,7 @@ namespace Phoenix.Project1.Client.Scripts
         }
         void IScriptable.Start()
         {
+            _Disposables.Clear();
             var obs = from dashboard in _Queryable.QueryNotifier<IDashboard>().SupplyEvent()
                       from _ in _RequestBattle(dashboard)
                       from battle in _Queryable.QueryNotifier<IBattle>().SupplyEvent()
@@ -52,7 +53,15 @@ namespace Phoenix.Project1.Client.Scripts
             actorPerformObs.DoOnError(_Error).Subscribe(_Print).AddTo(_Disposables);
             enterenceObs.DoOnError(_Error).Subscribe(_Print).AddTo(_Disposables);
             finishObs.DoOnError(_Error).Subscribe(_Print).AddTo(_Disposables);
+            var actorHpObs = from actor in battle.Actors.SupplyEvent()
+                            from newHp in actor.Hp.ChangeObservable()
+                            select new { actor, newHp };
+            actorHpObs.Subscribe(v => _PrintActorHp(v.actor.InstanceId.Value , v.newHp)).AddTo(_Disposables);
+        }
 
+        private void _PrintActorHp(int id, int newHp)
+        {
+            _Viewer.WriteLine($"Actor {id} Hp = {newHp}");
         }
 
         private void _Print(BattleResult obj)
@@ -65,6 +74,8 @@ namespace Phoenix.Project1.Client.Scripts
                 _Viewer.WriteLine(item);
             }            
             _Viewer.WriteLine("");
+
+            _Disposables.Clear();
         }
 
         private void _Print(ActorEntranceTimestamp obj)

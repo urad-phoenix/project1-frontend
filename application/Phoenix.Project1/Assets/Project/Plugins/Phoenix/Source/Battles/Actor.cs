@@ -26,7 +26,7 @@ namespace Phoenix.Project1.Battles
         }
 
         public readonly Property<int> Id;
-        Property<int> IActor.Id => Id;
+        Property<int> IActor.InstanceId => Id;
         
 
         public readonly Property<int> Location;
