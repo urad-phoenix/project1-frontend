@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.phoenix.dataconverttool": "file:../../PhoenixAddressables/Assets/Project/Scripts/DataConvertTool",
     "com.phoenix.pool": "file:../../PhoenixAddressables/Assets/Project/Scripts/Pool",
     "com.unity.addressables": "1.8.5",
     "com.unity.cinemachine": "2.3.4",

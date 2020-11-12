@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.phoenix.dataconverttool": {
+      "version": "file:../../PhoenixAddressables/Assets/Project/Scripts/DataConvertTool",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.phoenix.pool": {
       "version": "file:../../PhoenixAddressables/Assets/Project/Scripts/Pool",
       "depth": 0,
