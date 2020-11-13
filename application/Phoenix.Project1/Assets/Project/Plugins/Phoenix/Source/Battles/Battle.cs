@@ -10,12 +10,14 @@ namespace Phoenix.Project1.Battles
         readonly Regulus.Utility.StatusMachine _Machine;
         bool _Battleing;
         readonly Battles.Stage _Stage;
+        private readonly IBinder _Binder;
         readonly BattleTime _Time;
 
         
-        public Battle(Stage stage)
+        public Battle(Stage stage,IBinder binder)
         {
             _Stage = stage;
+            this._Binder = binder;
             _Time = new BattleTime();
             _Machine = new StatusMachine();
             _StageProperty = new Property<int>(_Stage.Id);
@@ -52,10 +54,15 @@ namespace Phoenix.Project1.Battles
                 _Actors.Items.Add(actor);
             }
 
-            _ToEntrance();
+            _ToReady();
         }
 
-       
+        private void _ToReady()
+        {
+            var status = new BattleReady(_Binder);
+            status.DoneEvent += _ToEntrance;
+            _Machine.Push(status);
+        }
 
         public void End()
         {

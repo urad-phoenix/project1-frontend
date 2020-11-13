@@ -25,6 +25,10 @@ namespace Phoenix.Project1.Battles
             Id = new Property<int>(id);
             Location = new Property<int>(location);
             Hp = new Property<int>(100);
+            if(id == 1)
+                _AvatarId = new Property<string>("hero-1");
+            else
+                _AvatarId = new Property<string>("hero-2");
         }
         public Actor(int id, int location, int hp)
         {
@@ -34,6 +38,10 @@ namespace Phoenix.Project1.Battles
             Id = new Property<int>(id);
             Location = new Property<int>(location);
             Hp = new Property<int>(hp);
+            if (id == 1)
+                _AvatarId = new Property<string>("hero-1");
+            else
+                _AvatarId = new Property<string>("hero-2");
         }
 
         public readonly Property<int> Id;
@@ -46,6 +54,9 @@ namespace Phoenix.Project1.Battles
         Property<int> IActor.Location => Location;
 
         Property<int> IActor.Hp => Hp;
+
+        Property<string> _AvatarId ;
+        Property<string> IActor.AvatarId => _AvatarId;
 
         internal bool IsMovable()
         {
