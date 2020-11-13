@@ -50,12 +50,18 @@ namespace Phoenix.Project1.Editors.Tools
             }
             
             var timelineSheets = new List<SheetData>();
-            timelineSheets.Add(timelineSheet);                   
-            ExcelGenerator.Generate(NewTable(timelineSheets, setting.OutputPath + $"Motion{DataGeneratorSetting.EXT_XLSX_FILES}"));
+            timelineSheets.Add(timelineSheet);
+            
+            var motionPath = System.IO.Path.Combine(UnityEngine.Application.dataPath,setting.OutputPath, $"Motion{DataGeneratorSetting.EXT_XLSX_FILES}");
+            motionPath = System.IO.Path.GetFullPath(motionPath);
+            ExcelGenerator.Generate(NewTable(timelineSheets, motionPath));
             
             var hitSheets = new List<SheetData>();
             hitSheets.Add(hitSheet);
-            ExcelGenerator.Generate(NewTable(hitSheets, setting.OutputPath + $"MotionHit{DataGeneratorSetting.EXT_XLSX_FILES}"));
+
+            var motionHitPath = System.IO.Path.Combine(UnityEngine.Application.dataPath,setting.OutputPath, $"MotionHit{DataGeneratorSetting.EXT_XLSX_FILES}");
+            motionHitPath = System.IO.Path.GetFullPath(motionHitPath);
+            ExcelGenerator.Generate(NewTable(hitSheets, motionHitPath));
         }
 
         public static TableData NewTable(List<SheetData> sheetDatas, string outputPath)
