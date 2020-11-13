@@ -19,7 +19,7 @@ namespace Phoenix.Project1.Client.Battles
 
             var controller = binding.GetHandle().GetReferenceObject() as BattleController;
 
-            var director = controller.GetPlayableDirector(_ActData.ActKey);
+            var director = controller.GetPlayableDirector(_ActData.ActKey, _ActData.ActorId);
             
             
             //director.

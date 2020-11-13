@@ -6,19 +6,39 @@ namespace TP.Scene.Locators
     public class CharacterLocator : MonoBehaviour
     {
         public int Index;
-
+    
+        private int _InstanceID;
+        
         private Role _Role;
 
-        private void Awake()
-        {
+        private void Start()
+        {            
             _Role = GetComponentInChildren<Role>();
             _Role.Location = Index;
+        }
+
+        public int GetInstanceID()
+        {
+            return _InstanceID;
+        }
+
+        public void SetInstanceID(int id)
+        {
+            _InstanceID = id;
+            _Role.ID = id;
         }
 
         public Role GetRole()
         {
             return _Role;
         }
+
+        public Avatar GetAvatar()
+        {
+            return _Role.GetComponentInChildren<Avatar>(true);
+        }
+        
+        
 
 #if UNITY_EDITOR
         [Header("Scene Editor")]

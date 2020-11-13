@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using Phoenix.Pool;
 using Phoenix.Project1.Addressable;
 using Phoenix.Project1.Client.UI;
@@ -12,6 +14,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Playables;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.Timeline;
 
 namespace Phoenix.Project1.Client.Battles
 {
@@ -24,9 +27,7 @@ namespace Phoenix.Project1.Client.Battles
         private readonly UniRx.CompositeDisposable _SendDisposables;
         
         private readonly UniRx.CompositeDisposable _SendRequestDisposables; 
-        
-        private readonly Regulus.Utility.Console.IViewer _Viewer;
-
+          
         private string _PlayablePoolName = "BattlePlayablePool";
 
         private int _PlayablePoolSize = 10;
@@ -34,7 +35,9 @@ namespace Phoenix.Project1.Client.Battles
         private ObjectPool _DirectorPool;
 
         [SerializeField]
-        private CharacterLocator[] _Locators;                
+        private CharacterLocator[] _Locators;
+
+        private List<Avatar> _Avatars;
         
         public BattleController()
         {
@@ -45,14 +48,15 @@ namespace Phoenix.Project1.Client.Battles
             _SendDisposables = new CompositeDisposable();
             
             _SendRequestDisposables = new CompositeDisposable();
+            
+            _Avatars = new List<Avatar>();
         }
 
         void Start()
         {
             var battleObs = from battle in NotifierRx.ToObservable().Supply<IBattle>()                
                             select battle;   
-                        
-
+                                    
             battleObs.Subscribe(_Battle).AddTo(_Disposables);
 
             _SetPlayablePool();
@@ -67,7 +71,7 @@ namespace Phoenix.Project1.Client.Battles
             director.playOnAwake = false;
             
             _DirectorPool = new ObjectPool(_PlayablePoolName, playable, this.transform, _PlayablePoolSize, true);
-            
+            _DirectorPool.Initialize();
             _DirectorPool.Spawn();
         }
 
@@ -75,37 +79,49 @@ namespace Phoenix.Project1.Client.Battles
         {
             var locator = _Locators.First(x => x.Index == actor.Location);
 
-            var role = locator.GetRole();
+            locator.SetInstanceID(actor.InstanceId);
 
-            role.ID = actor.InstanceId;
+            var role = locator.GetRole();            
             
-            var loader = Addressables.InstantiateAsync("hero-1", role.transform).AsHandleObserver();
+            var avatarId = actor.AvatarId.Value;
+            
+            var loader = Addressables.InstantiateAsync(avatarId, role.transform).AsHandleObserver();
 
             loader.Subscribe(RoleLoaded).AddTo(_Disposables);
         }
 
         private void RoleLoaded(AsyncOperationHandle<GameObject> handle)
         {
-            if(handle.IsDone && handle.Result == null)
+            if(!handle.IsDone)
+                return;                                        
+
+            if (handle.Result == null)
+            {
+                Debug.LogError("load character is null");
                 return;
-                        
-            handle.Result.SetActive(false);                       
+            }
+
+            Debug.Log($"load character is successful { handle.Result.name}");
+            handle.Result.SetActive(true);       
+            
+            _Avatars.Add(handle.Result.GetComponent<Avatar>());
         }
 
         private void _Battle(IBattle battle)
-        {
+        {            
             var actorPerformObs = UniRx.Observable.FromEvent<Action<ActorPerformTimestamp> , ActorPerformTimestamp>(h => (gpi) => h(gpi), h => battle.ActorPerformEvent += h, h => battle.ActorPerformEvent -= h);
             var enterenceObs =  UniRx.Observable.FromEvent<Action<ActorEntranceTimestamp>, ActorEntranceTimestamp>(h => (gpi) => h(gpi), h => battle.EntranceEvent += h, h => battle.EntranceEvent -= h);
             var finishObs = UniRx.Observable.FromEvent<Action<BattleResult>, BattleResult>(h => (gpi) => h(gpi), h => battle.FinishEvent += h, h => battle.FinishEvent -= h);
 
             var actors = from actor in battle.Actors.SupplyEvent()
                 select actor;
-
+            
             actors.Subscribe(_SpawnRole).AddTo(_Disposables);
-            
-            
+                        
             actorPerformObs.DoOnError(_Error).Subscribe(_ActorPerform).AddTo(_Disposables);
+            
             enterenceObs.DoOnError(_Error).Subscribe(_BattleEntrance).AddTo(_Disposables);
+            
             finishObs.DoOnError(_Error).Subscribe(_BattleFinished).AddTo(_Disposables);
             
             var actorHpObs = from actor in battle.Actors.SupplyEvent()
@@ -115,48 +131,39 @@ namespace Phoenix.Project1.Client.Battles
         }
         
         private void _ChangeActorHp(int id, int newHp)
-        {
-            _Viewer.WriteLine($"Actor {id} Hp = {newHp}");
+        {           
+            Debug.LogError($"Actor {id} Hp = {newHp}");
         }
         
         private void _Error(Exception obj)
         {
-            _Viewer.WriteLine(obj.Message);
+            Debug.LogError(obj.Message);
         }
         
         private void _BattleFinished(BattleResult obj)
         {            
-            var message = Newtonsoft.Json.JsonConvert.SerializeObject(obj, Newtonsoft.Json.Formatting.Indented);
-            _Viewer.WriteLine($"BattleResult :");
-            foreach (var item in message.Split('\n'))
-            {
-                _Viewer.WriteLine(item);
-            }            
-            _Viewer.WriteLine("");
-
+            Debug.Log($"_BattleFinished : {obj.Winner}");          
             _Disposables.Clear();
         }
 
         private void _BattleEntrance(ActorEntranceTimestamp obj)
-        {
-            var message = Newtonsoft.Json.JsonConvert.SerializeObject(obj, Newtonsoft.Json.Formatting.Indented);
-            _Viewer.WriteLine($"ActorEntranceTimestamp :");
-            foreach (var item in message.Split('\n'))
+        {                        
+            foreach (var entrance in obj.ActorEntrances)
             {
-                _Viewer.WriteLine(item);
+                var locator = _Locators.First(x => x.GetInstanceID() == entrance.Id);
+
+                var avatar = locator.GetAvatar();
+                
+                avatar.gameObject.SetActive(true);
             }
-            _Viewer.WriteLine("");
+            
+            Debug.Log($"_BattleEntrance : {obj.ActorEntrances.Count()}");          
         }
 
         private void _ActorPerform(ActorPerformTimestamp obj)
-        {
-            var message = Newtonsoft.Json.JsonConvert.SerializeObject(obj, Newtonsoft.Json.Formatting.Indented);
-            _Viewer.WriteLine($"ActorPerformTimestamp :");
-            foreach (var item in message.Split('\n'))
-            {
-                _Viewer.WriteLine(item);
-            }
-            _Viewer.WriteLine("");
+        {                     
+            Debug.Log($"_ActorPerform location : {obj.ActorPerform.Location}");
+            
         }
         
         private void _EndBattle()
@@ -235,9 +242,22 @@ namespace Phoenix.Project1.Client.Battles
             return null;
         }
 
-        public PlayableDirector GetPlayableDirector(string skillId)
+        public PlayableDirector GetPlayableDirector(string skillId, int id)
         {
-            return null;
+
+            var locator = _Locators.First(x => x.GetInstanceID() == id);
+
+            var avatar = locator.GetAvatar();
+
+            var timelineData = avatar.TimelineAssets.First(x => x.Action.ToString() == skillId);
+            
+            var go = _DirectorPool.Get(true);
+            
+            var director = go.GetComponent<PlayableDirector>();
+
+            director.playableAsset = timelineData.TimelineAsset;
+            
+            return director;
         }
 
         public void PlaySound(string key)
@@ -246,7 +266,9 @@ namespace Phoenix.Project1.Client.Battles
 
         public void RecyclePlayableDirector(PlayableDirector playableDirector)
         {
-            //playableDirector.re
+            playableDirector.Stop();
+            playableDirector.playableGraph.Destroy();
+            _DirectorPool.Recycle(playableDirector.gameObject, false);
         }
 
         private void _Finished()
@@ -260,6 +282,12 @@ namespace Phoenix.Project1.Client.Battles
 
         private void OnDestroy()
         {
+            foreach (var avatar in _Avatars)
+            {
+                Addressables.ReleaseInstance(avatar.gameObject);
+            }
+
+            
             _Finished();
         }
     }

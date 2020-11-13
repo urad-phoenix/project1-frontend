@@ -2324,7 +2324,7 @@ GameObject:
   - component: {fileID: 9201199008342893142}
   - component: {fileID: 383332036166367883}
   m_Layer: 0
-  m_Name: Actor
+  m_Name: Actor 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2405,7 +2405,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skeletonDataAsset: {fileID: 11400000, guid: 2f899e95232e6144786de8fb99678a8d, type: 2}
-  initialSkinName: weapon/morningstar
+  initialSkinName: weapon/sword
   initialFlipX: 0
   initialFlipY: 0
   updateMode: 3
