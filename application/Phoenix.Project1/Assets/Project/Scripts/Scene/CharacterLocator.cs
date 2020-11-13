@@ -1,3 +1,4 @@
+using Phoenix.Project1.Client.Battles;
 using UnityEngine;
 
 namespace TP.Scene.Locators
@@ -5,8 +6,21 @@ namespace TP.Scene.Locators
     public class CharacterLocator : MonoBehaviour
     {
         public int Index;
-        
-        #if UNITY_EDITOR
+
+        private Role _Role;
+
+        private void Awake()
+        {
+            _Role = GetComponentInChildren<Role>();
+            _Role.Location = Index;
+        }
+
+        public Role GetRole()
+        {
+            return _Role;
+        }
+
+#if UNITY_EDITOR
         [Header("Scene Editor")]
         [SerializeField]
         public Color Color = Color.blue;       

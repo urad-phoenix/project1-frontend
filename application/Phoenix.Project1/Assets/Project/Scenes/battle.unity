@@ -1032,7 +1032,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!20 &715378694
 Camera:
   m_ObjectHideFlags: 0
@@ -1759,6 +1759,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stage
       objectReference: {fileID: 0}
+    - target: {fileID: 1515906290793069822, guid: 6e1e99e920598d8478b4ede3ff68546d,
+        type: 3}
+      propertyPath: orthographic
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6508116947101993395, guid: 6e1e99e920598d8478b4ede3ff68546d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6e1e99e920598d8478b4ede3ff68546d, type: 3}
 --- !u!1001 &1575743158
@@ -1949,6 +1959,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1684667509 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 220165254818114870, guid: 6e1e99e920598d8478b4ede3ff68546d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1411467323}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1684667510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1684667509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf8d59abf7e74a8f906dbdd358a9866c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 0
+  Location: 0
 --- !u!1 &1956933118
 GameObject:
   m_ObjectHideFlags: 0

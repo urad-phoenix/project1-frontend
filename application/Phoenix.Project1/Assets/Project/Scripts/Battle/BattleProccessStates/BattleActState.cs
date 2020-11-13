@@ -5,21 +5,22 @@ namespace Phoenix.Project1.Client.Battles
 {
     public class BattleActState : BattleStateBase
     {
-        private Action _Action;
+        private ActData _ActData;
 
         private IStateBehaviour _Behaviour;
 
         private StateBinding _StateBinding;
         
-        public BattleActState(string name, Action action, StateBinding binding) : base(name)
+        public BattleActState(string name, ActData actData, StateBinding binding) : base(name)
         {
-            _Action = action;
+            _ActData = actData;
             
             _StateBinding = binding;
 
             var controller = binding.GetHandle().GetReferenceObject() as BattleController;
 
-            //var director = controller.GetPlayableDirector(_Action.SkillId);
+            var director = controller.GetPlayableDirector(_ActData.ActKey);
+            
             
             //director.
 
@@ -27,7 +28,7 @@ namespace Phoenix.Project1.Client.Battles
 
         public override void Start()
         {
-            if (_Action == null)
+            if (_ActData == null)
             {
                 _Finished();
                 return;
