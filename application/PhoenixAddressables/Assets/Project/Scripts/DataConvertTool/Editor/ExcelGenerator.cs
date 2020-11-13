@@ -1,8 +1,11 @@
 namespace Phoenix.Project1.DataConvertTool
 {
+    using DocumentFormat.OpenXml.Packaging;
     using System;
     using System.IO;
-    using OfficeOpenXml;
+    using DocumentFormat.OpenXml;
+    using System.Linq;
+    using DocumentFormat.OpenXml.Spreadsheet;
     
     public class ExcelGenerator
     {
@@ -20,25 +23,58 @@ namespace Phoenix.Project1.DataConvertTool
                 File.Delete(path); 
             }                        
             
-            using (var file = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
+            using (var doc = SpreadsheetDocument.Create(path, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook))
             {
-                var wb = new ExcelPackage(file);
+                var workbookPart = doc.AddWorkbookPart();
+
+                workbookPart.Workbook = new Workbook();
+
+                var worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+                
+                var sheetData =new DocumentFormat.OpenXml.Spreadsheet.SheetData();
+                
+                workbookPart.Workbook = new DocumentFormat.OpenXml.Spreadsheet.Workbook(sheetData);
+
+                var sheets = workbookPart.Workbook.AppendChild(new Sheets());
+             
+                string relationshipId = workbookPart.GetIdOfPart(worksheetPart);
+                
+                for (int i = 0; i < tableData.Sheets.Count; ++i)
+                {
+                    var sheet = new DocumentFormat.OpenXml.Spreadsheet.Sheet()
+                    {
+                        Id = relationshipId,
+                        SheetId = (uint) i + 1,
+                        Name = "sheet"
+                    };               
+                    sheets.Append(sheet);
                     
-                _ParseWorkbook(tableData, wb);                        
-                     
-                wb.Save();                
-            }
-            
+                    worksheetPart.Worksheet = new DocumentFormat.OpenXml.Spreadsheet.Worksheet(new DocumentFormat.OpenXml.Spreadsheet.SheetData());
+                    
+                    sheetData = worksheetPart.Worksheet.GetFirstChild<DocumentFormat.OpenXml.Spreadsheet.SheetData>();
+     
+                    foreach (var row in tableData.Sheets[i].Rows)
+                    {
+                        var excelRow = new Row();
+                                                
+                        var cells = row.Columns.Select((col) => new DocumentFormat.OpenXml.Spreadsheet.Cell()
+                        {
+                            CellValue = new CellValue(col),
+                            DataType = new EnumValue<CellValues>(CellValues.String)
+                        });
 
-            
+                        foreach (var cell in cells)
+                        {
+                            excelRow.Append(cell);
+                        }
 
-            //wb.Write(memoryStream);
-            
-            //memoryStream.Position = 0;
-            
-            //var byteArray = memoryStream.ToArray();
-            
-            //System.IO.File.WriteAllBytes(path, byteArray);           
+                        sheetData.AppendChild(excelRow);
+                    }
+                }  
+                
+                doc.WorkbookPart.Workbook.Save();
+                doc.Close();
+            }         
         }                    
 
         public static string CheckFilePath(string path)
@@ -46,33 +82,6 @@ namespace Phoenix.Project1.DataConvertTool
             path = path.Replace("/", @"\");                        
 
             return path;
-        }
-
-        private static void _ParseWorkbook(TableData tableData, ExcelPackage wb)
-        {                                  
-            for (int i = 0; i < tableData.Sheets.Count; ++i)
-            {
-                var sheet = tableData.Sheets[i];
-                
-                var wbSheet = wb.Workbook.Worksheets.Add(sheet.Name);
-
-                _ParseSheetData(sheet, wbSheet);
-            }        
-        }
-
-        private static void _ParseSheetData(SheetData sheetData, ExcelWorksheet sheet)
-        {
-            for (int i = 0; i < sheetData.Rows.Count; ++i)
-            {
-                var rowData = sheetData.Rows[i];
-                
-                for (int j = 0; j < rowData.Columns.Count; ++j)
-                {
-                    var col = rowData.Columns[j];
-                       
-                    sheet.Cells[i + 1, j + 1].Value = col;                    
-                }
-            }
         }
 
         private static bool CheckFile(string path)
