@@ -36,7 +36,7 @@ namespace Phoenix.Project1.Battles
         }
         public static Stage GetDemo()
         {
-            var attacker = new Actor(1, 2, 100);
+            var attacker = new Actor(1, 5, 100);
             var defender = new Actor(2, 8, 100);
             var aTeam = new Team(attacker);
             var dTeam = new Team(defender);
@@ -56,7 +56,7 @@ namespace Phoenix.Project1.Battles
 
         public static Stage GetAttackWin()
         {
-            var attacker = new Actor(1, 2, 10);
+            var attacker = new Actor(1, 5, 10);
             var defender = new Actor(2, 8, 0);
             var aTeam = new Team(attacker);
             var dTeam = new Team(defender);

@@ -49,7 +49,7 @@ namespace Phoenix.Project1.Users
         void IBinderProvider.AssignBinder(IBinder binder, object state)
         {
 
-            var user = new User(binder, _Lobby);
+            var user = new User(binder, _Lobby, _Configs);
             _Updater.Add(user);
 
 

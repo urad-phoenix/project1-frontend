@@ -11,10 +11,11 @@ namespace Phoenix.Project1.Users
         private readonly IBinder _Binder;
         readonly Regulus.Utility.StatusMachine _Machine;
         private readonly ILobby _Lobby;
+        readonly Game.IConfigurationDatabase _Configuration;
         bool _Enable;
-        public User(IBinder binder,ILobby lobby)
+        public User(IBinder binder,ILobby lobby, Game.IConfigurationDatabase configuration)
         {
-            
+            _Configuration = configuration;
             _Lobby = lobby;
             this._Binder = binder;
             _Machine = new Regulus.Utility.StatusMachine();
@@ -43,7 +44,7 @@ namespace Phoenix.Project1.Users
 
         private void _ToBattle(IPlayer player)
         {
-            var stage = new UserBattle(_Binder);
+            var stage = new UserBattle(_Binder, _Configuration);
             stage.DoneEvent += ()=> _ToDashboard(player);
             _Machine.Push(stage);
         }

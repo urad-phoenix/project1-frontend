@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a9f2e6591f47dd4ea86fc2efb7a68bd, type: 3}
   m_Name: TimelineDataGeneratorSetting
   m_EditorClassIdentifier: 
-  OutputPath: ../../../project1-configs
+  OutputPath: ../../../project1-configs/configurations
   SourcePath: Assets/Project/Assetbundles/Timelines/
   FilterTypes:
   - .playable

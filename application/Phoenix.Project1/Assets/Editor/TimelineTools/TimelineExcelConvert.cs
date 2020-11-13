@@ -27,25 +27,27 @@ namespace Phoenix.Project1.Editors.Tools
 
             var timelineAssets = TimelineOutputExcelTool.GetTimelineFiles(setting.SourcePath, setting.FilterTypes);
                        
-            var timelineSheet = NewSheetData("sheet1", new [] {"Timline資源名稱", "總幀數"});
-            timelineSheet.Rows.Add(NewRowData(new[] {"Key", "TotalFrame"}));
+            var timelineSheet = NewSheetData("sheet1", new [] {"Timline資源名稱","是否開啟", "總幀數"});
+            timelineSheet.Rows.Add(NewRowData(new[] {"Key","__extra", "TotalFrame"}));
+            timelineSheet.Rows.Add(NewRowData(new[] { "Both", "Both", "Both" }));
 
-            var hitSheet = NewSheetData("sheet1", new[] {"Timline資源名稱", "總幀數"});
-            hitSheet.Rows.Add(NewRowData(new[] {"Key", "Frame"}));
-            
+            var hitSheet = NewSheetData("sheet1", new[] {"Timline資源名稱", "是否開啟", "總幀數"});
+            hitSheet.Rows.Add(NewRowData(new[] {"Key","__extra", "Frame"}));
+            hitSheet.Rows.Add(NewRowData(new[] { "Both", "Both", "Both" }));
+
             for (int i = 0; i < timelineAssets.Count; ++i)
             {
                 var asset = timelineAssets[i];
 
                 var timelineData = TimelineOutputExcelTool.ConvertData(asset.name, asset);
 
-                timelineSheet.Rows.Add(NewRowData(new[] {timelineData.Key, timelineData.TotalFrame.ToString()}));                                                                
+                timelineSheet.Rows.Add(NewRowData(new[] {timelineData.Key,"1", timelineData.TotalFrame.ToString()}));                                                                
                 
                 for (int j = 0; j < timelineData.HitDatas.Count; ++j)
                 {
                     var hit = timelineData.HitDatas[j];
 
-                    hitSheet.Rows.Add(NewRowData(new[] {hit.Key, hit.Frame.ToString()}));                                        
+                    hitSheet.Rows.Add(NewRowData(new[] {hit.Key,"1", hit.Frame.ToString()}));                                        
                 }
             }
             

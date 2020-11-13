@@ -1,0 +1,134 @@
+{
+  "Tables": [
+    {
+      "Rows": [
+        {
+          "Columns": [
+            "Id",
+            "",
+            "Tc",
+            "En",
+            ""
+          ]
+        },
+        {
+          "Columns": [
+            "Both",
+            "Skip",
+            "Both",
+            "Both",
+            ""
+          ]
+        },
+        {
+          "Columns": [
+            "1",
+            "1",
+            "歡迎光臨",
+            "welcome",
+            ""
+          ]
+        },
+        {
+          "Columns": [
+            "2",
+            "1",
+            "安安",
+            "hi",
+            ""
+          ]
+        },
+        {
+          "Columns": [
+            "4",
+            "1",
+            "你好",
+            "hello",
+            ""
+          ]
+        }
+      ],
+      "TableType": "Phoenix.Project1.Configs.Localization, Phoenix.Project1.Configs, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Rows": [
+        {
+          "Columns": [
+            "Key",
+            "__extra",
+            "Frame"
+          ]
+        },
+        {
+          "Columns": [
+            "Both",
+            "Both",
+            "Both"
+          ]
+        },
+        {
+          "Columns": [
+            "AttackTesttTimeline",
+            "1",
+            "4"
+          ]
+        },
+        {
+          "Columns": [
+            "AttackTesttTimeline",
+            "1",
+            "21"
+          ]
+        },
+        {
+          "Columns": [
+            "AttackTesttTimeline",
+            "1",
+            "24"
+          ]
+        },
+        {
+          "Columns": [
+            "AttackTesttTimeline",
+            "1",
+            "27"
+          ]
+        }
+      ],
+      "TableType": "Phoenix.Project1.Configs.MotionHit, Phoenix.Project1.Configs, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    {
+      "Rows": [
+        {
+          "Columns": [
+            "Key",
+            "__extra",
+            "TotalFrame"
+          ]
+        },
+        {
+          "Columns": [
+            "Both",
+            "Both",
+            "Both"
+          ]
+        },
+        {
+          "Columns": [
+            "AttackTesttTimeline",
+            "1",
+            "53"
+          ]
+        },
+        {
+          "Columns": [
+            "DefentTesttTimeline",
+            "1",
+            "5"
+          ]
+        }
+      ],
+      "TableType": "Phoenix.Project1.Configs.Motion, Phoenix.Project1.Configs, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    }
+  ]
+}

@@ -17,14 +17,22 @@ namespace Phoenix.Project1.Users
         readonly Battles.Battle _Battle;
 
         public event System.Action DoneEvent;
-        public UserBattle(IBinder binder)
+        readonly Game.IConfigurationDatabase  _Configuration;
+        public UserBattle(IBinder binder, Game.IConfigurationDatabase configuration)
         {
+            _Configuration = configuration;
             _Binder = binder;
             _Battle = new Battles.Battle(_BuildDemoStage());
         }
         private Stage _BuildDemoStage()
         {
-            return Stage.GetDemo();
+            
+            var attacker = new Actor(1, 5, _Configuration);
+            var defender = new Actor(2, 8, _Configuration);
+            var aTeam = new Team(attacker);
+            var dTeam = new Team(defender);
+            var stage = new Stage(1, aTeam, dTeam);
+            return stage;
         }
 
         void IStatus.Enter()
