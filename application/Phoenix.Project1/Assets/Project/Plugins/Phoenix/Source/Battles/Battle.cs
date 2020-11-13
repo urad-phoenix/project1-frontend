@@ -53,7 +53,7 @@ namespace Phoenix.Project1.Battles
             {
                 _Actors.Items.Add(actor);
             }
-
+            _ActorCount.Value = _Actors.Items.Count;
             _ToReady();
         }
 
@@ -120,6 +120,8 @@ namespace Phoenix.Project1.Battles
         
         Regulus.Remote.Property<int> IBattle.Frames => _Time.Frames;
 
+        readonly Property<int> _ActorCount ;
+        Property<int> IBattle.ActorCount => _ActorCount;
 
         readonly Phoenix.Project1.NotifierCollection<ActorEntranceTimestamp> _Entrances;
 
