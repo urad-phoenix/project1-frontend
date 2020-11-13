@@ -34,7 +34,7 @@ namespace Phoenix.Project1.Client
 
         private static IEnumerator _RunWaitAgent(System.IObserver<Configuration> observer)
         {
-            while (Instance == null && Instance._IsReady())
+            while (Instance == null || !Instance._IsReady())
             {
                 yield return new WaitForEndOfFrame();
             }

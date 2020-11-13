@@ -1,6 +1,7 @@
 ﻿using Phoenix.Project1.Common.Battles;
 using Regulus.Remote;
 using System;
+using System.Linq;
 
 namespace Phoenix.Project1.Battles
 {
@@ -15,6 +16,16 @@ namespace Phoenix.Project1.Battles
                 Hp.Value = 0;
         }
 
+        public Actor(int id, int location, Game.IConfigurationDatabase configuration)
+        {
+            var motion = configuration.Query<Configs.Motion>().Where(m => m.Key == "AttackTesttTimeline").Single();
+            _Motions = new System.Collections.Generic.Dictionary<MotionType, Motion>();
+            _Motions.Add(MotionType.Entrance, new Motion { Frames = 60 });            
+            _Motions.Add(MotionType.Spell1, new Motion { Frames = motion.TotalFrame, HitFrames = motion.HitFrames.Select(h => h.Frame).ToArray() });
+            Id = new Property<int>(id);
+            Location = new Property<int>(location);
+            Hp = new Property<int>(100);
+        }
         public Actor(int id, int location, int hp)
         {
             _Motions = new System.Collections.Generic.Dictionary<MotionType, Motion>();
