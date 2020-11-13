@@ -8,7 +8,8 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "EPPlus.dll"
+        "DocumentFormat.OpenXml.dll",
+        "WindowsBase.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],

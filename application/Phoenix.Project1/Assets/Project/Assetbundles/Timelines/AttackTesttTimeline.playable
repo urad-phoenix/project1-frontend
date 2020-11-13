@@ -243,7 +243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e56c2ca2e3dc41c19cb750cb733ab140, type: 3}
   m_Name: Playable Event Marker
   m_EditorClassIdentifier: 
-  m_Time: 0.7166666666666667
+  m_Time: 0.7
   Name: 
 --- !u!114 &-4622508483221454699
 MonoBehaviour:
@@ -585,7 +585,7 @@ MonoBehaviour:
     m_Start: 1.083333345254262
     m_ClipIn: 0
     m_Asset: {fileID: 224675093353579986}
-    m_Duration: 0.20000000000000007
+    m_Duration: 0.18333332141240466
     m_TimeScale: 1
     m_ParentTrack: {fileID: 5070384243163291074}
     m_EaseInDuration: 0
@@ -680,7 +680,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e56c2ca2e3dc41c19cb750cb733ab140, type: 3}
   m_Name: Playable Event Marker
   m_EditorClassIdentifier: 
-  m_Time: 0.11666666666666667
+  m_Time: 0.13333333333333333
+  Name: 
+--- !u!114 &1460110488413472538
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e56c2ca2e3dc41c19cb750cb733ab140, type: 3}
+  m_Name: Playable Event Marker
+  m_EditorClassIdentifier: 
+  m_Time: 0.8999999999999999
   Name: 
 --- !u!114 &1941515304707628800
 MonoBehaviour:
@@ -710,7 +724,7 @@ MonoBehaviour:
     m_Start: 0.7166666666666667
     m_ClipIn: 0
     m_Asset: {fileID: 1941515304707628800}
-    m_Duration: 0.18333333333333324
+    m_Duration: 0.15000000000000002
     m_TimeScale: 1
     m_ParentTrack: {fileID: 5070384243163291074}
     m_EaseInDuration: 0
@@ -926,7 +940,25 @@ MonoBehaviour:
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -953,7 +985,25 @@ MonoBehaviour:
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -986,7 +1036,25 @@ MonoBehaviour:
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -1025,7 +1093,25 @@ MonoBehaviour:
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -1041,6 +1127,20 @@ MonoBehaviour:
     m_DisplayName: CM vcam1
   m_Markers:
     m_Objects: []
+--- !u!114 &4980914889740462550
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e56c2ca2e3dc41c19cb750cb733ab140, type: 3}
+  m_Name: Playable Event Marker
+  m_EditorClassIdentifier: 
+  m_Time: 0.8
+  Name: 
 --- !u!114 &5070384243163291074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1250,7 +1350,25 @@ MonoBehaviour:
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -1343,7 +1461,25 @@ MonoBehaviour:
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -1367,11 +1503,17 @@ MonoBehaviour:
     m_Objects:
     - {fileID: 549663457234727034}
     - {fileID: -4623301298018124439}
+    - {fileID: 4980914889740462550}
+    - {fileID: 1460110488413472538}
   BindingType: 0
   IsReturnToSpecifyState: 1
   ReturnName: idle
   template:
-    Markers: []
+    Markers:
+    - {fileID: 549663457234727034}
+    - {fileID: -4623301298018124439}
+    - {fileID: 4980914889740462550}
+    - {fileID: 1460110488413472538}
 --- !u!114 &5824559414051372536
 MonoBehaviour:
   m_ObjectHideFlags: 1

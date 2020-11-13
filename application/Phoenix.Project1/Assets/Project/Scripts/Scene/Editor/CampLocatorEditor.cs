@@ -53,7 +53,7 @@ namespace TP.Scene.Locators.Editor
             }
         }
 
-        private static void Drawing(CampLocator locator)
+        public static void Drawing(CampLocator locator)
         {
             if(locator == null)
                 return;

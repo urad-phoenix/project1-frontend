@@ -1,10 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using NUnit.Framework;
-using Phoenix.Pool;
 using Phoenix.Project1.DataConvertTool;
-using UnityEngine;
 
 namespace Tests
 {
