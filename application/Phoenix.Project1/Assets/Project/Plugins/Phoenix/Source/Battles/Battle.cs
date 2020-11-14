@@ -10,12 +10,14 @@ namespace Phoenix.Project1.Battles
         readonly Regulus.Utility.StatusMachine _Machine;
         bool _Battleing;
         readonly Battles.Stage _Stage;
+        private readonly IBinder _Binder;
         readonly BattleTime _Time;
 
         
-        public Battle(Stage stage)
+        public Battle(Stage stage,IBinder binder)
         {
             _Stage = stage;
+            this._Binder = binder;
             _Time = new BattleTime();
             _Machine = new StatusMachine();
             _StageProperty = new Property<int>(_Stage.Id);
@@ -51,11 +53,16 @@ namespace Phoenix.Project1.Battles
             {
                 _Actors.Items.Add(actor);
             }
-
-            _ToEntrance();
+            _ActorCount.Value = _Actors.Items.Count;
+            _ToReady();
         }
 
-       
+        private void _ToReady()
+        {
+            var status = new BattleReady(_Binder);
+            status.DoneEvent += _ToEntrance;
+            _Machine.Push(status);
+        }
 
         public void End()
         {
@@ -113,6 +120,8 @@ namespace Phoenix.Project1.Battles
         
         Regulus.Remote.Property<int> IBattle.Frames => _Time.Frames;
 
+        readonly Property<int> _ActorCount ;
+        Property<int> IBattle.ActorCount => _ActorCount;
 
         readonly Phoenix.Project1.NotifierCollection<ActorEntranceTimestamp> _Entrances;
 

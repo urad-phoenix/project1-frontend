@@ -35,8 +35,9 @@ namespace Phoenix.Project1.Client.Scripts
             var obs = from dashboard in _Queryable.QueryNotifier<IDashboard>().SupplyEvent()
                       from _ in _RequestBattle(dashboard)
                       from battle in _Queryable.QueryNotifier<IBattle>().SupplyEvent()
-                      select battle;
-            obs.DoOnError(_Error).Subscribe(_Battle).AddTo(_Disposables);
+                      from ready in _Queryable.QueryNotifier<IReady>().SupplyEvent()
+                      select new { battle, ready };
+            obs.DoOnError(_Error).Subscribe(v=>_Battle(v.battle , v.ready)).AddTo(_Disposables);
         }
 
         private void _Error(Exception obj)
@@ -44,8 +45,9 @@ namespace Phoenix.Project1.Client.Scripts
             _Viewer.WriteLine(obj.Message);
         }
 
-        private void _Battle(IBattle battle)
+        private void _Battle(IBattle battle,IReady ready)
         {
+            ready.Ready();
             var actorPerformObs = UniRx.Observable.FromEvent<Action<ActorPerformTimestamp> , ActorPerformTimestamp>(h => (gpi) => h(gpi), h => battle.ActorPerformEvent += h, h => battle.ActorPerformEvent -= h);
             var enterenceObs =  UniRx.Observable.FromEvent<Action<ActorEntranceTimestamp>, ActorEntranceTimestamp>(h => (gpi) => h(gpi), h => battle.EntranceEvent += h, h => battle.EntranceEvent -= h);
             var finishObs = UniRx.Observable.FromEvent<Action<BattleResult>, BattleResult>(h => (gpi) => h(gpi), h => battle.FinishEvent += h, h => battle.FinishEvent -= h);

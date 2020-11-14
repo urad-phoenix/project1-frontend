@@ -22,7 +22,7 @@ namespace Phoenix.Project1.Users
         {
             _Configuration = configuration;
             _Binder = binder;
-            _Battle = new Battles.Battle(_BuildDemoStage());
+            _Battle = new Battles.Battle(_BuildDemoStage() , binder);
         }
         private Stage _BuildDemoStage()
         {
