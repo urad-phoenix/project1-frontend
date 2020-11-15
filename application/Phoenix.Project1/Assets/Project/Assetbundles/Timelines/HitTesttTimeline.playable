@@ -322,10 +322,10 @@ MonoBehaviour:
     m_Objects: []
   StartBindingType: 0
   EndBindingType: 0
-  VFXKey: 
+  VFXKey: hit
   IsProjectile: 0
   IsAnchor: 1
-  AnchorDummyKey: 
+  AnchorDummyKey: Hit
   IsAnchorToEndPoint: 0
   IsSetEndToVfxHitDummy: 1
   StartDummyKey: 4

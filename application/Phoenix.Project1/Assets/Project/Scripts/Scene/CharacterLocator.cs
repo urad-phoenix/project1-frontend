@@ -31,15 +31,8 @@ namespace TP.Scene.Locators
         public Role GetRole()
         {
             return _Role;
-        }
-
-        public Avatar GetAvatar()
-        {
-            return _Role.GetComponentInChildren<Avatar>(true);
-        }
+        }    
         
-        
-
 #if UNITY_EDITOR
         [Header("Scene Editor")]
         [SerializeField]

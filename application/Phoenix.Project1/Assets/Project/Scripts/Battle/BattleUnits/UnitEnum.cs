@@ -3,17 +3,20 @@ namespace Phoenix.Project1.Client.Battles
     public enum DummyType
     {
         Hit,
-        Caster_1,
-        Caster_2,
+        Location,
+        LeftHand,
+        RightHand,
         Max
     }
 
     public enum ActionKey
     {
-        Move,
+        Move,        
         Attack,
+        Entrance,
         Caster,
-        Hit,
+        Back,
+        Hit,        
         Max
     }
 }

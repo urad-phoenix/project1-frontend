@@ -4,8 +4,10 @@ namespace Phoenix.Project1.Client.Battles
     {
         public int ActorId;
 
-        public string ActKey;
-    }
+        public int Location;
+        
+        public ActionKey ActKey;
+    }        
 
     public class MoveData
     {

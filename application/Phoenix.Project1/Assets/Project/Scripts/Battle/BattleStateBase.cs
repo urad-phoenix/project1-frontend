@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Phoenix.Project1.Client.Battles
 {
-    public abstract class BattleStateBase
+    public abstract class BattleStateBase : IDisposable
     {
         protected StateTransition _Transition;               
         
@@ -19,36 +19,44 @@ namespace Phoenix.Project1.Client.Battles
 
         protected readonly System.Guid _Id;
 
-        private string _Name;
+        private string _Name;      
+
+        protected BattleStateMachine _StateMachine;
         
-        public BattleStateBase(string name)
+        public BattleStateBase(string name,  BattleStateMachine stateMachine)
         {
             _Name = name;
-            
-            _Id = Guid.NewGuid();                      
+            _StateMachine = stateMachine;
+            _Id = Guid.NewGuid();  
         }
 
-        public void AddTransition(StateTransition transition)
+        public BattleStateBase AddNext(BattleStateBase destinationState)
         {
-            _Transition = transition;
-        }
+            _Transition = new StateTransition(destinationState, _StateMachine);
+
+            return _Transition.GetDestinationState();
+        }                
         
         public void RemoveTransition()
         {
             _Transition = null;
-        }
-
-        public StateTransition CreateTransition(BattleStateBase destinationState)
-        {
-            var newTransition = new StateTransition();
-
-            return newTransition;
-        }
+        }      
         
         public abstract void Start();
 
-        public abstract void Stop();
+        public virtual void Stop()
+        {
+        }
 
-        public abstract void Update();                
+        protected virtual void _SwitchState()
+        {  
+            var destination = _Transition?.GetDestinationState();
+                                    
+            _StateMachine.Play(destination);
+        }
+
+        public abstract void Update();
+
+        public abstract void Dispose();
     }
 }

@@ -5,16 +5,13 @@ namespace Phoenix.Project1.Client.Battles
         private BattleStateBase _DestinationState;
 
         private BattleStateMachine _DestinationStateMachine;
-        
-        public void SetDestinationState(BattleStateBase state)
+
+        public StateTransition(BattleStateBase state, BattleStateMachine stateMachine)
         {
             _DestinationState = state;
-        }
 
-        public void SetDestinationStateMachine(BattleStateMachine stateMachine)
-        {
             _DestinationStateMachine = stateMachine;
-        }
+        }       
                 
         public BattleStateMachine GetDestinationStateMachine()
         {

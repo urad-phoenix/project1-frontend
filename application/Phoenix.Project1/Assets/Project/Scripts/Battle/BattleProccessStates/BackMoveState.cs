@@ -1,28 +1,30 @@
+using System;
 using System.Linq;
 using Phoenix.Playables;
+using Phoenix.Project1.Common.Battles.Invoker.IBattle;
 using UniRx;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
 namespace Phoenix.Project1.Client.Battles
 {
-    public class MoveState : BattleStateBase
+    public class BackMoveState : BattleStateBase
     {
         private MoveData _Data;
-     
+
         private BattleController _Controller;
+
+        private CompositeDisposable _Disposable;
         
-        private CompositeDisposable _Disposable;              
-        
-        public MoveState(string name, BattleStateMachine stateMachine, MoveData data, BattleController controller) : base(name, stateMachine)
+        public BackMoveState(string name, BattleStateMachine stateMachine, MoveData data, BattleController controller) : base(name, stateMachine)
         {            
-            _Disposable = new CompositeDisposable();
-            
             _Data = data;                        
 
             _Controller = controller;
+            
+            _Disposable = new CompositeDisposable();
         }
-
+     
         public override void Start()
         {
             if (_Data == null)
@@ -30,8 +32,8 @@ namespace Phoenix.Project1.Client.Battles
                 _Finished(null);
                 return;
             }
-
-            var director = _Controller.GetPlayableDirector(ActionKey.Move, _Data.MoveActorId);           
+            
+            var director = _Controller.GetPlayableDirector(ActionKey.Back, _Data.MoveActorId);
 
             if (director == null)
             {
@@ -50,12 +52,7 @@ namespace Phoenix.Project1.Client.Battles
             var obs = director.PlayAsObservable();
 
             obs.Subscribe(_Finished).AddTo(_Disposable);
-        }
-
-        public override void Stop()
-        {
-            
-        }
+        }    
 
         public override void Update()
         {
@@ -68,11 +65,11 @@ namespace Phoenix.Project1.Client.Battles
         }
 
         private void _Finished(PlayableDirector director)
-        {            
-            if(director && _Controller)
-                _Controller.RecyclePlayableDirector(director);                       
+        {          
+            if(director)
+                _Controller.RecyclePlayableDirector(director);
             
             _SwitchState();
         }
-    }
+    }    
 }

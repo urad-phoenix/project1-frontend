@@ -1,59 +1,79 @@
-using Phoenix.Project1.Client.Battles;
-using Phoenix.Project1.Common.Battles;
+using System.Linq;
+using Phoenix.Playables;
+using UniRx;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
 
 namespace Phoenix.Project1.Client.Battles
 {
     public class BattleActState : BattleStateBase
     {
         private ActData _ActData;
-
-        private IStateBehaviour _Behaviour;
-
-        private StateBinding _StateBinding;
         
-        public BattleActState(string name, ActData actData, StateBinding binding) : base(name)
+        private BattleController _Controller;
+               
+        private CompositeDisposable _Disposable;
+        
+        public BattleActState(string name, BattleStateMachine stateMachine, ActData actData, BattleController controller) : base(name, stateMachine)
         {
             _ActData = actData;
+                     
+            _Disposable = new CompositeDisposable();
             
-            _StateBinding = binding;
-
-            var controller = binding.GetHandle().GetReferenceObject() as BattleController;
-
-            var director = controller.GetPlayableDirector(_ActData.ActKey, _ActData.ActorId);
-            
-            
-            //director.
-
+            _Controller = controller;          
         }
 
         public override void Start()
         {
             if (_ActData == null)
             {
-                _Finished();
+                _Finished(null);
+                return;
+            }
+                                   
+            var director = _Controller.GetPlayableDirector(_ActData.ActKey, _ActData.ActorId);
+
+            if (director == null)
+            {
+                _Finished(null);
                 return;
             }
             
-            _Behaviour.Start(_StateBinding);                        
-        }
+            var spineTracks = from outputTrack in ((TimelineAsset) director.playableAsset).GetOutputTracks()
+                                where outputTrack is SpineAnimationTrack
+                                select outputTrack as SpineAnimationTrack;
+            
+            var vfxTracks = from outputTrack in ((TimelineAsset) director.playableAsset).GetOutputTracks()
+                where outputTrack is VFXTrack
+                select outputTrack as VFXTrack;
+            
+            var spineBinding = new SpineAnimationBinding();
+            
+            spineBinding.Bind(director, _ActData, spineTracks, _Controller);                        
 
-        public override void Stop()
-        {
-            _Behaviour.Stop(_StateBinding);
-        }
+            var vfxBinding = new VFXBinding();
+            
+            vfxBinding.Bind(director, _ActData, vfxTracks, _Controller);
+            
+            director.PlayAsObservable().Subscribe(_Finished).AddTo(_Disposable);
 
+        }
+       
         public override void Update()
-        {
-            _Behaviour.Update(_StateBinding);
+        {         
         }
-        
-        private void _Finished()
+
+        public override void Dispose()
         {
-            var destination = _Transition.GetDestinationState();
+            _Disposable.Clear();
+        }
+
+        private void _Finished(PlayableDirector director)
+        {        
+            if(director)
+                _Controller.RecyclePlayableDirector(director);  
             
-            var stateMachine = _Transition.GetDestinationStateMachine();
-            
-            stateMachine.Play(destination);
+            _SwitchState();
         }
     }
 }

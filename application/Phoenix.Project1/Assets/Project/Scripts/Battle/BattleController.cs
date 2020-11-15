@@ -1,27 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DG.Tweening;
 using Phoenix.Pool;
 using Phoenix.Project1.Addressable;
-using Phoenix.Project1.Client.UI;
 using Phoenix.Project1.Common.Battles;
 using Regulus.Remote.Reactive;
-using Regulus.Utility;
 using TP.Scene.Locators;
 using UniRx;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Playables;
 using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.Timeline;
 
 namespace Phoenix.Project1.Client.Battles
 {
     public class BattleController : MonoBehaviour
-    {
-        private BattleStateMachine _StateMachine;
-
+    {       
         private CompositeDisposable _Disposables;
         
         private readonly UniRx.CompositeDisposable _SendDisposables;
@@ -34,14 +28,18 @@ namespace Phoenix.Project1.Client.Battles
 
         private ObjectPool _DirectorPool;
 
+        private BattleStateMachine _CurrentStateMachine;
+
         [SerializeField]
         private CharacterLocator[] _Locators;
 
         private List<Avatar> _Avatars;
+
+        private Queue<BattleStateMachine> _Machines;
         
         public BattleController()
-        {
-            _StateMachine = new BattleStateMachine();                        
+        {                           
+            _Machines = new Queue<BattleStateMachine>();
             
             _Disposables = new CompositeDisposable();
             
@@ -55,7 +53,7 @@ namespace Phoenix.Project1.Client.Battles
         void Start()
         {
             var battleObs = from battle in NotifierRx.ToObservable().Supply<IBattle>()                
-                            select battle;   
+                            select battle;
                                     
             battleObs.Subscribe(_Battle).AddTo(_Disposables);
 
@@ -75,36 +73,61 @@ namespace Phoenix.Project1.Client.Battles
             _DirectorPool.Spawn();
         }
 
-        private void _SpawnRole(IActor actor)
+        public class LoadData
         {
-            var locator = _Locators.First(x => x.Index == actor.Location);
+            public int Key;
 
-            locator.SetInstanceID(actor.InstanceId);
+            public AsyncOperationHandle<GameObject> Handle;
 
-            var role = locator.GetRole();            
-            
-            var avatarId = actor.AvatarId.Value;
-            
-            var loader = Addressables.InstantiateAsync(avatarId, role.transform).AsHandleObserver();
-
-            loader.Subscribe(RoleLoaded).AddTo(_Disposables);
         }
 
-        private void RoleLoaded(AsyncOperationHandle<GameObject> handle)
-        {
-            if(!handle.IsDone)
-                return;                                        
-
-            if (handle.Result == null)
-            {
-                Debug.LogError("load character is null");
-                return;
-            }
-
-            Debug.Log($"load character is successful { handle.Result.name}");
-            handle.Result.SetActive(true);       
+        private IObservable<LoadData[]> _SpawnRole(IList<IActor> actors)
+        {            
+            List<IObservable<LoadData>> loaders = new List<IObservable<LoadData>>();
             
-            _Avatars.Add(handle.Result.GetComponent<Avatar>());
+            foreach (var actor in actors)
+            {
+                var locator = _Locators.First(x => x.Index == actor.Location);
+
+                locator.SetInstanceID(actor.InstanceId);
+
+                var role = locator.GetRole();            
+            
+                var avatarId = actor.AvatarId.Value;
+
+                var loadData = from hnd in UniRx.Observable.Defer(() =>
+                        Addressables.InstantiateAsync(avatarId, role.transform).AsHandleObserver())
+                        select new LoadData() {Key = actor.InstanceId, Handle = hnd};
+                               
+                loaders.Add(loadData);
+            }
+                      
+            var obs = from handle in UniRx.Observable.Merge(loaders)
+                from observable in _RoleLoaded(handle)
+                where observable
+                select handle;
+
+            return Observable.WhenAll(obs);                            
+        }
+
+        private IObservable<bool> _RoleLoaded(LoadData data)
+        {    
+            if (!data.Handle.IsDone)
+            {
+                return Observable.Return(false);
+            }           
+            
+            Debug.Log($"_RoleLoaded {data.Key}");
+            
+            data.Handle.Result.SetActive(false);
+            
+            var avatar = data.Handle.Result.GetComponent<Avatar>();
+
+            avatar.InstanceID = data.Key;
+            
+            _Avatars.Add(avatar);
+            
+            return Observable.Return(true);
         }
 
         private void _Battle(IBattle battle)
@@ -113,10 +136,14 @@ namespace Phoenix.Project1.Client.Battles
             var enterenceObs =  UniRx.Observable.FromEvent<Action<ActorEntranceTimestamp>, ActorEntranceTimestamp>(h => (gpi) => h(gpi), h => battle.EntranceEvent += h, h => battle.EntranceEvent -= h);
             var finishObs = UniRx.Observable.FromEvent<Action<BattleResult>, BattleResult>(h => (gpi) => h(gpi), h => battle.FinishEvent += h, h => battle.FinishEvent -= h);
 
-            var actors = from actor in battle.Actors.SupplyEvent()
-                select actor;
+            var actors = from actor in battle.Actors.SupplyEvent()                            
+                         select actor;
+
+            var loadObs = from load in actors.Buffer(battle.ActorCount.Value)
+                from spawn in _SpawnRole(load)
+                select spawn;
             
-            actors.Subscribe(_SpawnRole).AddTo(_Disposables);
+            loadObs.Subscribe(_Ready).AddTo(_Disposables);
                         
             actorPerformObs.DoOnError(_Error).Subscribe(_ActorPerform).AddTo(_Disposables);
             
@@ -127,9 +154,20 @@ namespace Phoenix.Project1.Client.Battles
             var actorHpObs = from actor in battle.Actors.SupplyEvent()
                 from newHp in actor.Hp.ChangeObservable()
                 select new { actor, newHp };
+            
             actorHpObs.Subscribe(v => _ChangeActorHp(v.actor.InstanceId.Value , v.newHp)).AddTo(_Disposables);
+        }      
+
+        private void _Ready(LoadData[] handles)
+        {
+            Debug.Log("Ready");           
+
+            var readyObs = from ready in NotifierRx.ToObservable().Supply<IReady>()
+                            select ready;
+            
+            readyObs.Subscribe(r => r.Ready()).AddTo(_Disposables);
         }
-        
+     
         private void _ChangeActorHp(int id, int newHp)
         {           
             Debug.LogError($"Actor {id} Hp = {newHp}");
@@ -142,19 +180,23 @@ namespace Phoenix.Project1.Client.Battles
         
         private void _BattleFinished(BattleResult obj)
         {            
-            Debug.Log($"_BattleFinished : {obj.Winner}");          
-            _Disposables.Clear();
-        }
+            Debug.Log($"_BattleFinished : {obj.Winner}");
+            
+            var stateMachine = new BattleStateMachine();
+            
+            stateMachine.AddState(new BattleResultState("finished", stateMachine));          
+            
+            Enqueue(stateMachine, true);
+        }       
 
         private void _BattleEntrance(ActorEntranceTimestamp obj)
-        {                        
+        {                                    
+            
             foreach (var entrance in obj.ActorEntrances)
-            {
-                var locator = _Locators.First(x => x.GetInstanceID() == entrance.Id);
-
-                var avatar = locator.GetAvatar();
+            {                
+                var avatar = GetAvatar(entrance.Id);
                 
-                avatar.gameObject.SetActive(true);
+                avatar.gameObject.SetActive(true);                           
             }
             
             Debug.Log($"_BattleEntrance : {obj.ActorEntrances.Count()}");          
@@ -163,101 +205,122 @@ namespace Phoenix.Project1.Client.Battles
         private void _ActorPerform(ActorPerformTimestamp obj)
         {                     
             Debug.Log($"_ActorPerform location : {obj.ActorPerform.Location}");
-            
-        }
-        
-        private void _EndBattle()
-        {
-            var battleObs = from battle in NotifierRx.ToObservable().Supply<IBattleStatus>()
-                select battle;
-            
-            battleObs.Subscribe(_ExitBattle).AddTo(_Disposables); 
-        }
 
-        private void _ExitBattle(IBattleStatus battle)
-        {
-            battle.Exit();
-            //battle.Exit();
-        } 
-
-        private void _GetBattle(IBattle battle)
-        {            
-            /*
-            //TODO
-            //關卡資訊, 之後要移到關卡腳本
-            var stage = battle.GetCampsByStageId(1);
-            
-            var stageResult = stage.GetValue();
-
-            if (stageResult == null)
-            {                
-                _EndBattle();
-                return;
-            }
-            //關卡初始化, 產生角色, 定位
-            
-            //拿整場戰鬥的結果
-            var fight = battle.ToFight(1);            
-                
-            var battleResult = fight.GetValue();
-
-            //BattleStatus.Success贏  BattleStatus.Fail 輸
-            if (battleResult != null)
-            {                
-                var actions = battleResult.Actions;                
-
-                for (int i = 0; i < actions.Length; ++i)
+            var stateMachine = new BattleStateMachine();
+            stateMachine.
+            AddState(new MoveState($"move{obj.Frames.ToString()}", stateMachine, new MoveData()
+            {
+                MoveActorId = obj.ActorPerform.StarringId,
+                Location = obj.ActorPerform.Location
+            }, this)).
+            AddNext(stateMachine.AddState(new BattleActState($"act{obj.Frames.ToString()}", stateMachine, new ActData()
+            {
+                ActKey = (ActionKey) obj.ActorPerform.SpellId,
+                Location = obj.ActorPerform.Location,
+                ActorId = obj.ActorPerform.StarringId
+            }, this))).
+            AddNext(stateMachine.AddState(new BackMoveState($"move{obj.Frames.ToString()}", stateMachine, new MoveData()
                 {
-                    var action = actions[i];
-                    
-                    var handle = new BindingHandle();
-                    
-                    handle.SetReferenceObject(this);
+                    MoveActorId = obj.ActorPerform.StarringId,
+                    Location = GetLocatorIndex(obj.ActorPerform.StarringId)
+                }, this)));                      
+            
+            Enqueue(stateMachine);
+        }
+               
+        private void _StateMachineFinished(BattleStateMachine stateMachine)
+        {           
+            stateMachine.Dispose();
+            stateMachine = null;
 
-                    var binding = new StateBinding(handle);
-                    
-                    var state = new BattleActState(action.SkillId.ToString(), action, binding);
-                   
-                    _StateMachine.AddState(state);
-                }
-
-                _SetBattleFinished();
-            }                       */ 
+            _CurrentStateMachine = null;
+            
+            if (_Machines.Count != 0)
+            {                
+                _CurrentStateMachine = _Machines.Dequeue();
+                _CurrentStateMachine.Start();
+            }
         }
 
-        void _SetBattleFinished()
-        {
-            //TODO
-            //跟server要獎勵或是第一次同步就已經同步獎勵完成
-            _StateMachine.AddState(new BattleResultState("finished"));
-        }              
+        private void Enqueue(BattleStateMachine stateMachine, bool isLast = false)
+        {                        
+            if(stateMachine == null)
+                return;
+            
+            var finishedObs = stateMachine.FinishedAsObservable();
 
-        public Role GetRole(string id)
-        {
-            return null;
+            if (isLast)
+            {
+                finishedObs.Subscribe(_EndBattle);
+            }
+            else
+            {
+                finishedObs.Subscribe(_StateMachineFinished);    
+            }
+
+            if (_Machines.Count == 0 && _CurrentStateMachine == null)
+            {
+                _CurrentStateMachine = stateMachine;
+                
+                stateMachine.Start();
+            }
+            else
+            {
+                _Machines.Enqueue(stateMachine);    
+            }
         }
+
+        private void Update()
+        {
+            _CurrentStateMachine?.Update();
+        }      
+
+        public int GetLocatorIndex(int id)
+        {
+            return _Locators.First(x => x.GetInstanceID() == id).Index;
+        }
+
+        public Role GetRole(int id)
+        {
+            return _Locators.First(x => x.GetInstanceID() == id).GetRole();
+        }
+
+        public CharacterLocator GetLocator(int index)
+        {
+            return _Locators.First(x => x.Index == index);
+        }
+
+        public Avatar GetAvatar(int id)
+        {
+            return _Avatars.Find(x => x.InstanceID == id);
+        }       
 
         public CameraUnit GetCamera(string id)
         {
             return null;
         }
 
-        public PlayableDirector GetPlayableDirector(string skillId, int id)
-        {
+        public PlayableDirector GetPlayableDirector(ActionKey actionKey, int id)
+        {            
+            var avatar = GetAvatar(id);
 
-            var locator = _Locators.First(x => x.GetInstanceID() == id);
-
-            var avatar = locator.GetAvatar();
-
-            var timelineData = avatar.TimelineAssets.First(x => x.Action.ToString() == skillId);
+            try
+            {
+                var timelineData = avatar.TimelineAssets.First(x => x.Action == actionKey);
             
-            var go = _DirectorPool.Get(true);
+                var go = _DirectorPool.Get(true);
             
-            var director = go.GetComponent<PlayableDirector>();
+                var director = go.GetComponent<PlayableDirector>();
 
-            director.playableAsset = timelineData.TimelineAsset;
+                director.playableAsset = timelineData.TimelineAsset;
             
-            return director;
+                return director;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                return null;
+            }            
         }
 
         public void PlaySound(string key)
@@ -265,9 +328,7 @@ namespace Phoenix.Project1.Client.Battles
         }                
 
         public void RecyclePlayableDirector(PlayableDirector playableDirector)
-        {
-            playableDirector.Stop();
-            playableDirector.playableGraph.Destroy();
+        {                       
             _DirectorPool.Recycle(playableDirector.gameObject, false);
         }
 
@@ -278,17 +339,37 @@ namespace Phoenix.Project1.Client.Battles
             _SendDisposables.Clear();
             
             _SendRequestDisposables.Clear();
+            
+            _Machines.Clear();            
         }
 
         private void OnDestroy()
+        {
+            
+            _Finished();
+        }
+        
+        private void _EndBattle(BattleStateMachine stateMachine)
+        {
+            var battleObs = from battle in NotifierRx.ToObservable().Supply<IBattleStatus>()
+                select battle;
+            
+            battleObs.Subscribe(_ExitBattle).AddTo(_Disposables);                        
+        }
+
+        private void _ExitBattle(IBattleStatus battle)
         {
             foreach (var avatar in _Avatars)
             {
                 Addressables.ReleaseInstance(avatar.gameObject);
             }
 
+            foreach (var machine in _Machines)
+            {
+                machine.Dispose();
+            }
             
-            _Finished();
-        }
+            battle.Exit();      
+        }      
     }
 }

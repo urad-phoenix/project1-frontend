@@ -1,24 +1,28 @@
+using UniRx;
+
 namespace Phoenix.Project1.Client.Battles
 {
     public class BattleResultState : BattleStateBase
-    {
-        public BattleResultState(string name) : base(name)
+    {     
+        private CompositeDisposable _Disposable;
+        
+        public BattleResultState(string name, BattleStateMachine stateMachine) : base(name, stateMachine)
         {
+            _Disposable = new CompositeDisposable();
         }
 
         public override void Start()
         {
-            throw new System.NotImplementedException();
+            _SwitchState();
         }
-
-        public override void Stop()
-        {
-            throw new System.NotImplementedException();
-        }
-
+        
         public override void Update()
+        {           
+        }
+
+        public override void Dispose()
         {
-            throw new System.NotImplementedException();
+            _Disposable.Clear();
         }
     }
 }

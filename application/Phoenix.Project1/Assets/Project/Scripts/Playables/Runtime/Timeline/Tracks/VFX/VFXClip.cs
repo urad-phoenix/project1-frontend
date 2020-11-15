@@ -24,6 +24,7 @@ namespace Phoenix.Playables
         [HideInInspector]
         public TimelineClip TimeClip;
 
+        [HideInInspector]
         [System.NonSerialized]
         public string Key;
 

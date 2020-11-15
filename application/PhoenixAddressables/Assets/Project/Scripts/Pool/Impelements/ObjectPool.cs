@@ -11,7 +11,7 @@ namespace Phoenix.Pool
         private readonly object _ID;
         private readonly int _Size;
 
-        private Stack<GameObject> _Stack;
+        private Queue<GameObject> _Stack;
         private bool _IsInitialized;
         private bool _IsDispose;
         private bool _IsBeforeRecycle;
@@ -55,7 +55,7 @@ namespace Phoenix.Pool
             _Source = source;
             _Parent = parent;
             _Size = size;
-            _Stack = new Stack<GameObject>();
+            _Stack = new Queue<GameObject>();
             _IsBeforeRecycle = isBeforeRecycle;
         }
 
@@ -112,7 +112,7 @@ namespace Phoenix.Pool
             {
                 var obj = Create();
 
-                _Stack.Push(obj);
+                _Stack.Enqueue(obj);
             }
         }
 
@@ -127,7 +127,7 @@ namespace Phoenix.Pool
             }
             else
             {
-                obj = _Stack.Pop();
+                obj = _Stack.Dequeue();
             }
 
             if(isDoBefore)
@@ -148,7 +148,7 @@ namespace Phoenix.Pool
                 OnBeforeRecycle(poolObj);
 
             if(!_Stack.Contains(poolObj))
-                _Stack.Push(poolObj);
+                _Stack.Enqueue(poolObj);
         }
 
         public void Clear()
@@ -160,7 +160,7 @@ namespace Phoenix.Pool
 
             while(_Stack.Count != 0)
             {
-                var obj = _Stack.Pop();
+                var obj = _Stack.Dequeue();
                 OnClear(obj);
             }
         }

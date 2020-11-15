@@ -456,7 +456,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!320 &333713084
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -472,8 +472,6 @@ PlayableDirector:
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
   m_SceneBindings:
-  - key: {fileID: 8174320658888279178, guid: 193a0a1a73bf2a9448d2eed5960f73b8, type: 2}
-    value: {fileID: 0}
   - key: {fileID: 5477419718906568090, guid: 193a0a1a73bf2a9448d2eed5960f73b8, type: 2}
     value: {fileID: 0}
   - key: {fileID: 5070384243163291074, guid: 193a0a1a73bf2a9448d2eed5960f73b8, type: 2}
@@ -487,6 +485,7 @@ PlayableDirector:
   m_ExposedReferences:
     m_References:
     - a072f464bc3cf884c9a7473510911d12: {fileID: 0}
+    - bbe56661749da784ea65b1b6d817b3ee: {fileID: 195601358}
     - e7f09c94c0903df45bc707f38e857203: {fileID: 0}
     - aa680a89c5f00014188a0bb142b7ef19: {fileID: 2007744160}
     - 67d6df654c7a63140bde56cf6c54d2d0: {fileID: 195601358}
@@ -1394,7 +1393,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &1628448039
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1541,7 +1540,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!320 &2007744160
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -1557,7 +1556,7 @@ PlayableDirector:
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
   m_SceneBindings:
-  - key: {fileID: 8174320658888279178, guid: 193a0a1a73bf2a9448d2eed5960f73b8, type: 2}
+  - key: {fileID: 0}
     value: {fileID: 0}
   - key: {fileID: 5477419718906568090, guid: 193a0a1a73bf2a9448d2eed5960f73b8, type: 2}
     value: {fileID: 0}
