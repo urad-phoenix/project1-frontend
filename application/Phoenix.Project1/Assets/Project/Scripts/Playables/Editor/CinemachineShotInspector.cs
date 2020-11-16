@@ -1,7 +1,4 @@
-using System.Linq;
-using UnityEditor.SceneManagement;
-
-namespace Phoenix.Playables.Editor
+namespace Phoenix.Playables.Editors
 {
     using System;
     using Cinemachine.Editor;

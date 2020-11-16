@@ -38,22 +38,30 @@ namespace Phoenix.Project1.Client.Battles
                 _Finished(null);
                 return;
             }
-            
-            var spineTracks = from outputTrack in ((TimelineAsset) director.playableAsset).GetOutputTracks()
-                                where outputTrack is SpineAnimationTrack
-                                select outputTrack as SpineAnimationTrack;
-            
-            var vfxTracks = from outputTrack in ((TimelineAsset) director.playableAsset).GetOutputTracks()
-                where outputTrack is VFXTrack
-                select outputTrack as VFXTrack;
-            
-            var spineBinding = new SpineAnimationBinding();
-            
-            spineBinding.Bind(director, _ActData, spineTracks, _Controller);                        
 
-            var vfxBinding = new VFXBinding();
+            var tracks = ((TimelineAsset) director.playableAsset).GetOutputTracks();         
+
+            foreach (var track in tracks)
+            {
+                if (track is SpineAnimationTrack)
+                {
+                    var spineBinding = new SpineAnimationBinding();
             
-            vfxBinding.Bind(director, _ActData, vfxTracks, _Controller);
+                    spineBinding.Bind(director, _ActData, track, _Controller);    
+                }
+                else if (track is VFXTrack)
+                {
+                    var vfxBinding = new VFXBinding();
+            
+                    vfxBinding.Bind(director, _ActData, track, _Controller);
+                }
+                else if (track is CameraShotTrack)
+                {
+                    var cameraBinding = new CameraBinding();
+                    
+                    cameraBinding.Bind(director, _ActData, track, _Controller);
+                }
+            }                  
             
             director.PlayAsObservable().Subscribe(_Finished).AddTo(_Disposable);
 

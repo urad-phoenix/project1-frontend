@@ -1,10 +1,15 @@
-﻿namespace TP.Scene.Locators
+﻿using Phoenix.Project1.Client.Battles;
+
+namespace TP.Scene.Locators
 {
 	using UnityEngine;
 
 	public class GroupLocator : MonoBehaviour
 	{
 		public int Index;
+
+		[SerializeField] 
+		private CameraGroup _CameraGroup;
 
 		#if UNITY_EDITOR
 		

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cinemachine;
 using Phoenix.Pool;
 using Phoenix.Project1.Client.Battles;
 using UniRx;
@@ -31,10 +32,13 @@ public class Avatar : MonoBehaviour
         public ActionKey Action;
         
         public TimelineAsset TimelineAsset;
-    }
+    }   
 
     [HideInInspector]
     public int InstanceID;
+
+    [HideInInspector] 
+    public int Location;
 
     public TimelineAssetSource[] TimelineAssets;
 
@@ -45,6 +49,9 @@ public class Avatar : MonoBehaviour
     private Dictionary<string, ObjectPool> _VFXPools;
 
     private CompositeDisposable _Disposable;
+
+    [SerializeField]
+    private CameraGroup _CameraGroup;
 
     public Avatar()
     {
@@ -71,6 +78,21 @@ public class Avatar : MonoBehaviour
         }
 
         return this.transform;
+    }
+
+    public CinemachineVirtualCamera GetVirtualCamera(int index)
+    {
+        try
+        {
+            var cameraData = _CameraGroup.CameraDatas.First(x => x.Index == index);
+
+            return cameraData.VirtualCamera;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+            return null;
+        }        
     }
 
     public void Init()

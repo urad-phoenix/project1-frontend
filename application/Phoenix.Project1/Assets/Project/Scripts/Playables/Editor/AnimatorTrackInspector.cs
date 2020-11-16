@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Phoenix.Playables;
 using UnityEngine;
 
-namespace Playables.Timeline.Editor
+namespace Playables.Timeline.Editors
 {
     using UnityEditor;
     

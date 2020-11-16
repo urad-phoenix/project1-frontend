@@ -1,54 +1,56 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
-using DG.DOTweenEditor.Core;
 using UnityEngine;
 using UnityEditor;
 
-public class EidtorUtility
+namespace Phoenix.Playables.Editors
 {
-    public static object DrawObjectField(string name, FieldInfo field, object obj, float width)
+    public class EidtorUtility
     {
-        if (obj == null)
-            return null;                        
-
-        Type type = obj.GetType();     
-
-        if (type.IsPrimitive || type.IsEnum)
+        public static object DrawObjectField(string name, FieldInfo field, object obj, float width)
         {
-            if (type.IsEnum)
-            {
-                obj = EnumPopup(name, width, obj as Enum, width);
-            }
-            if (typeof(bool) == type)
-            {                    
-                // ReSharper disable once HeapView.BoxingAllocation
-                obj = ToggleField(name, width, (bool)obj, width);
-            }
-            else if (typeof(int) == type)
-            {               
-                // ReSharper disable once HeapView.BoxingAllocation
-                obj = IntField(name, width, (int)obj, width);
-            }
-            else if (typeof(float) == type)
-            {
-                // ReSharper disable once HeapView.BoxingAllocation
-                obj = FloatField(name, width, (float)obj, width);
-            }
-            else if (typeof(Guid) == type)
-            {
+            if (obj == null)
                 return null;
+
+            Type type = obj.GetType();
+
+            if (type.IsPrimitive || type.IsEnum)
+            {
+                if (type.IsEnum)
+                {
+                    obj = EnumPopup(name, width, obj as Enum, width);
+                }
+
+                if (typeof(bool) == type)
+                {
+                    // ReSharper disable once HeapView.BoxingAllocation
+                    obj = ToggleField(name, width, (bool) obj, width);
+                }
+                else if (typeof(int) == type)
+                {
+                    // ReSharper disable once HeapView.BoxingAllocation
+                    obj = IntField(name, width, (int) obj, width);
+                }
+                else if (typeof(float) == type)
+                {
+                    // ReSharper disable once HeapView.BoxingAllocation
+                    obj = FloatField(name, width, (float) obj, width);
+                }
+                else if (typeof(Guid) == type)
+                {
+                    return null;
+                }
             }
+            else if (type == typeof(string))
+            {
+                obj = TextField(name, width, (string) obj, width);
+            }
+
+            return obj;
         }
-        else if (type == typeof(string))
-        {
-            obj = TextField(name, width, (string)obj, width);
-        }
-        return obj;
-    } 
-    
-     #region Fields
+
+        #region Fields
+
         public static int IntField(string labelcontent, float labelWidth, int value, float width)
         {
             return IntField(new GUIContent(labelcontent), labelWidth, value, width);
@@ -67,7 +69,8 @@ public class EidtorUtility
                 return result;
         }
 
-        public static int IntPopup(GUIContent labelcontent, float labelWidth, int value, string[] optionList, int[] valueList, float width)
+        public static int IntPopup(GUIContent labelcontent, float labelWidth, int value, string[] optionList,
+            int[] valueList, float width)
         {
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(labelcontent, GUILayout.Width(labelWidth));
@@ -80,7 +83,8 @@ public class EidtorUtility
                 return result;
         }
 
-        public static int IntPopup(string labelcontent, float labelWidth, int value, string[] optionList, int[] valueList, float width)
+        public static int IntPopup(string labelcontent, float labelWidth, int value, string[] optionList,
+            int[] valueList, float width)
         {
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(labelcontent, GUILayout.Width(labelWidth));
@@ -138,7 +142,7 @@ public class EidtorUtility
         public static float FloatField(GUIContent labelcontent, float labelWidth, float value, float width)
         {
             GUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(labelcontent, GUILayout.Width(labelWidth));            
+            EditorGUILayout.LabelField(labelcontent, GUILayout.Width(labelWidth));
             float result = EditorGUILayout.FloatField(value, GUILayout.Width(width));
             GUILayout.EndHorizontal();
 
@@ -157,7 +161,7 @@ public class EidtorUtility
         {
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(labelcontent, GUILayout.Width(labelWidth));
-            string result = EditorGUILayout.TextField(value, GUILayout.Width(width));           
+            string result = EditorGUILayout.TextField(value, GUILayout.Width(width));
             GUILayout.EndHorizontal();
 
             if (Application.isPlaying)
@@ -189,20 +193,23 @@ public class EidtorUtility
             return ToggleField(new GUIContent(labelcontent), labelWidth, value, width);
         }
 
-        public static T ObjectField<T>(GUIContent labelcontent, float labelWidth, UnityEngine.Object value, float width, bool allowSceneObjects) where T : UnityEngine.Object
-        {      
+        public static T ObjectField<T>(GUIContent labelcontent, float labelWidth, UnityEngine.Object value, float width,
+            bool allowSceneObjects) where T : UnityEngine.Object
+        {
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(labelcontent, GUILayout.Width(labelWidth));
-            T obj = (T)EditorGUILayout.ObjectField(value, typeof(T), allowSceneObjects, GUILayout.Width(width));
+            T obj = (T) EditorGUILayout.ObjectField(value, typeof(T), allowSceneObjects, GUILayout.Width(width));
             GUILayout.EndHorizontal();
 
             return obj;
         }
 
-        public static T ObjectField<T>(string labelcontent, float labelWidth, UnityEngine.Object value, float width, bool allowSceneObjects) where T : UnityEngine.Object
+        public static T ObjectField<T>(string labelcontent, float labelWidth, UnityEngine.Object value, float width,
+            bool allowSceneObjects) where T : UnityEngine.Object
         {
             return ObjectField<T>(new GUIContent(labelcontent), labelWidth, value, width, allowSceneObjects);
         }
 
         #endregion
+    }
 }

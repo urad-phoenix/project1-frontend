@@ -65,7 +65,7 @@ namespace Phoenix.Playables
 
         public BindingTrackType BindingType;
 
-        public string Key;
+        public int Key;
 
         [HideInInspector]
         public bool IsOpenNoise;

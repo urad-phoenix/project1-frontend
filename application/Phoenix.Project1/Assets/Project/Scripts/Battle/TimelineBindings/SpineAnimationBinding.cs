@@ -16,21 +16,23 @@ namespace Phoenix.Project1.Client.Battles
             if(actorData == null)
                 return;
 
-            var tracks = data[1] as IEnumerable<SpineAnimationTrack>;                        
-            
-            if(tracks == null || !tracks.Any())
+//            var tracks = data[1] as IEnumerable<SpineAnimationTrack>;                        
+//            
+//            if(tracks == null || !tracks.Any())
+//                return;
+
+            var track = data[1] as SpineAnimationTrack;
+
+            if(track == null)
                 return;
-
-            var controller = data[2] as BattleController;
-
-            foreach (var track in tracks)
-            {
-                var avatar = controller?.GetAvatar(actorData.ActorId);                                   
-
-                var anim = avatar?.GetComponent<SkeletonAnimation>();
             
-                playableDirector.SetGenericBinding(track, anim);    
-            }                                                
+            var controller = data[2] as BattleController;
+                       
+            var avatar = controller?.GetAvatarByID(actorData.ActorId);                                   
+
+            var anim = avatar?.GetComponent<SkeletonAnimation>();
+        
+            playableDirector.SetGenericBinding(track, anim);                                                            
         }        
     }
 }

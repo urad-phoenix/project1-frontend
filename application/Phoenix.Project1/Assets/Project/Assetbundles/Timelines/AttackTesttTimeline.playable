@@ -15,8 +15,8 @@ MonoBehaviour:
   VirtualCamera:
     exposedName: 61f0c16b08ea7d94b83b906af4c49178
     defaultValue: {fileID: 0}
-  BindingType: 0
-  Key: 
+  BindingType: 1
+  Key: 1
   IsOpenNoise: 1
   CameraNoiseSetting:
     NoiseSettings: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
@@ -54,8 +54,8 @@ MonoBehaviour:
   VirtualCamera:
     exposedName: bbe56661749da784ea65b1b6d817b3ee
     defaultValue: {fileID: 0}
-  BindingType: 0
-  Key: 
+  BindingType: 1
+  Key: 1
   IsOpenNoise: 1
   CameraNoiseSetting:
     NoiseSettings: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}

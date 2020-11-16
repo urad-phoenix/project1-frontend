@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Phoenix.Playables.Editor
+namespace Phoenix.Playables.Editors
 {    
     using UnityEditor;
     

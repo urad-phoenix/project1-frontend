@@ -1,7 +1,6 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Phoenix.Playables.Editor
+namespace Phoenix.Playables.Editors
 {
     using UnityEditor;
     

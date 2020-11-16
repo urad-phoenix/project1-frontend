@@ -1,6 +1,7 @@
+using Phoenix.Playables.Utilities;
+
 namespace Phoenix.Playables
 {
-    using Phoenix.Playables.Utilities;
     using UnityEngine;
     using UnityEngine.Playables;
     
@@ -24,13 +25,17 @@ namespace Phoenix.Playables
         public Vector3 DefaultPosition;           
         public Quaternion DefaultRotation;
 
-        public VFXBehaviour.ParticleData ParticleData;
+      
 
         public bool IsAnchorToEndPoint;
         
         public bool IsSetEndToVfxHitDummy;
         
         public string RuntimeKey;
+        
+#if UNITY_EDITOR
+        
+        public VFXBehaviour.ParticleData ParticleData;
         
         private void SetParticleSystem()
         {
@@ -41,6 +46,7 @@ namespace Phoenix.Playables
                 ParticleData.Initialize();
             }
         }
+#endif
 
         public void Init()
         {          
@@ -49,10 +55,11 @@ namespace Phoenix.Playables
             
             VFX.gameObject.SetActive(true);   
             
+#if UNITY_EDITOR
             SetParticleSystem();
             
             DefaultParent = VFX.parent;           
-            
+#endif  
             if (IsAnchor)
             {
                 VFX.parent =LaunchPoint;

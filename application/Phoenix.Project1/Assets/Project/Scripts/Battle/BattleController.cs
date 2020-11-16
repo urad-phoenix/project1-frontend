@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cinemachine;
+using Phoenix.Playables;
 using Phoenix.Pool;
 using Phoenix.Project1.Addressable;
 using Phoenix.Project1.Common.Battles;
@@ -30,12 +32,27 @@ namespace Phoenix.Project1.Client.Battles
 
         private BattleStateMachine _CurrentStateMachine;
 
-        [SerializeField]
-        private CharacterLocator[] _Locators;
-
         private List<Avatar> _Avatars;
 
         private Queue<BattleStateMachine> _Machines;
+        
+        [SerializeField]
+        private CharacterLocator[] _Locators;
+
+        [SerializeField] 
+        private Camera _Camera;
+
+        [SerializeField] 
+        private CameraGroup _StageCameraGroup;       
+        
+        public class LoadData
+        {
+            public int Id;
+
+            public int Location;
+
+            public AsyncOperationHandle<GameObject> Handle;
+        }
         
         public BattleController()
         {                           
@@ -71,15 +88,7 @@ namespace Phoenix.Project1.Client.Battles
             _DirectorPool = new ObjectPool(_PlayablePoolName, playable, this.transform, _PlayablePoolSize, true);
             _DirectorPool.Initialize();
             _DirectorPool.Spawn();
-        }
-
-        public class LoadData
-        {
-            public int Key;
-
-            public AsyncOperationHandle<GameObject> Handle;
-
-        }
+        }     
 
         private IObservable<LoadData[]> _SpawnRole(IList<IActor> actors)
         {            
@@ -97,7 +106,7 @@ namespace Phoenix.Project1.Client.Battles
 
                 var loadData = from hnd in UniRx.Observable.Defer(() =>
                         Addressables.InstantiateAsync(avatarId, role.transform).AsHandleObserver())
-                        select new LoadData() {Key = actor.InstanceId, Handle = hnd};
+                        select new LoadData() {Id = actor.InstanceId, Location = actor.Location, Handle = hnd};
                                
                 loaders.Add(loadData);
             }
@@ -117,14 +126,14 @@ namespace Phoenix.Project1.Client.Battles
                 return Observable.Return(false);
             }           
             
-            Debug.Log($"_RoleLoaded {data.Key}");
+            Debug.Log($"_RoleLoaded {data.Id}");
             
             data.Handle.Result.SetActive(false);
             
             var avatar = data.Handle.Result.GetComponent<Avatar>();
 
-            avatar.InstanceID = data.Key;
-            
+            avatar.InstanceID = data.Id;
+            avatar.Location = data.Location;
             _Avatars.Add(avatar);
             
             return Observable.Return(true);
@@ -194,7 +203,7 @@ namespace Phoenix.Project1.Client.Battles
             
             foreach (var entrance in obj.ActorEntrances)
             {                
-                var avatar = GetAvatar(entrance.Id);
+                var avatar = GetAvatarByID(entrance.Id);
                 
                 avatar.gameObject.SetActive(true);                           
             }
@@ -290,19 +299,38 @@ namespace Phoenix.Project1.Client.Battles
             return _Locators.First(x => x.Index == index);
         }
 
-        public Avatar GetAvatar(int id)
+        public Avatar GetAvatarByID(int id)
         {
             return _Avatars.Find(x => x.InstanceID == id);
-        }       
-
-        public CameraUnit GetCamera(string id)
+        } 
+        
+        public Avatar GetAvatarByLocation(int index)
         {
-            return null;
+            return _Avatars.Find(x => x.Location == index);
+        }  
+
+        public Camera GetMainCamera()
+        {
+            return _Camera;
+        }
+
+        public CinemachineVirtualCamera GetVirtualCamera(bool isActorCamera, int index)
+        {
+            if (isActorCamera)
+            {
+                var avatar = GetAvatarByLocation(index);
+
+                return avatar.GetVirtualCamera(index);
+            }
+            else
+            {
+                return _StageCameraGroup.GetVirtualCamera(index);
+            }           
         }
 
         public PlayableDirector GetPlayableDirector(ActionKey actionKey, int id)
         {            
-            var avatar = GetAvatar(id);
+            var avatar = GetAvatarByID(id);
 
             try
             {
