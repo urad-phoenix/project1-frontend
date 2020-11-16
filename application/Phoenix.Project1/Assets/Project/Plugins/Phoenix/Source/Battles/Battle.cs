@@ -27,8 +27,8 @@ namespace Phoenix.Project1.Battles
         
             _Finishs = new NotifierCollection<BattleResult>();
             _Actors = new NotifierCollection<IActor>();
-            
-            
+
+            _ActorCount = new Property<int>();
         }
 
         
