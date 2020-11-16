@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CameraShotClip
   m_EditorClassIdentifier: 
   VirtualCamera:
-    exposedName: 61f0c16b08ea7d94b83b906af4c49178
+    exposedName: 
     defaultValue: {fileID: 0}
   BindingType: 1
   Key: 1
@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Name: CameraShotClip(Clone)
   m_EditorClassIdentifier: 
   VirtualCamera:
-    exposedName: bbe56661749da784ea65b1b6d817b3ee
+    exposedName: 
     defaultValue: {fileID: 0}
   BindingType: 1
   Key: 1
@@ -87,7 +87,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bfda56da833e2384a9677cd3c976a436, type: 3}
-  m_Name: AttackTesttTimeline
+  m_Name: AttackTesttTimeline 1
   m_EditorClassIdentifier: 
   m_Version: 0
   m_Tracks:
@@ -546,7 +546,7 @@ MonoBehaviour:
     m_PreExtrapolationMode: 0
     m_PostExtrapolationTime: 0
     m_PreExtrapolationTime: 0
-    m_DisplayName: CM vcam1
+    m_DisplayName: GameObject
   - m_Version: 1
     m_Start: 0.5
     m_ClipIn: 0
@@ -579,7 +579,7 @@ MonoBehaviour:
     m_PreExtrapolationMode: 0
     m_PostExtrapolationTime: 0
     m_PreExtrapolationTime: 0
-    m_DisplayName: CM vcam1
+    m_DisplayName: GameObject
   m_Markers:
     m_Objects: []
 --- !u!114 &4980914889740462550

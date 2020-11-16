@@ -2443,15 +2443,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InstanceID: 0
+  Location: 0
   TimelineAssets:
   - Action: 1
-    TimelineAsset: {fileID: 11400000, guid: 193a0a1a73bf2a9448d2eed5960f73b8, type: 2}
+    TimelineAsset: {fileID: 11400000, guid: 776a31fab6062824ea9f93fc800f4864, type: 2}
   - Action: 0
-    TimelineAsset: {fileID: 11400000, guid: ac68982bd483d3942ab40a5f7872e8a1, type: 2}
+    TimelineAsset: {fileID: 11400000, guid: c98307ae0cf988b4ca0bdbd7f0e0c4f1, type: 2}
   - Action: 3
-    TimelineAsset: {fileID: 11400000, guid: 2968fd617d43e1240be833087d16e8ca, type: 2}
+    TimelineAsset: {fileID: 0}
   - Action: 4
-    TimelineAsset: {fileID: 11400000, guid: 722a700dfff3be846ab398ee0e9a19d0, type: 2}
+    TimelineAsset: {fileID: 0}
   DummyDatas:
   - DummyType: 0
     Dummy: {fileID: 3263636595593084947}
@@ -2462,6 +2463,7 @@ MonoBehaviour:
     Source: {fileID: 1226274352160944, guid: b7ff43f227be6bc40978b86098124e27, type: 3}
   - Key: hit
     Source: {fileID: 1000012744041452, guid: 149f4c873f67b1040a4bf504c031894e, type: 3}
+  _CameraGroup: {fileID: 0}
 --- !u!114 &383332036166367883
 MonoBehaviour:
   m_ObjectHideFlags: 0

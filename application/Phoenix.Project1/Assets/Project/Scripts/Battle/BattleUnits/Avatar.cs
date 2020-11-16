@@ -32,7 +32,7 @@ public class Avatar : MonoBehaviour
         public ActionKey Action;
         
         public TimelineAsset TimelineAsset;
-    }   
+    }    
 
     [HideInInspector]
     public int InstanceID;

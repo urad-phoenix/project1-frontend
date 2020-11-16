@@ -7,15 +7,7 @@ using UnityEngine;
 namespace Phoenix.Project1.Client.Battles
 {
     public class BattleStateMachine : IDisposable
-    {
-        public enum PlayMode
-        {
-            Sequence,
-            Parallel
-        }
-        
-        public PlayMode MachinePlayMode = PlayMode.Sequence;
-        
+    {        
         private List<BattleStateBase> _States;
 
         private BattleStateBase _CurrentState;

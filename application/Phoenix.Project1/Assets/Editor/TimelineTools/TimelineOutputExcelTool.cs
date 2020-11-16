@@ -59,6 +59,53 @@ namespace Phoenix.Project1.Editors.Tools
 
             return assets;
         }
+        
+        public static List<TimelineAsset> GetTimelineFiles(string path, string folder, string[] filterTypes)
+        {   
+            List<TimelineAsset> assets = new List<TimelineAsset>();
+
+            var paths = GetAllFiles(path, folder,filterTypes);
+
+            for (int i = 0; i < paths.Count; ++i)
+            {
+                var asset = AssetDatabase.LoadAssetAtPath(paths[i], typeof(TimelineAsset)) as TimelineAsset;
+
+                if (asset)
+                {
+                    assets.Add(asset);
+                }
+            }
+
+            return assets;
+        }
+        
+        public static List<string> GetAllFiles(string directoryPath, string folder, string[] filterTypes)
+        {
+            string[] files = Directory.GetFiles(directoryPath, "*",SearchOption.AllDirectories);
+			
+            List<string> paths = new List<string>();
+            
+            foreach (string file in files)
+            {               
+                if (file.Contains(".meta"))				
+                    continue;
+                
+                if(!file.Contains(folder))
+                    continue;                    
+                
+                if (filterTypes.Index(x => file.Contains(x)) > -1)                
+                {                    
+                    var assetPath = PathUtilities.AssetPath(file);
+				
+                    if (!string.IsNullOrEmpty(assetPath) && AssetDatabase.LoadAssetAtPath(assetPath, typeof(Object)))
+                    {
+                        paths.Add(assetPath);       
+                    }
+                }                
+            }
+
+            return paths;
+        }  
 
         public static List<string> GetAllFiles(string directoryPath, string[] filterTypes)
         {

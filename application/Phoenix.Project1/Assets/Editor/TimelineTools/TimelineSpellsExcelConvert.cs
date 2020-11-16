@@ -1,19 +1,15 @@
 using System.Collections.Generic;
-using System.Security.Policy;
-using Phoenix.Project1.Configs;
 using Phoenix.Project1.DataConvertTool;
 using UnityEditor;
-using UnityEngine;
-using UnityEngine.Timeline;
 
 namespace Phoenix.Project1.Editors.Tools
 {
-    public class TimelineExcelConvert
+    public class TimelineSpellsExcelConvert
     {
-        [MenuItem("Phoenix/TimelineExcelConvert")]
+         [MenuItem("Phoenix/輸出SpellExcel")]
         public static void ConvertTimelineToExcel()
         {
-            var convertSetting = AssetDatabase.FindAssets("TimelineDataGeneratorSetting t:DataGeneratorSetting");
+            var convertSetting = AssetDatabase.FindAssets("SpellGeneratorSetting t:DataGeneratorSetting");
 
             string assetPath = "";
             
@@ -102,6 +98,6 @@ namespace Phoenix.Project1.Editors.Tools
             sheet.Rows.Add(rowData);
             
             return sheet;
-        }       
+        }     
     }
 }

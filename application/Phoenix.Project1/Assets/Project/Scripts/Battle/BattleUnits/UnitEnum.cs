@@ -18,5 +18,5 @@ namespace Phoenix.Project1.Client.Battles
         Back,
         Hit,        
         Max
-    }
+    } 
 }
