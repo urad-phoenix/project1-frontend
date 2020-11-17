@@ -79,7 +79,7 @@ namespace Phoenix.Project1.Editors.Tools
             return assets;
         }
         
-        public static List<string> GetAllFiles(string directoryPath, string folder, string[] filterTypes)
+        private static List<string> GetAllFiles(string directoryPath, string folder, string[] filterTypes)
         {
             string[] files = Directory.GetFiles(directoryPath, "*",SearchOption.AllDirectories);
 			
@@ -107,7 +107,7 @@ namespace Phoenix.Project1.Editors.Tools
             return paths;
         }  
 
-        public static List<string> GetAllFiles(string directoryPath, string[] filterTypes)
+        private static List<string> GetAllFiles(string directoryPath, string[] filterTypes)
         {
             string[] files = Directory.GetFiles(directoryPath, "*",SearchOption.AllDirectories);
 			

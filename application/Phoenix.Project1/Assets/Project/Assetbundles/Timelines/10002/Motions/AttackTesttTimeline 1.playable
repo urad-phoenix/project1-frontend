@@ -73,6 +73,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e82f483057ae45246964dadd9023a9f9, type: 3}
   m_Name: TriggerDirectorClip
   m_EditorClassIdentifier: 
+  TimelineAsset: {fileID: 0}
   Director:
     exposedName: aa680a89c5f00014188a0bb142b7ef19
     defaultValue: {fileID: 0}
@@ -455,6 +456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e82f483057ae45246964dadd9023a9f9, type: 3}
   m_Name: TriggerDirectorClip(Clone)
   m_EditorClassIdentifier: 
+  TimelineAsset: {fileID: 0}
   Director:
     exposedName: 6efc0ecf48281e445b0a6f389a0fc5ef
     defaultValue: {fileID: 0}

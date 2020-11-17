@@ -5,7 +5,7 @@ namespace Phoenix.Project1.Editors.Tools
     [CreateAssetMenu(menuName = "Urad/DataGeneratorSetting")]
     public class DataGeneratorSetting : ScriptableObject
     {
-        public string OutputPath = "D:/urad/project1-configs/";
+        public string OutputPath = "D:/urad/project1-configs/";   
         public string SourcePath = "Assets/Project/Assetbundles/Timelines/";
         public string FilterFolder = "Motions";
         public string[] FilterTypes = {".playable"};        
