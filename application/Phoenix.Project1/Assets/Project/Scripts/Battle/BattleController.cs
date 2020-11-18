@@ -70,14 +70,14 @@ namespace Phoenix.Project1.Client.Battles
 
         void Start()
         {
+            ActorUIController.Instance.SettingCamera(_Camera);
+            
             var battleObs = from battle in NotifierRx.ToObservable().Supply<IBattle>()                
                             select battle;
                                     
             battleObs.Subscribe(_Battle).AddTo(_Disposables);
 
             _SetPlayablePool();
-            
-            ActorUIController.Instance.SettingCamera(_Camera);
         }
 
         private void _SetPlayablePool()
@@ -152,12 +152,19 @@ namespace Phoenix.Project1.Client.Battles
 
             var actors = from actor in battle.Actors.SupplyEvent()                            
                          select actor;
+            
+            var actorHpObs = from actor in actors
+                from newHp in actor.Hp.ObserveEveryValueChanged(h=>h.Value)
+                select new { actor, newHp };
+
+            actorHpObs.DoOnError(_Error)
+                .Subscribe(v => _ChangeActorHp(v.actor.InstanceId.Value, v.newHp)); //.AddTo(_Disposables);
 
             var loadObs = from load in actors.Buffer(battle.ActorCount.Value)
                 from spawn in _SpawnRole(load)
                 select spawn;
             
-            loadObs.Subscribe(_Ready).AddTo(_Disposables);
+            loadObs.DoOnError(_Error).Subscribe(_Ready).AddTo(_Disposables);
                         
             actorPerformObs.DoOnError(_Error).Subscribe(_ActorPerform).AddTo(_Disposables);
             
@@ -165,11 +172,7 @@ namespace Phoenix.Project1.Client.Battles
             
             finishObs.DoOnError(_Error).Subscribe(_BattleFinished).AddTo(_Disposables);
             
-            var actorHpObs = from actor in battle.Actors.SupplyEvent()
-                from newHp in actor.Hp.ChangeObservable()
-                select new { actor, newHp };
-            
-            actorHpObs.Subscribe(v => _ChangeActorHp(v.actor.InstanceId.Value , v.newHp)).AddTo(_Disposables);
+           
         }      
 
         private void _Ready(LoadData[] handles)

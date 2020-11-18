@@ -25,6 +25,8 @@ namespace Phoenix.Project1.Client.Battles
 
         private List<UIHUD> _HUDList;
 
+        private Camera _Camera;
+
         public ActorUIController()
         {
             _HUDList = new List<UIHUD>();                        
@@ -35,10 +37,16 @@ namespace Phoenix.Project1.Client.Battles
             var hud = Instantiate(HudSource, HUDCanvas.transform);
                         
             hud.Binding(avatar.InstanceID, avatar.GetDummy(DummyType.Location.ToString()));
+            
+            hud.BindingCamera(_Camera);
+            
+            _HUDList.Add(hud);
         }                
 
         public void SettingCamera(Camera camera)
         {
+            _Camera = camera;
+            
             foreach (var uihud in _HUDList)
             {
                 uihud.BindingCamera(camera);
