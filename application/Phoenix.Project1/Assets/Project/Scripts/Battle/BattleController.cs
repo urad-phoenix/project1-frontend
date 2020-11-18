@@ -6,6 +6,7 @@ using Phoenix.Playables;
 using Phoenix.Pool;
 using Phoenix.Project1.Addressable;
 using Phoenix.Project1.Common.Battles;
+using Project.Scripts.UI;
 using Regulus.Remote.Reactive;
 using TP.Scene.Locators;
 using UniRx;
@@ -43,7 +44,7 @@ namespace Phoenix.Project1.Client.Battles
         private Camera _Camera;
 
         [SerializeField] 
-        private CameraGroup _StageCameraGroup;       
+        private CameraGroup _StageCameraGroup;
         
         public class LoadData
         {
@@ -75,6 +76,8 @@ namespace Phoenix.Project1.Client.Battles
             battleObs.Subscribe(_Battle).AddTo(_Disposables);
 
             _SetPlayablePool();
+            
+            ActorUIController.Instance.SettingCamera(_Camera);
         }
 
         private void _SetPlayablePool()
@@ -136,6 +139,8 @@ namespace Phoenix.Project1.Client.Battles
             avatar.Location = data.Location;
             _Avatars.Add(avatar);
             
+            ActorUIController.Instance.SettingHUD(avatar);
+            
             return Observable.Return(true);
         }
 
@@ -180,6 +185,8 @@ namespace Phoenix.Project1.Client.Battles
         private void _ChangeActorHp(int id, int newHp)
         {           
             Debug.LogError($"Actor {id} Hp = {newHp}");
+            
+            ActorUIController.Instance.SetCurrentBlood(id, newHp);
         }
         
         private void _Error(Exception obj)
