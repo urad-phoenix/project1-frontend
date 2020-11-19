@@ -1,6 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using DG.Tweening;
+using Phoenix.Project1.Client;
+using Phoenix.Project1.Common.Battles;
+using Regulus.Remote.Reactive;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,21 +33,44 @@ public class UIBlood : MonoBehaviour
     [SerializeField]
     private int _MaxBloodValue;
 
+    private bool _Isinitialized;
+
+    private int _UpdateValue;
+
+    private CompositeDisposable _Disposable;
+
+    public UIBlood()
+    {
+        _Disposable = new CompositeDisposable();
+    }  
+
     public void Init(int value)
     {
+        _Isinitialized = true;
         _MaxBloodValue = value;
         _CurrentBloodValue = value;
+        
         _AnimBloodSlider.maxValue = value;
         _RealBloodSlider.maxValue = value;
+        
         _AnimBloodSlider.minValue = 0;
         _RealBloodSlider.minValue = 0;
-    }
 
+        _AnimBloodSlider.value = value;
+        _RealBloodSlider.value = value;
+    }   
+    
     public void SetCurrentBlood(int value)
     {
-        _CurrentBloodValue = value;
-        _AnimBloodSlider.value = _CurrentBloodValue;
-        _RealBloodSlider.value = _CurrentBloodValue;
+        if (!_Isinitialized)
+        {
+            Init(value);
+            //return;
+        }
+
+//        _CurrentBloodValue = value;
+//        _AnimBloodSlider.value = _CurrentBloodValue;
+//        _RealBloodSlider.value = _CurrentBloodValue;
     }
 
     public void ReduceValue(int value)
@@ -57,9 +83,7 @@ public class UIBlood : MonoBehaviour
 
         _AnimBooldImage.color = _ResuceColor;
         
-        _AnimBloodSlider.DOValue(targetValue, _Duration);
-
-        _CurrentBloodValue = targetValue;
+        _AnimBloodSlider.DOValue(targetValue, _Duration);      
     }
     
     public void IncreaseValue(int value)
@@ -73,5 +97,10 @@ public class UIBlood : MonoBehaviour
         _AnimBooldImage.color = _IncreaseColor;
         
         _RealBloodSlider.DOValue(targetValue, _Duration);        
+    }
+
+    private void OnDestroy()
+    {
+        _Disposable.Clear();
     }
 }

@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using Phoenix.Project1.Client;
+using Phoenix.Project1.Common.Battles;
+using Regulus.Remote.Reactive;
 using UniRx;
 using UnityEngine;
 
@@ -17,13 +21,33 @@ namespace Project.Scripts.UI
 
         public int FollowId;
         
+        private CompositeDisposable _Disposables;
+
+        public UIHUD()
+        {            
+            _Disposables = new CompositeDisposable();
+        }
+
         public void Binding(int id, Transform follow)
         {
             _Follow = follow;
 
             FollowId = id;
-            
+
             gameObject.SetActive(true);
+            
+            var actorHpObs =  from battle in NotifierRx.ToObservable().Supply<IBattle>()
+                from actor in battle.Actors.SupplyEvent()
+                from newHp in actor.Hp.ChangeObservable()
+                select new { actor, newHp };
+            
+            actorHpObs.DoOnError(_Error).ObserveOnMainThread()
+                .Subscribe(v => _SetActorHp(v.actor.InstanceId.Value, v.newHp)).AddTo(_Disposables);
+        }
+        
+        public void _Error(Exception exception)
+        {
+            Debug.LogError(exception);   
         }
 
         public void BindingCamera(Camera followCamera)
@@ -33,7 +57,7 @@ namespace Project.Scripts.UI
 
         private void Start()
         {
-            Observable.EveryUpdate().Subscribe(obs => _SetFollow());
+            Observable.EveryUpdate().Subscribe(obs => _SetFollow()).AddTo(_Disposables);
         }
 
         private void _SetFollow()
@@ -46,19 +70,34 @@ namespace Project.Scripts.UI
             transform.position = screenPoint;                                  
         }
 
-        public void SetCurrentBlood(int value)
+        public void _SetActorHp(int id, int hp)
         {
-            _UIBlood.SetCurrentBlood(value);
-        }
+            if (FollowId == id)
+            {                
+                _UIBlood.SetCurrentBlood(hp);
+            }
+        }    
+        
+        public void EffectTrigger(Effect effect)
+        {
+            Debug.Log($"effect {effect.Type}  , hud id{FollowId}");
 
-        public void ReduceBlood(int value)
-        {
-            _UIBlood.ReduceValue(value);
+            if(effect.Actor != FollowId)
+                return;
+            
+            if (effect.Type == EffectType.Heal)
+            {
+                _UIBlood.IncreaseValue(effect.Value);
+            }
+            else
+            {
+                _UIBlood.ReduceValue(effect.Value);
+            }
         }
         
-        public void IncreaseBlood(int value)
+        private void OnDestroy()
         {
-            _UIBlood.IncreaseValue(value);
+            _Disposables.Clear();
         }
     }
 }

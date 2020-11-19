@@ -1,4 +1,4 @@
-using Phoenix.Project1.Common.Battles;
+using UnityEngine;
 
 namespace Phoenix.Project1.Client.Battles
 {
@@ -6,9 +6,17 @@ namespace Phoenix.Project1.Client.Battles
     {
         public int Location;
 
+        public int HP;
+
         public Avatar GetAvatar()
         {
             return GetComponentInChildren<Avatar>();
+        }
+
+        public void SettingHP(int hp)
+        {
+//            Debug.Log($"SettingHP : {ID}, {hp}");
+            HP = hp;
         }
     }
 }

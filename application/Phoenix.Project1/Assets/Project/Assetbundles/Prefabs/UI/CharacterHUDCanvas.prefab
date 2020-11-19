@@ -21,16 +21,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8970193891420324983}
     m_Modifications:
-    - target: {fileID: 8301699180149788271, guid: 12d644fcd3c2b5249a6906c1a31760cb,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8301699180149788271, guid: 12d644fcd3c2b5249a6906c1a31760cb,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8301699181068540197, guid: 12d644fcd3c2b5249a6906c1a31760cb,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -140,21 +130,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: CharacterHUD
-      objectReference: {fileID: 0}
-    - target: {fileID: 8301699181068540202, guid: 12d644fcd3c2b5249a6906c1a31760cb,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8301699181678115581, guid: 12d644fcd3c2b5249a6906c1a31760cb,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8301699181678115581, guid: 12d644fcd3c2b5249a6906c1a31760cb,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 12d644fcd3c2b5249a6906c1a31760cb, type: 3}
