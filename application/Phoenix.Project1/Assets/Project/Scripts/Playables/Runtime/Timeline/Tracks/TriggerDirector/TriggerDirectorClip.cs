@@ -9,7 +9,7 @@
     {        
         private readonly TriggerDirectorData template = new TriggerDirectorData();             
         
-        private TimelineAsset TimelineAsset;
+        public TimelineAsset TimelineAsset;
 
         public ExposedReference<PlayableDirector> Director;
         
@@ -40,7 +40,10 @@
             
             if (clone.Director != null && clone.Director.playableAsset != null)
             {
-                TimelineAsset = clone.Director.playableAsset as TimelineAsset;
+                if (TimelineAsset != null)
+                {
+                    clone.Director.playableAsset = TimelineAsset;
+                }               
             }
             
             return data;
