@@ -611,6 +611,7 @@ MonoBehaviour:
   _JumpYRandomRange: {x: 20, y: 50}
   _Duration: 0.5
   _Text: {fileID: 1866571878}
+  _IsAutoDestroy: 1
 --- !u!1 &1973051786
 GameObject:
   m_ObjectHideFlags: 0
