@@ -14,10 +14,10 @@ namespace Phoenix.Pool
             {
                 if(_Instance == null)
                 {
-                    _Instance = FindObjectOfType<PoolManager>();    
-                    
-                    DontDestroyOnLoad(_Instance);
+                    _Instance = FindObjectOfType<PoolManager>();   
+                    _Instance.Initialize();
                 }
+               
                 return _Instance;
             }
         }
@@ -192,12 +192,15 @@ namespace Phoenix.Pool
         }
 
         public void Dispose()
-        {
-            _CheckNotInitialized();
-
+        {           
             _Dispose(true);
 
             GC.SuppressFinalize(this);
+        }
+
+        private void OnDestroy()
+        {
+            Dispose();
         }
     }
 }

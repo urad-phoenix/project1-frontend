@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using Phoenix.Pool;
 using Phoenix.Project1.Common.Battles;
 using Project.Scripts.UI;
+using UniRx;
 using UnityEngine;
 
 namespace Phoenix.Project1.Client.Battles
@@ -16,10 +18,20 @@ namespace Phoenix.Project1.Client.Battles
 
         private Camera _Camera;
 
+        [SerializeField] 
+        private TextJumpComponent[] _Texts;
+
+        private List<string> _TextKey;
       
         public ActorUIController()
         {
-            _HUDList = new List<UIHUD>();                        
+            _HUDList = new List<UIHUD>();  
+            _TextKey = new List<string>();
+        }
+
+        private void Start()
+        {
+            CreateTexts();
         }
 
         public UIHUD InstantiateHUD(Avatar avatar)
@@ -31,9 +43,54 @@ namespace Phoenix.Project1.Client.Battles
             hud.BindingCamera(_Camera);
             
             _HUDList.Add(hud);
-
+            
             return hud;
-        }                
+        }
+
+        private void CreateTexts()
+        {
+            if (!PoolManager.Instance)
+            {
+                return;
+            }
+
+            foreach (var text in _Texts)
+            {
+                var pool = new ObjectPool(text.name, text.gameObject, this.transform, 5);
+
+                pool.OnAfterSpawn += _TextAfterSpawn;
+
+                _TextKey.Add(text.name);
+                
+                pool.Initialize();
+                
+                pool.Spawn();
+
+                PoolManager.Instance.AddPool(pool);
+            }                        
+        }
+
+        private void _TextAfterSpawn(GameObject go)
+        {
+            var component = go.GetComponent<TextJumpComponent>();
+
+            var obs = component.RegisterCompleteCallback();
+
+            obs.Subscribe(_RecycleText).AddTo(go);
+        }
+
+        private void _RecycleText(GameObject go)
+        {
+            var key = _TextKey.Find(x => go.name.Contains(x));
+
+            if (!PoolManager.Instance.IsContainsPool(key))
+            {
+                Destroy(go);
+                return;
+            }
+            
+            PoolManager.Instance.Recycle(key, go);
+        }
 
         public void SettingCamera(Camera camera)
         {

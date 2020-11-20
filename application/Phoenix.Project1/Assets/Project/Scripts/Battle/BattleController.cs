@@ -30,9 +30,7 @@ namespace Phoenix.Project1.Client.Battles
           
         private string _PlayablePoolName = "BattlePlayablePool";
 
-        private int _PlayablePoolSize = 10;
-
-        private ObjectPool _DirectorPool;
+        private int _PlayablePoolSize = 10;  
 
         private BattleStateMachine _CurrentStateMachine;
 
@@ -96,10 +94,12 @@ namespace Phoenix.Project1.Client.Battles
             var director = playable.AddComponent<PlayableDirector>();
             
             director.playOnAwake = false;
+                        
+            var directorPool = new ObjectPool(_PlayablePoolName, playable, this.transform, _PlayablePoolSize, true);                       
+
+            PoolManager.Instance.AddPool(directorPool);
             
-            _DirectorPool = new ObjectPool(_PlayablePoolName, playable, this.transform, _PlayablePoolSize, true);
-            _DirectorPool.Initialize();
-            _DirectorPool.Spawn();
+            directorPool.Spawn();
         }     
 
         private IObservable<LoadData[]> _SpawnRole(IList<IActor> actors)
@@ -146,7 +146,7 @@ namespace Phoenix.Project1.Client.Battles
 
             avatar.InstanceID = data.Id;
             avatar.Location = data.Location;
-            
+            avatar.Init();
             _Avatars.Add(avatar);           
             
             var hud = _ActorUiController.InstantiateHUD(avatar);
@@ -421,7 +421,7 @@ namespace Phoenix.Project1.Client.Battles
             {
                 var timelineData = avatar.TimelineAssets.First(x => x.Action == actionKey);
             
-                var go = _DirectorPool.Get(true);
+                var go = PoolManager.Instance.GetObject<GameObject>(_PlayablePoolName);               
             
                 var director = go.GetComponent<PlayableDirector>();
 
@@ -442,7 +442,7 @@ namespace Phoenix.Project1.Client.Battles
 
         public void RecyclePlayableDirector(PlayableDirector playableDirector)
         {                       
-            _DirectorPool.Recycle(playableDirector.gameObject, true);
+            PoolManager.Instance.Recycle(_PlayablePoolName, playableDirector.gameObject);
         }
 
         private void _Finished()
@@ -456,6 +456,8 @@ namespace Phoenix.Project1.Client.Battles
             _Machines.Clear();    
             
             _Frame?.Dispose();
+            
+            PoolManager.Instance.RemovePool(_PlayablePoolName);
         }
 
         private void OnDestroy()
