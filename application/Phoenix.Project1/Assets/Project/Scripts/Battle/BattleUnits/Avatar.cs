@@ -4,6 +4,7 @@ using System.Linq;
 using Cinemachine;
 using Phoenix.Pool;
 using Phoenix.Project1.Client.Battles;
+using Phoenix.Project1.Client.Utilities.RxExtensions;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Timeline;
