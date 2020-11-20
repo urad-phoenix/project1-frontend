@@ -37,6 +37,12 @@ namespace Phoenix.Project1.Client.Battles
         static T GetOrAddComponent<T>(GameObject gameObject)
             where T : Component
         {
+            var particle = gameObject.GetComponent<ParticleSystem>();
+
+            var main = particle.main;
+            
+            main.stopAction = ParticleSystemStopAction.Callback;
+            
             var component = gameObject.GetComponent<T>();
             if (component == null)
             {

@@ -441,7 +441,7 @@ namespace Phoenix.Project1.Client.Battles
 
         public void RecyclePlayableDirector(PlayableDirector playableDirector)
         {                       
-            _DirectorPool.Recycle(playableDirector.gameObject, false);
+            _DirectorPool.Recycle(playableDirector.gameObject, true);
         }
 
         private void _Finished()
