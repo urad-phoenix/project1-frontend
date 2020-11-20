@@ -21,8 +21,7 @@ namespace Phoenix.Project1.Client.Battles
             : base(false)
         {
 
-            _FrameEffect = new FrameEffect();
-            
+            _FrameEffect = new FrameEffect();            
             _FrameEffect.Effect = value;
             _FrameEffect.Frame = frame;
             _FrameEffect.CurrentFrame = currentFrame;
@@ -35,14 +34,11 @@ namespace Phoenix.Project1.Client.Battles
 
         class EffectTriggerObserver : UniRx.Operators.OperatorObserverBase<Effect, Effect>
         {
-            readonly object gate = new object();          
-            //private FrameSubject _FrameSubject;     
+            readonly object gate = new object();
             readonly CompositeDisposable _CancellationToken = new CompositeDisposable();
             bool isCompleted;
             
-            private Subject<int> _Frame;
-
-            private int _CurrentFrame;
+            private Subject<int> _Frame;        
             
             private FrameEffect _FrameEffect;
             
@@ -50,9 +46,7 @@ namespace Phoenix.Project1.Client.Battles
             {                
                 _FrameEffect = effect;
                
-                isCompleted = false;
-
-                //_FrameSubject = new FrameSubject(_FrameEffect.CurrentFrame);
+                isCompleted = false;             
             }
 
             private void Update(int frame)
@@ -60,37 +54,19 @@ namespace Phoenix.Project1.Client.Battles
                 if(isCompleted)
                     return;
 
-                _CurrentFrame += frame;
-                if (_CurrentFrame >= _FrameEffect.Frame)
-                {                                                         
-                    observer.OnNext(_FrameEffect.Effect);    
-                    
+                if (frame >= _FrameEffect.Frame)
+                {                  
+//                    Debug.Log($"trigger effect currentFrame {frame}, target frame {_FrameEffect.Frame}");
+                    observer.OnNext(_FrameEffect.Effect);                        
                     OnCompleted();
                 }
             }
-
-//            private bool _IsTrigger()
-//            {
-//                return _FrameSubject.Frame >= _FrameEffect.Frame;
-//            }
-
-//            private void _CheckAndTrigger()
-//            {
-//                if (_IsTrigger() && !isCompleted)
-//                {
-//                    observer.OnNext(_FrameEffect.Effect);
-//                    
-//                    observer.OnCompleted();
-//                }
-//            }
-//
+           
             public IDisposable Run()
             {               
-                _Frame = new Subject<int>();
+                _Frame = new Subject<int>();               
                 
-                _CurrentFrame = _FrameEffect.CurrentFrame;
-                
-                var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), _FrameEffect.Frame);
+                var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), _FrameEffect.CurrentFrame);
 
                 obs.Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
 

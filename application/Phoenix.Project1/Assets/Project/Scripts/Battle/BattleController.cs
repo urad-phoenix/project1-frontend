@@ -174,11 +174,11 @@ namespace Phoenix.Project1.Client.Battles
             
             loadObs.DoOnError(_Error).Subscribe(_SendReady).AddTo(_Disposables);
                         
-            actorPerformObs.DoOnError(_Error).Subscribe(_ActorPerform).AddTo(_Disposables);
+            actorPerformObs.DoOnError(_Error).ObserveOnMainThread().Subscribe(_ActorPerform).AddTo(_Disposables);
             
-            enterenceObs.DoOnError(_Error).Subscribe(_BattleEntrance).AddTo(_Disposables);
+            enterenceObs.DoOnError(_Error).ObserveOnMainThread().Subscribe(_BattleEntrance).AddTo(_Disposables);
             
-            finishObs.DoOnError(_Error).Subscribe(_BattleFinished).AddTo(_Disposables);
+            finishObs.DoOnError(_Error).ObserveOnMainThread().Subscribe(_BattleFinished).AddTo(_Disposables);
         }
 
         private void _SendReady(LoadData[] handles)
@@ -277,7 +277,8 @@ namespace Phoenix.Project1.Client.Battles
                     Location = GetLocatorIndex(obj.ActorPerform.StarringId)
                 }, this)));
                         
-            IObservable<Effect[]> triggerSubject = from effects in _EffectTriggerCombine(obj.ActorPerform.TargetEffects, obj.Frames)                
+            Debug.Log($"action frame {obj.Frames}, client frame {_FrameNumber}");
+            IObservable<Effect[]> triggerSubject = from effects in _EffectTriggerCombine(obj.ActorPerform.TargetEffects, _FrameNumber)//obj.Frames)                
                                                     select effects;
 
             triggerSubject.ObserveOnMainThread().Subscribe(_EffectFinished).AddTo(_Disposables);

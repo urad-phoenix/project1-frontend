@@ -11,14 +11,12 @@ namespace Phoenix.Project1.Client.Battles
     public class FrameSubject : OperatorObservableBase<int>
     {
         readonly IObservable<int> source;
-        readonly int frameCount;
-        readonly FrameCountType frameCountType;
+        readonly int _Frame;
 
-        public FrameSubject(IObservable<int> source, int frameCount, FrameCountType frameCountType) : base(source.IsRequiredSubscribeOnCurrentThread())
+        public FrameSubject(IObservable<int> source, int frame) : base(source.IsRequiredSubscribeOnCurrentThread())
         {
             this.source = source;
-            this.frameCount = frameCount;
-            this.frameCountType = frameCountType;
+            this._Frame = frame;
         }
 
         protected override IDisposable SubscribeCore(IObserver<int> observer, IDisposable cancel)
@@ -33,11 +31,22 @@ namespace Phoenix.Project1.Client.Battles
             int latestValue = default(int);
             bool isUpdated = false;
             bool isCompleted = false;
+            
+            readonly TimePusher _Pusher;
+            
+            readonly TimeCounter _Counter;
+
+            private int _Frame;
+            
             SingleAssignmentDisposable sourceSubscription;
 
             public Frame(FrameSubject parent, IObserver<int> observer, IDisposable cancel) : base(observer, cancel)
             {
+                _Pusher = new TimePusher();
+                _Counter = new TimeCounter();
                 this.parent = parent;
+
+                _Frame = parent._Frame;
             }
 
             public IDisposable Run()
@@ -50,6 +59,15 @@ namespace Phoenix.Project1.Client.Battles
 
                 return StableCompositeDisposable.Create(sourceSubscription, scheduling);
             }
+            
+            int Advance()
+            {
+                var frames = _Pusher.Advance(_Counter.Second);
+                _Counter.Reset();
+                _Frame += frames;
+            
+                return _Frame;
+            }
 
             public override void OnNext(int value)
             {
@@ -59,9 +77,10 @@ namespace Phoenix.Project1.Client.Battles
                     isUpdated = true;
                     
                     if (isUpdated)
-                    {                        
+                    {
+                        var frame = Advance();
                         isUpdated = false;
-                        observer.OnNext(value);
+                        observer.OnNext(frame);
                     }
 
                     if (isCompleted)
@@ -151,7 +170,7 @@ namespace Phoenix.Project1.Client.Battles
     {
         public static IObservable<int> OnFrameUpdateAsObserver(this IObservable<int> source, int frame)
         {
-            return new FrameSubject(source, frame, FrameCountType.FixedUpdate);
+            return new FrameSubject(source, frame);
         }
     }
 }
