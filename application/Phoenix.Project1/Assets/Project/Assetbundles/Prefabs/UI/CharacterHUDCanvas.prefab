@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HUDCanvas: {fileID: 8970193891420324970}
   HudSource: {fileID: 1132824338}
+  _Texts:
+  - Key: Damage
+    TextJump: {fileID: 6588038554399631217, guid: c99144c3bf8d0c1428970b9eaf59827b,
+      type: 3}
 --- !u!1001 &874003234
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -37,6 +37,10 @@ namespace Phoenix.Project1.Client.Battles
         private List<Avatar> _Avatars;
 
         private Queue<BattleStateMachine> _Machines;
+                                
+        private Subject<int> _Frame;
+        
+        private int _FrameNumber;
         
         [SerializeField]
         private CharacterLocator[] _Locators;
@@ -77,7 +81,9 @@ namespace Phoenix.Project1.Client.Battles
         {
             _ActorUiController = FindObjectOfType<ActorUIController>();
 
-            _ActorUiController.SettingCamera(_Camera);          
+            _ActorUiController.SettingCamera(_Camera); 
+            
+            _ActorUiController.CreateTexts();
             
             var battleObs = from battle in NotifierRx.ToObservable().Supply<IBattle>()                
                             select battle;
@@ -147,13 +153,13 @@ namespace Phoenix.Project1.Client.Battles
             avatar.InstanceID = data.Id;
             avatar.Location = data.Location;
             avatar.Init();
-            _Avatars.Add(avatar);           
+            _Avatars.Add(avatar);
             
             var hud = _ActorUiController.InstantiateHUD(avatar);
 
             Observable.FromEvent<Action<Effect>, Effect>(h => value => h(value),
                     h => _EffectTriggerCallback += hud.EffectTrigger, h => _EffectTriggerCallback -= h)
-                .Subscribe().AddTo(_Disposables);
+                .Subscribe().AddTo(_Disposables);                                   
             
             return Observable.Return(true);
         }
@@ -190,10 +196,6 @@ namespace Phoenix.Project1.Client.Battles
             
             readyObs.Subscribe(r => _Ready(r)).AddTo(_Disposables);
         }
-                
-        private Subject<int> _Frame;
-        
-        private int _FrameNumber;
       
         private void _Ready(IReady ready)
         {
@@ -294,8 +296,10 @@ namespace Phoenix.Project1.Client.Battles
 
         private IObservable<bool> _TriggerEffect(Effect data)
         {
-            Debug.Log($"Trigger Effect {data.Actor},  {data.Type} value {data.Value}");
-
+            Debug.Log($"Trigger Effect {data.Actor},  {data.Type} value {data.Value}");         
+            
+            _ActorUiController.ShowJumpText(data.Type, data.Value.ToString(), GetAvatarByID(data.Actor), IsAttackerByID(data.Actor));
+            
             _EffectTriggerCallback?.Invoke(data);
             
             return Observable.Return(true);
@@ -317,7 +321,7 @@ namespace Phoenix.Project1.Client.Battles
                 from observable in _TriggerEffect(handle)  
                 where observable
                 select handle;          
-            //effectObs.Subscribe(effect => _TriggerEffect(effect)).AddTo(_Disposables);
+           
             return Observable.WhenAll(effectObs);
        }
 
@@ -382,6 +386,17 @@ namespace Phoenix.Project1.Client.Battles
         public CharacterLocator GetLocator(int index)
         {
             return _Locators.First(x => x.Index == index);
+        }
+
+        public bool IsAttackerByID(int id)
+        {
+            var locatorIndex = GetLocatorIndex(id);
+            
+            var isAttacker = locatorIndex <= 6;
+            
+            Debug.Log($"index  {locatorIndex}, isAttacker {isAttacker}");
+            
+            return isAttacker;
         }
 
         public Avatar GetAvatarByID(int id)

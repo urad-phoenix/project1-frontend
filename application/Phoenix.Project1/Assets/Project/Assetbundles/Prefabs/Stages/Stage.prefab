@@ -384,7 +384,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3352170633408197232}
   - component: {fileID: 6369175724252875343}
-  - component: {fileID: 1684667510}
   m_Layer: 0
   m_Name: Role
   m_TagString: Untagged
@@ -420,20 +419,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Location: 0
---- !u!114 &1684667510
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 220165254818114870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf8d59abf7e74a8f906dbdd358a9866c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ID: 0
-  Location: 0
+  HP: 0
 --- !u!1 &554934350832197509
 GameObject:
   m_ObjectHideFlags: 0
@@ -479,6 +465,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Location: 0
+  HP: 0
 --- !u!1 &714732412606297876
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,6 +511,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Location: 0
+  HP: 0
 --- !u!1 &1002321261370085408
 GameObject:
   m_ObjectHideFlags: 0
@@ -994,6 +982,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Location: 0
+  HP: 0
 --- !u!1 &3324634035816252658
 GameObject:
   m_ObjectHideFlags: 0
@@ -1189,6 +1178,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Location: 0
+  HP: 0
 --- !u!1 &4340547380981525850
 GameObject:
   m_ObjectHideFlags: 0
@@ -1284,6 +1274,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Location: 0
+  HP: 0
 --- !u!1 &6116716675916315096
 GameObject:
   m_ObjectHideFlags: 0
@@ -1329,6 +1320,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Location: 0
+  HP: 0
 --- !u!1 &6136871387369495624
 GameObject:
   m_ObjectHideFlags: 0
@@ -1374,6 +1366,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Location: 0
+  HP: 0
 --- !u!1 &6196087397056320125
 GameObject:
   m_ObjectHideFlags: 0
@@ -1419,6 +1412,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Location: 0
+  HP: 0
 --- !u!1 &6508116947101993395
 GameObject:
   m_ObjectHideFlags: 0
@@ -1581,6 +1575,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Location: 0
+  HP: 0
 --- !u!1 &7677125264299392584
 GameObject:
   m_ObjectHideFlags: 0
@@ -1626,6 +1621,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Location: 0
+  HP: 0
 --- !u!1 &8032282144647758436
 GameObject:
   m_ObjectHideFlags: 0
@@ -1752,6 +1748,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   Location: 0
+  HP: 0
 --- !u!1 &8417715026007652385
 GameObject:
   m_ObjectHideFlags: 0

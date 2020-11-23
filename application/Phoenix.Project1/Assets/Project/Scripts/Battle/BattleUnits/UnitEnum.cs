@@ -6,6 +6,7 @@ namespace Phoenix.Project1.Client.Battles
         Location,
         LeftHand,
         RightHand,
+        UIText,
         Max
     }
 

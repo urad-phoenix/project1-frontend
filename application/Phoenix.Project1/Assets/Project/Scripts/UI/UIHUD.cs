@@ -5,6 +5,7 @@ using Phoenix.Project1.Common.Battles;
 using Regulus.Remote.Reactive;
 using UniRx;
 using UnityEngine;
+using Action = Phoenix.Project1.Common.Battles.Action;
 
 namespace Project.Scripts.UI
 {
@@ -98,6 +99,6 @@ namespace Project.Scripts.UI
         private void OnDestroy()
         {
             _Disposables.Clear();
-        }
-    }
+        }               
+    }  
 }

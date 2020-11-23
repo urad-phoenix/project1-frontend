@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Phoenix.Pool;
 using Phoenix.Project1.Common.Battles;
@@ -9,6 +10,14 @@ namespace Phoenix.Project1.Client.Battles
 {
     public class ActorUIController : MonoBehaviour
     {        
+        [Serializable]
+        internal class TextData
+        {
+            public EffectType Key;
+
+            public TextJumpComponent TextJump;
+        }
+        
         public Canvas HUDCanvas;
 
         [SerializeField]
@@ -19,7 +28,7 @@ namespace Phoenix.Project1.Client.Battles
         private Camera _Camera;
 
         [SerializeField] 
-        private TextJumpComponent[] _Texts;
+        private TextData[] _Texts;
 
         private List<string> _TextKey;
       
@@ -27,11 +36,6 @@ namespace Phoenix.Project1.Client.Battles
         {
             _HUDList = new List<UIHUD>();  
             _TextKey = new List<string>();
-        }
-
-        private void Start()
-        {
-            CreateTexts();
         }
 
         public UIHUD InstantiateHUD(Avatar avatar)
@@ -47,7 +51,7 @@ namespace Phoenix.Project1.Client.Battles
             return hud;
         }
 
-        private void CreateTexts()
+        public void CreateTexts()
         {
             if (!PoolManager.Instance)
             {
@@ -56,17 +60,21 @@ namespace Phoenix.Project1.Client.Battles
 
             foreach (var text in _Texts)
             {
-                var pool = new ObjectPool(text.name, text.gameObject, this.transform, 5);
+                var key = text.Key.ToString();
+                
+                text.TextJump.gameObject.name = key;
+                
+                Debug.Log($"text key {key}");
+                
+                var pool = new ObjectPool(key, text.TextJump.gameObject, this.transform, 5);
 
                 pool.OnAfterSpawn += _TextAfterSpawn;
 
-                _TextKey.Add(text.name);
-                
-                pool.Initialize();
-                
-                pool.Spawn();
+                _TextKey.Add(key);
 
                 PoolManager.Instance.AddPool(pool);
+                
+                pool.Spawn();
             }                        
         }
 
@@ -80,7 +88,9 @@ namespace Phoenix.Project1.Client.Battles
         }
 
         private void _RecycleText(GameObject go)
-        {
+        {            
+            Debug.Log($"_RecycleText {go.name}");
+            
             var key = _TextKey.Find(x => go.name.Contains(x));
 
             if (!PoolManager.Instance.IsContainsPool(key))
@@ -101,7 +111,38 @@ namespace Phoenix.Project1.Client.Battles
                 uihud.BindingCamera(camera);
             }
         }
-      
+
+        public void ShowJumpText(EffectType type, string text, Avatar avatar, bool isAttacker)
+        {         
+            var textObj = PoolManager.Instance.GetObject<GameObject>(type.ToString());
+
+            textObj.transform.position = _GetPosition(_Camera, avatar.GetDummy(DummyType.UIText.ToString()));
+            
+            var component = textObj.GetComponent<TextJumpComponent>();
+
+            component.InvertEnd = isAttacker;
+            
+            var obs = from jump in component.SetTextJumpAsObservable(text)
+                select jump;
+
+            obs.Subscribe(unit => _Compelete()).AddTo(gameObject);
+        }  
+        
+        private Vector3 _GetPosition(Camera camera, Transform follow)
+        {
+           if(!camera || !follow)
+               return Vector3.zero;
+            
+            var screenPoint = RectTransformUtility.WorldToScreenPoint(camera, follow.position);
+            
+            return screenPoint;                                  
+        }
+
+        private void _Compelete()
+        {
+            Debug.Log($"_Compelete");
+        }
+
 //        public void SetCurrentBlood(int id, int value)
 //        {
 //            Debug.Log($"SetCurrentBlood : {id}, {value}");

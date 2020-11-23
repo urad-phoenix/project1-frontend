@@ -2458,6 +2458,8 @@ MonoBehaviour:
     Dummy: {fileID: 3263636595593084947}
   - DummyType: 1
     Dummy: {fileID: 3263636595593084947}
+  - DummyType: 4
+    Dummy: {fileID: 3263636595593084947}
   VfxSources:
   - Key: attack
     Source: {fileID: 1226274352160944, guid: b7ff43f227be6bc40978b86098124e27, type: 3}
