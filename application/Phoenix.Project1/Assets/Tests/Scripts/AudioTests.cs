@@ -15,7 +15,10 @@ namespace Tests
         public AudioClip[] TestBackground;
 
         public Slider MusicVolume;
+        
         public Slider SoundVolume;
+
+        private int _Index;
 
         private void Start()
         {
@@ -49,8 +52,12 @@ namespace Tests
         }
 
         public void TestPlayMusic()
-        {
-            AudioManager.Instance.PlayMusic(TestBackground[Random.Range(0, TestBackground.Length)], true, 0.5f, 1.0f);
+        {         
+            AudioManager.Instance.PlayMusic(TestBackground[_Index], true, 0.5f, 1.0f);
+            
+            _Index = (_Index + 1) % TestBackground.Length;
+                     
+            Debug.Log(_Index);
         }
     }
 }
