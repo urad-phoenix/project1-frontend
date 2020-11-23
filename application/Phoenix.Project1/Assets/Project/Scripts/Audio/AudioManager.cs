@@ -254,16 +254,10 @@ namespace Phoenix.Project1.Client.Audio
         {
             _MusicVolume = volume;
 
-            if(_AudioSources != null)
-            {
-                for(int i = 0; i < _AudioSources.Count; ++i)
-                {
-                    if(_AudioSources[i] == null)
-                        continue;
-
-                    _AudioSources[i].volume = volume;
-                }
-            }
+            if(_MusicSource == null)
+                return;
+            
+            _MusicSource.volume = _MusicVolume;
         }       
 
         public void SetSoundVolume(float volume)
@@ -300,19 +294,22 @@ namespace Phoenix.Project1.Client.Audio
     }
 
     public static class AudioRx
-    {
+    {                
         public static IObservable<AudioSource> PlayAsObserver(this AudioSource audio)
         {
             audio.Play();
 
-            return Observable.Create<AudioSource>(ob => 
+            return Observable.Create<AudioSource>(ob =>
             {
-                if(!audio.isPlaying)
+                Observable.EveryUpdate().Subscribe(u =>
                 {
-                    ob.OnNext(audio);
-                    ob.OnCompleted();
-                }
-
+                    if (!audio.isPlaying)
+                    {
+                        ob.OnNext(audio);
+                        ob.OnCompleted();                        
+                    }                    
+                }).AddTo(audio);
+                
                 return Disposable.Empty;
             });
         }        
