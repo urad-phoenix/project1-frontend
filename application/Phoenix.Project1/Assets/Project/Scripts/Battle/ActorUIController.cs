@@ -89,7 +89,7 @@ namespace Phoenix.Project1.Client.Battles
 
         private void _RecycleText(GameObject go)
         {            
-            Debug.Log($"_RecycleText {go.name}");
+            //Debug.Log($"_RecycleText {go.name}");
             
             var key = _TextKey.Find(x => go.name.Contains(x));
 
@@ -125,7 +125,8 @@ namespace Phoenix.Project1.Client.Battles
             var obs = from jump in component.SetTextJumpAsObservable(text)
                 select jump;
 
-            obs.Subscribe(unit => _Compelete()).AddTo(gameObject);
+            obs.Subscribe().AddTo(gameObject);
+            //obs.Subscribe(unit => _Compelete()).AddTo(gameObject);
         }  
         
         private Vector3 _GetPosition(Camera camera, Transform follow)
@@ -138,10 +139,10 @@ namespace Phoenix.Project1.Client.Battles
             return screenPoint;                                  
         }
 
-        private void _Compelete()
-        {
-            Debug.Log($"_Compelete");
-        }
+//        private void _Compelete()
+//        {
+//            //Debug.Log($"_Compelete");
+//        }
 
 //        public void SetCurrentBlood(int id, int value)
 //        {

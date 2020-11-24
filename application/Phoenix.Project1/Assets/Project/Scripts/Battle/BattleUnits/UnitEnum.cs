@@ -19,5 +19,12 @@ namespace Phoenix.Project1.Client.Battles
         Back,
         Hit,        
         Max
-    } 
+    }
+    
+    public enum CampType
+    {
+        Attacker,
+        Defender
+    }
+
 }

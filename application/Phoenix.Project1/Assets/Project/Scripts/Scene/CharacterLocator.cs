@@ -1,5 +1,6 @@
 using Phoenix.Project1.Client.Battles;
 using UnityEngine;
+using CampType = Phoenix.Project1.Client.Battles.CampType;
 
 namespace TP.Scene.Locators
 {
@@ -10,6 +11,8 @@ namespace TP.Scene.Locators
         private int _InstanceID;
         
         private Role _Role;
+        
+        public CampType CampType;
 
         private void Start()
         {            

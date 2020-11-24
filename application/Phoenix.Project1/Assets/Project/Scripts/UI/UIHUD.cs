@@ -81,7 +81,7 @@ namespace Project.Scripts.UI
         
         public void EffectTrigger(Effect effect)
         {
-            Debug.Log($"effect {effect.Type}  , hud id{FollowId}");
+            //Debug.Log($"effect {effect.Type}  , hud id{FollowId}");
 
             if(effect.Actor != FollowId)
                 return;

@@ -24,7 +24,7 @@ namespace TP.Scene.Locators.Editor
                 font < locator.FontMinSize ? locator.FontMinSize : font;       
             
             var labelPos = locator.transform.position + Vector3.up * locator.LabelShownPos;
-            
+            locator.CampType = camp.CampType;
             UnityEditor.Handles.Label(labelPos, "Camp: " + (camp ? camp.CampType.ToString() : "have not in camp") + " Index: " + locator.Index, new GUIStyle(){fontSize = font});
             locator.Color = camp ? camp.Color : locator.Color;
         }

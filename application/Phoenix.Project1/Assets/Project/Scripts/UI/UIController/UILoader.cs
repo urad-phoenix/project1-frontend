@@ -56,7 +56,7 @@ namespace Phoenix.Project1.Client.UI
             
             obs.Subscribe(ob =>
                 {
-                    Debug.Log("loaded");
+                    Debug.Log($"UI loaded ui count{ob.Length}");
                     
                     LoadCompletedEvent?.Invoke();
                 });
@@ -120,7 +120,7 @@ namespace Phoenix.Project1.Client.UI
         {
             var percent = (data.Handle.PercentComplete + _UIs.Length) / count;
             
-            UnityEngine.Debug.Log($"ui {data.Key} ui load : {percent}% ");
+           // UnityEngine.Debug.Log($"ui {data.Key} ui load : {percent}% ");
 
             if (!data.Handle.IsDone)
             {

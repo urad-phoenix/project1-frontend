@@ -63,9 +63,13 @@ namespace Phoenix.Project1.Client.Audio
 
             var audioObject = new GameObject("AutioSource");
                                   
-            _ObjectPool = PoolManager.Instance.AddPool(new ObjectPool(_PoolName, audioObject, this.transform, 10));
+            _ObjectPool = new ObjectPool(_PoolName, audioObject, this.transform, 10);
 
+            _ObjectPool.Initialize();
+            
             _ObjectPool.OnAfterSpawn += _AfterSpawn;
+            
+            _ObjectPool.Spawn();
 
             _AudioSources = new List<AudioSource>();
 
@@ -175,9 +179,11 @@ namespace Phoenix.Project1.Client.Audio
                 Debug.LogWarning("[PlaySoundFx] sound clip not assigned");
                 return;
             }
-
-            var obj = PoolManager.Instance.GetObject<GameObject>(_PoolName);            
+            
+            var obj = _ObjectPool.Get(true);
+            
             var audio = obj.GetComponent<AudioSource>();
+            
             audio.volume = _SoundVolume;
             audio.playOnAwake = false;
             audio.clip = clip;
@@ -190,8 +196,8 @@ namespace Phoenix.Project1.Client.Audio
             {
                 _AudioSources.Remove(ob);
 
-                PoolManager.Instance.Recycle<GameObject>(_PoolName, ob.gameObject);
-            });
+                _ObjectPool.Recycle(obj.gameObject, true);                
+            }).AddTo(gameObject);;
         }
 
         public void PlaySoundLoop(AudioClip clip)
@@ -201,8 +207,8 @@ namespace Phoenix.Project1.Client.Audio
                 Debug.LogWarning("[PlaySoundLoop] sound clip not assigned");
                 return;
             }
-
-            var obj = PoolManager.Instance.GetObject<GameObject>(_PoolName);
+            
+            var obj = _ObjectPool.Get(true);
 
             var audio = obj.GetComponent<AudioSource>();
 
@@ -218,8 +224,9 @@ namespace Phoenix.Project1.Client.Audio
             {
                 _AudioSources.Remove(ob);
 
-                PoolManager.Instance.Recycle<GameObject>(_PoolName, ob.gameObject);
-            });                       
+                _ObjectPool.Recycle(obj.gameObject, true);
+                
+            }).AddTo(gameObject);;                       
         }
 
         public void PlayVoise(AudioClip clip)
@@ -230,7 +237,7 @@ namespace Phoenix.Project1.Client.Audio
                 return;
             }
 
-            var obj = PoolManager.Instance.GetObject<GameObject>(_PoolName);
+            var obj = _ObjectPool.Get(true);
 
             var audio = obj.GetComponent<AudioSource>();
 
@@ -246,8 +253,8 @@ namespace Phoenix.Project1.Client.Audio
             {
                 _VoiseSources.Remove(ob);
 
-                PoolManager.Instance.Recycle<GameObject>(_PoolName, ob.gameObject);
-            });
+                _ObjectPool.Recycle(obj.gameObject, true);
+            }).AddTo(gameObject);
         }
 
         public void SetMusicVolume(float volume)
@@ -258,7 +265,12 @@ namespace Phoenix.Project1.Client.Audio
                 return;
             
             _MusicSource.volume = _MusicVolume;
-        }       
+        }
+
+        public float GetSoundVolume()
+        {
+            return _SoundVolume;
+        }
 
         public void SetSoundVolume(float volume)
         {
@@ -275,6 +287,8 @@ namespace Phoenix.Project1.Client.Audio
                 }
             }
         }
+        
+        
         public void SetVoiseVolume(float volume)
         {
             _VoiseVolume = volume;
@@ -290,7 +304,30 @@ namespace Phoenix.Project1.Client.Audio
                 }
             }
         }
-        
+
+//        public AudioSource GetSoundAudioSource()
+//        {
+//            var obj = _ObjectPool.Get(true);
+//
+//            var audio = obj.GetComponent<AudioSource>();
+//
+//            audio.playOnAwake = false;
+//            
+//            audio.volume = _VoiseVolume;
+//
+//            _AudioSources.Add(audio);
+//
+//            var observable = audio.PlayAsObserver();
+//
+//            observable.Subscribe(ob =>
+//            {
+//                _AudioSources.Remove(ob);
+//
+//                _ObjectPool.Recycle(obj.gameObject, true);
+//            }).AddTo(gameObject);
+//
+//            return audio;
+//        }                
     }
 
     public static class AudioRx

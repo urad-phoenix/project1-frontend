@@ -258,7 +258,7 @@ namespace Phoenix.Project1.Client.Battles
 
         private void _ActorPerform(ActorPerformTimestamp obj)
         {                     
-            Debug.Log($"_ActorPerform location : {obj.ActorPerform.Location}");         
+           //Debug.Log($"_ActorPerform location : {obj.ActorPerform.Location}");         
             
             var stateMachine = new BattleStateMachine();
             stateMachine.
@@ -279,7 +279,7 @@ namespace Phoenix.Project1.Client.Battles
                     Location = GetLocatorIndex(obj.ActorPerform.StarringId)
                 }, this)));
                         
-            Debug.Log($"action frame {obj.Frames}, client frame {_FrameNumber}");
+            //Debug.Log($"action frame {obj.Frames}, client frame {_FrameNumber}");
             IObservable<Effect[]> triggerSubject = from effects in _EffectTriggerCombine(obj.ActorPerform.TargetEffects, _FrameNumber)//obj.Frames)                
                                                     select effects;
 
@@ -296,7 +296,7 @@ namespace Phoenix.Project1.Client.Battles
 
         private IObservable<bool> _TriggerEffect(Effect data)
         {
-            Debug.Log($"Trigger Effect {data.Actor},  {data.Type} value {data.Value}");         
+            //Debug.Log($"Trigger Effect {data.Actor},  {data.Type} value {data.Value}");         
             
             _ActorUiController.ShowJumpText(data.Type, data.Value.ToString(), GetAvatarByID(data.Actor), IsAttackerByID(data.Actor));
             
@@ -387,16 +387,17 @@ namespace Phoenix.Project1.Client.Battles
         {
             return _Locators.First(x => x.Index == index);
         }
+        
+        public CharacterLocator GetLocatorByID(int id)
+        {
+            return _Locators.First(x => x.GetInstanceID() == id);
+        }
 
         public bool IsAttackerByID(int id)
         {
-            var locatorIndex = GetLocatorIndex(id);
+            var locator = GetLocatorByID(id);           
             
-            var isAttacker = locatorIndex <= 6;
-            
-            Debug.Log($"index  {locatorIndex}, isAttacker {isAttacker}");
-            
-            return isAttacker;
+            return locator.CampType == CampType.Attacker ? true : false;;
         }
 
         public Avatar GetAvatarByID(int id)

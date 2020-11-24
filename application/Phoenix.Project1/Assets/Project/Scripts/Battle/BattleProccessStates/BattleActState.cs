@@ -1,6 +1,7 @@
 using System.Linq;
 using Phoenix.Playables;
 using UniRx;
+using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
@@ -30,9 +31,11 @@ namespace Phoenix.Project1.Client.Battles
                 _Finished(null);
                 return;
             }
-                                   
+                                              
             var director = _Controller.GetPlayableDirector(_ActData.ActKey, _ActData.ActorId);
 
+            Debug.Log($"act key {_ActData.ActKey}");
+            
             if (director == null)
             {
                 _Finished(null);
@@ -60,6 +63,12 @@ namespace Phoenix.Project1.Client.Battles
                     var cameraBinding = new CameraBinding();
                     
                     cameraBinding.Bind(director, _ActData, track, _Controller);
+                }
+                else if(track is AudioTrack)
+                {
+                    var audioBinding = new AudioBinding();
+                    
+                    audioBinding.Bind(director, _ActData, track, _Controller);
                 }
             }                  
             
