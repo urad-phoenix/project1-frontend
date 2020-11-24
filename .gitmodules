@@ -1,6 +1,3 @@
 [submodule "backend"]
 	path = backend
 	url = https://github.com/urad-phoenix/project1-backend.git
-[submodule "project1-configs"]
-	path = project1-configs
-	url = https://github.com/urad-phoenix/project1-configs.git
