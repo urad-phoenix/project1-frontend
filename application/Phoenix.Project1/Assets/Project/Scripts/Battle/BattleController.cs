@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Cinemachine;
 using Phoenix.Playables;
 using Phoenix.Pool;
 using Phoenix.Project1.Addressable;
 using Phoenix.Project1.Common.Battles;
+using Project.Scripts.UI;
 using Regulus.Remote.Reactive;
 using TP.Scene.Locators;
 using UniRx;
@@ -13,6 +15,8 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Playables;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.UIElements;
+using Debug = UnityEngine.Debug;
 
 namespace Phoenix.Project1.Client.Battles
 {
@@ -26,15 +30,17 @@ namespace Phoenix.Project1.Client.Battles
           
         private string _PlayablePoolName = "BattlePlayablePool";
 
-        private int _PlayablePoolSize = 10;
-
-        private ObjectPool _DirectorPool;
+        private int _PlayablePoolSize = 10;  
 
         private BattleStateMachine _CurrentStateMachine;
 
         private List<Avatar> _Avatars;
 
         private Queue<BattleStateMachine> _Machines;
+                                
+        private Subject<int> _Frame;
+        
+        private int _FrameNumber;
         
         [SerializeField]
         private CharacterLocator[] _Locators;
@@ -43,7 +49,11 @@ namespace Phoenix.Project1.Client.Battles
         private Camera _Camera;
 
         [SerializeField] 
-        private CameraGroup _StageCameraGroup;       
+        private CameraGroup _StageCameraGroup;
+
+        private ActorUIController _ActorUiController;
+
+        private Action<Effect> _EffectTriggerCallback;
         
         public class LoadData
         {
@@ -64,18 +74,24 @@ namespace Phoenix.Project1.Client.Battles
             
             _SendRequestDisposables = new CompositeDisposable();
             
-            _Avatars = new List<Avatar>();
+            _Avatars = new List<Avatar>();                       
         }
 
         void Start()
         {
+            _ActorUiController = FindObjectOfType<ActorUIController>();
+
+            _ActorUiController.SettingCamera(_Camera); 
+            
+            _ActorUiController.CreateTexts();
+            
             var battleObs = from battle in NotifierRx.ToObservable().Supply<IBattle>()                
                             select battle;
                                     
             battleObs.Subscribe(_Battle).AddTo(_Disposables);
 
             _SetPlayablePool();
-        }
+        }     
 
         private void _SetPlayablePool()
         {
@@ -84,10 +100,12 @@ namespace Phoenix.Project1.Client.Battles
             var director = playable.AddComponent<PlayableDirector>();
             
             director.playOnAwake = false;
+                        
+            var directorPool = new ObjectPool(_PlayablePoolName, playable, this.transform, _PlayablePoolSize, true);                       
+
+            PoolManager.Instance.AddPool(directorPool);
             
-            _DirectorPool = new ObjectPool(_PlayablePoolName, playable, this.transform, _PlayablePoolSize, true);
-            _DirectorPool.Initialize();
-            _DirectorPool.Spawn();
+            directorPool.Spawn();
         }     
 
         private IObservable<LoadData[]> _SpawnRole(IList<IActor> actors)
@@ -134,7 +152,14 @@ namespace Phoenix.Project1.Client.Battles
 
             avatar.InstanceID = data.Id;
             avatar.Location = data.Location;
+            avatar.Init();
             _Avatars.Add(avatar);
+            
+            var hud = _ActorUiController.InstantiateHUD(avatar);
+
+            Observable.FromEvent<Action<Effect>, Effect>(h => value => h(value),
+                    h => _EffectTriggerCallback += hud.EffectTrigger, h => _EffectTriggerCallback -= h)
+                .Subscribe().AddTo(_Disposables);                                   
             
             return Observable.Return(true);
         }
@@ -151,35 +176,55 @@ namespace Phoenix.Project1.Client.Battles
             var loadObs = from load in actors.Buffer(battle.ActorCount.Value)
                 from spawn in _SpawnRole(load)
                 select spawn;
+                       
             
-            loadObs.Subscribe(_Ready).AddTo(_Disposables);
+            loadObs.DoOnError(_Error).Subscribe(_SendReady).AddTo(_Disposables);
                         
-            actorPerformObs.DoOnError(_Error).Subscribe(_ActorPerform).AddTo(_Disposables);
+            actorPerformObs.DoOnError(_Error).ObserveOnMainThread().Subscribe(_ActorPerform).AddTo(_Disposables);
             
-            enterenceObs.DoOnError(_Error).Subscribe(_BattleEntrance).AddTo(_Disposables);
+            enterenceObs.DoOnError(_Error).ObserveOnMainThread().Subscribe(_BattleEntrance).AddTo(_Disposables);
             
-            finishObs.DoOnError(_Error).Subscribe(_BattleFinished).AddTo(_Disposables);
-            
-            var actorHpObs = from actor in battle.Actors.SupplyEvent()
-                from newHp in actor.Hp.ChangeObservable()
-                select new { actor, newHp };
-            
-            actorHpObs.Subscribe(v => _ChangeActorHp(v.actor.InstanceId.Value , v.newHp)).AddTo(_Disposables);
-        }      
+            finishObs.DoOnError(_Error).ObserveOnMainThread().Subscribe(_BattleFinished).AddTo(_Disposables);
+        }
 
-        private void _Ready(LoadData[] handles)
+        private void _SendReady(LoadData[] handles)
         {
             Debug.Log("Ready");           
 
             var readyObs = from ready in NotifierRx.ToObservable().Supply<IReady>()
                             select ready;
             
-            readyObs.Subscribe(r => r.Ready()).AddTo(_Disposables);
+            readyObs.Subscribe(r => _Ready(r)).AddTo(_Disposables);
         }
-     
+      
+        private void _Ready(IReady ready)
+        {
+            ready.Ready();
+            
+            var actorHpObs =  from battle in NotifierRx.ToObservable().Supply<IBattle>()
+                from actor in battle.Actors.SupplyEvent()
+                from newHp in actor.Hp.ChangeObservable()
+                select new { actor, newHp };
+            
+            actorHpObs.DoOnError(_Error).ObserveOnMainThread()
+                .Subscribe(v => _ChangeActorHp(v.actor.InstanceId.Value, v.newHp)).AddTo(_Disposables);
+            
+            _Frame = new Subject<int>();
+            
+            _FrameNumber = 0;
+            
+            var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), 0);
+            
+            obs.ObserveOnMainThread().Subscribe(frame => _Update(frame)).AddTo(_Disposables);
+        }
+
         private void _ChangeActorHp(int id, int newHp)
-        {           
-            Debug.LogError($"Actor {id} Hp = {newHp}");
+        {   
+            var role = GetRole(id);
+            
+            role.SettingHP(newHp);
+            
+            //_ActorUiController.SetCurrentBlood(id, newHp);            
         }
         
         private void _Error(Exception obj)
@@ -213,8 +258,8 @@ namespace Phoenix.Project1.Client.Battles
 
         private void _ActorPerform(ActorPerformTimestamp obj)
         {                     
-            Debug.Log($"_ActorPerform location : {obj.ActorPerform.Location}");
-
+           //Debug.Log($"_ActorPerform location : {obj.ActorPerform.Location}");         
+            
             var stateMachine = new BattleStateMachine();
             stateMachine.
             AddState(new MoveState($"move{obj.Frames.ToString()}", stateMachine, new MoveData()
@@ -232,11 +277,54 @@ namespace Phoenix.Project1.Client.Battles
                 {
                     MoveActorId = obj.ActorPerform.StarringId,
                     Location = GetLocatorIndex(obj.ActorPerform.StarringId)
-                }, this)));                      
+                }, this)));
+                        
+            //Debug.Log($"action frame {obj.Frames}, client frame {_FrameNumber}");
+            IObservable<Effect[]> triggerSubject = from effects in _EffectTriggerCombine(obj.ActorPerform.TargetEffects, _FrameNumber)//obj.Frames)                
+                                                    select effects;
+
+            triggerSubject.ObserveOnMainThread().Subscribe(_EffectFinished).AddTo(_Disposables);
             
             Enqueue(stateMachine);
         }
-               
+
+        private void _EffectFinished(Effect[] effects)
+        {
+            Debug.Log($"_EffectFinished");
+        }
+     
+
+        private IObservable<bool> _TriggerEffect(Effect data)
+        {
+            //Debug.Log($"Trigger Effect {data.Actor},  {data.Type} value {data.Value}");         
+            
+            _ActorUiController.ShowJumpText(data.Type, data.Value.ToString(), GetAvatarByID(data.Actor), IsAttackerByID(data.Actor));
+            
+            _EffectTriggerCallback?.Invoke(data);
+            
+            return Observable.Return(true);
+        }
+
+        private IObservable<Effect[]> _EffectTriggerCombine(ActorFrameEffect[] frameEffects, int currentFrame)
+        {
+            List<IObservable<Effect>> obs = new List<IObservable<Effect>>();
+
+            foreach (var frameEffect in frameEffects)
+            {
+                foreach (var effect in frameEffect.Effects)
+                {
+                    obs.Add(EffectTriggerRx.OnEffectTriggerObserver(effect, frameEffect.Frames, currentFrame));    
+                }
+            }                        
+            
+            var effectObs = from handle in Observable.Merge(obs) 
+                from observable in _TriggerEffect(handle)  
+                where observable
+                select handle;          
+           
+            return Observable.WhenAll(effectObs);
+       }
+
         private void _StateMachineFinished(BattleStateMachine stateMachine)
         {           
             stateMachine.Dispose();
@@ -277,10 +365,11 @@ namespace Phoenix.Project1.Client.Battles
             {
                 _Machines.Enqueue(stateMachine);    
             }
-        }
-
-        private void Update()
+        }     
+        
+        private void _Update(int frame)
         {
+            _FrameNumber = frame;
             _CurrentStateMachine?.Update();
         }      
 
@@ -297,6 +386,18 @@ namespace Phoenix.Project1.Client.Battles
         public CharacterLocator GetLocator(int index)
         {
             return _Locators.First(x => x.Index == index);
+        }
+        
+        public CharacterLocator GetLocatorByID(int id)
+        {
+            return _Locators.First(x => x.GetInstanceID() == id);
+        }
+
+        public bool IsAttackerByID(int id)
+        {
+            var locator = GetLocatorByID(id);           
+            
+            return locator.CampType == CampType.Attacker ? true : false;;
         }
 
         public Avatar GetAvatarByID(int id)
@@ -336,7 +437,7 @@ namespace Phoenix.Project1.Client.Battles
             {
                 var timelineData = avatar.TimelineAssets.First(x => x.Action == actionKey);
             
-                var go = _DirectorPool.Get(true);
+                var go = PoolManager.Instance.GetObject<GameObject>(_PlayablePoolName);               
             
                 var director = go.GetComponent<PlayableDirector>();
 
@@ -357,24 +458,27 @@ namespace Phoenix.Project1.Client.Battles
 
         public void RecyclePlayableDirector(PlayableDirector playableDirector)
         {                       
-            _DirectorPool.Recycle(playableDirector.gameObject, false);
+            PoolManager.Instance.Recycle(_PlayablePoolName, playableDirector.gameObject);
         }
 
         private void _Finished()
-        {
+        {                        
             _Disposables.Clear();
             
             _SendDisposables.Clear();
             
             _SendRequestDisposables.Clear();
             
-            _Machines.Clear();            
+            _Machines.Clear();    
+            
+            _Frame?.Dispose();
+            
+            PoolManager.Instance.RemovePool(_PlayablePoolName);
         }
 
         private void OnDestroy()
-        {
-            
-            _Finished();
+        {            
+            _Finished();                      
         }
         
         private void _EndBattle(BattleStateMachine stateMachine)
@@ -398,6 +502,6 @@ namespace Phoenix.Project1.Client.Battles
             }
             
             battle.Exit();      
-        }      
+        }                            
     }
 }

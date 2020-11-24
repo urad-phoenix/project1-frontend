@@ -77,7 +77,7 @@ namespace TP.Scene.Locators.Editor
 
             UnityEditor.Handles.color = locator.Color;
             
-            UnityEditor.Handles.Label(labelPos, "Camp: " + locator.CampType, new GUIStyle(){fontStyle = FontStyle.Bold, fontSize = font});
+            UnityEditor.Handles.Label(labelPos, "Camp: " + (int) locator.CampType, new GUIStyle(){fontStyle = FontStyle.Bold, fontSize = font});
             
             UnityEditor.Handles.EndGUI();
            

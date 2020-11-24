@@ -4,6 +4,7 @@ using System.Linq;
 using Cinemachine;
 using Phoenix.Pool;
 using Phoenix.Project1.Client.Battles;
+using Phoenix.Project1.Client.Utilities.RxExtensions;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -44,9 +45,7 @@ public class Avatar : MonoBehaviour
 
     public DummyData[] DummyDatas;
 
-    public VFXSource[] VfxSources;
-
-    private Dictionary<string, ObjectPool> _VFXPools;
+    public VFXSource[] VfxSources;   
 
     private CompositeDisposable _Disposable;
 
@@ -56,14 +55,8 @@ public class Avatar : MonoBehaviour
     public Avatar()
     {
         _Disposable = new CompositeDisposable();
-        _VFXPools = new Dictionary<string, ObjectPool>();
     }
-
-    private void Start()
-    {
-        Init();
-    }
-
+   
     public Transform GetDummy(string key)
     {
         try
@@ -99,15 +92,13 @@ public class Avatar : MonoBehaviour
     {   
         foreach (var source in VfxSources)
         {
-            var pool = new ObjectPool(source.Key, source.Source, this.transform, 5);
+            var pool = new ObjectPool(Location + source.Key, source.Source, this.transform, 5);
 
-            pool.OnAfterSpawn += _AfterSpawn;
+            pool.OnAfterSpawn += _AfterSpawn;                                                
+
+            PoolManager.Instance.AddPool(pool);
             
-            pool.Initialize();
-            
-            pool.Spawn();
-            
-            _VFXPools.Add(source.Key, pool);
+            pool.Spawn();            
         }        
     }
 
@@ -118,39 +109,35 @@ public class Avatar : MonoBehaviour
 
     public GameObject GetVFX(string key)
     {
-        ObjectPool pool;
+//        ObjectPool pool;
 
-        if (_VFXPools.TryGetValue(key, out pool))
-        {
-            var go = pool.Get(false);
+        var go = PoolManager.Instance.GetObject<GameObject>(Location + key, false);
 
-            var obs = go.OnParticleStoppedAsObserver(key);
-
-            obs.Subscribe(_Recycle).AddTo(_Disposable);
-
-            return go;
-        }
-
-        return null;
+        var obs = go.OnParticleStoppedAsObserver(key);
+        
+        obs.Subscribe(_Recycle).AddTo(_Disposable);
+        
+        return go;
+//        {
+//            var go = pool.Get(false);
+//
+//            var obs = go.OnParticleStoppedAsObserver(key);
+//
+//            obs.Subscribe(_Recycle).AddTo(_Disposable);
+//
+//            return go;
+//        }
+//
+//        return null;
     }
 
     private void _Recycle(ObserverParticleStopped go)
-    {
-        ObjectPool pool;
-        if (_VFXPools.TryGetValue(go.Key, out pool))
-        {
-            pool.Recycle(go.gameObject, true);
-        }
+    {       
+        PoolManager.Instance.Recycle(Location + go.Key, go.gameObject);
     }
 
     private void OnDestroy()
-    {
-        foreach (var pool in _VFXPools)
-        {
-            pool.Value.Clear();
-        }
-        
-        _VFXPools.Clear();
+    {      
         _Disposable.Clear();
     }
 }

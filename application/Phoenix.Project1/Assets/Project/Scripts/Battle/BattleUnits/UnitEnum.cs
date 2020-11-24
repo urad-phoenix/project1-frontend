@@ -6,6 +6,7 @@ namespace Phoenix.Project1.Client.Battles
         Location,
         LeftHand,
         RightHand,
+        UIText,
         Max
     }
 
@@ -18,5 +19,12 @@ namespace Phoenix.Project1.Client.Battles
         Back,
         Hit,        
         Max
-    } 
+    }
+    
+    public enum CampType
+    {
+        Attacker,
+        Defender
+    }
+
 }

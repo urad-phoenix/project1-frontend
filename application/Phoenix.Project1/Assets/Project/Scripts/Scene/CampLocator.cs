@@ -1,10 +1,11 @@
+using Phoenix.Project1.Client.Battles;
 using UnityEngine;
 
 namespace TP.Scene.Locators
 {
     public class CampLocator : MonoBehaviour
     {
-        public int CampType;
+        public CampType CampType;       
         
         #if UNITY_EDITOR
         

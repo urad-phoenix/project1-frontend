@@ -2324,7 +2324,7 @@ GameObject:
   - component: {fileID: 9201199008342893142}
   - component: {fileID: 383332036166367883}
   m_Layer: 0
-  m_Name: Actor 1
+  m_Name: Actor_10001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2448,7 +2448,7 @@ MonoBehaviour:
   - Action: 1
     TimelineAsset: {fileID: 11400000, guid: 776a31fab6062824ea9f93fc800f4864, type: 2}
   - Action: 0
-    TimelineAsset: {fileID: 11400000, guid: c98307ae0cf988b4ca0bdbd7f0e0c4f1, type: 2}
+    TimelineAsset: {fileID: 11400000, guid: 10e4f5e395acd1b47874ba6c171ff01d, type: 2}
   - Action: 3
     TimelineAsset: {fileID: 11400000, guid: 776a31fab6062824ea9f93fc800f4864, type: 2}
   - Action: 4
@@ -2457,6 +2457,8 @@ MonoBehaviour:
   - DummyType: 0
     Dummy: {fileID: 3263636595593084947}
   - DummyType: 1
+    Dummy: {fileID: 3263636595593084947}
+  - DummyType: 4
     Dummy: {fileID: 3263636595593084947}
   VfxSources:
   - Key: attack
