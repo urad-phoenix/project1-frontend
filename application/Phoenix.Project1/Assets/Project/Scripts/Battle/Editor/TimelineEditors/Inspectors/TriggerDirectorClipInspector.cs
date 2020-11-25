@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
-namespace Phoenix.Project1.Client.Battles.Editors
+namespace Phoenix.Project1.Editors
 {
     [CustomEditor(typeof(TriggerDirectorClip))]
     public class TriggerDirectorClipInspector : Editor
