@@ -81,10 +81,11 @@ namespace Phoenix.Project1.Battles
             attributes.Add(AttributeType.Attack, new Property<float>( prototype.Attack) );
             attributes.Add(AttributeType.Avoid, new Property<float>(prototype.Evasion));
             attributes.Add(AttributeType.CriticalDamage, new Property<float>(prototype.CriticalDamage));
-            attributes.Add(AttributeType.DamageReduction, new Property<float>(0));
+            attributes.Add(AttributeType.DamageReduction, new Property<float>(prototype.DamageReduction));
             attributes.Add(AttributeType.Defense, new Property<float>(prototype.Defense));
+            //attributes.Add(AttributeType.Defense, new Property<float>(1));
             attributes.Add(AttributeType.Hit, new Property<float>(prototype.Hit));
-            attributes.Add(AttributeType.IncreasedDamage, new Property<float>(1));
+            attributes.Add(AttributeType.DamageIncreased, new Property<float>(prototype.DamageIncreased));
 
             return attributes;
         }

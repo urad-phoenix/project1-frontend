@@ -51,7 +51,8 @@ namespace Phoenix.Project1.Battles
             {                
                 var hitFrame = motionCast.Hits[i];
                 var startHitFrame = castStart + hitFrame.Frame;
-                
+
+                _Timer.Register(startHitFrame, () => cast.Occurrence(_Stage));
                 effects.Add(new ActorFrameEffect() { Frames = startHitFrame, Effects = hitEffects });
             }
 
