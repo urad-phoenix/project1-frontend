@@ -1,18 +1,16 @@
-using System.Collections.Generic;
-using System.Linq;
 using Cinemachine;
 using Phoenix.Playables;
-using Spine.Unity;
+using Phoenix.Project1.Common.Battles;
 using UnityEngine;
 using UnityEngine.Playables;
 
 namespace Phoenix.Project1.Client.Battles
 {
-    public class CameraBinding : ICameraBinding
+    public static partial class TimelineBinding
     {
-        public void Bind(PlayableDirector playableDirector, params object[] data)
+        public static void BindCameraTrack(PlayableDirector playableDirector, params object[] data)
         {
-            var actorData = data[0] as ActData;
+            var actorData = data[0] as ActorFrameMotion;
             
             if(actorData == null)
                 return;

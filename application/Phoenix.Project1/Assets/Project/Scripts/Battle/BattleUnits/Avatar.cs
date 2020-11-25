@@ -5,119 +5,119 @@ using Cinemachine;
 using Phoenix.Pool;
 using Phoenix.Project1.Client.Battles;
 using Phoenix.Project1.Client.Utilities.RxExtensions;
+using Phoenix.Project1.Common.Battles;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Timeline;
 
-public class Avatar : MonoBehaviour
+namespace Phoenix.Project1.Client.Battles
 {
-    [Serializable]
-    public class DummyData
+    public class Avatar : MonoBehaviour
     {
-        public DummyType DummyType;
-
-        public Transform Dummy;
-    }        
-    
-    [Serializable]
-    public class VFXSource
-    {
-        public string Key;
-        
-        public GameObject Source;        
-    }
-    
-    [Serializable]
-    public class TimelineAssetSource
-    {
-        public ActionKey Action;
-        
-        public TimelineAsset TimelineAsset;
-    }    
-
-    [HideInInspector]
-    public int InstanceID;
-
-    [HideInInspector] 
-    public int Location;
-
-    public TimelineAssetSource[] TimelineAssets;
-
-    public DummyData[] DummyDatas;
-
-    public VFXSource[] VfxSources;   
-
-    private CompositeDisposable _Disposable;
-
-    [SerializeField]
-    private CameraGroup _CameraGroup;
-
-    public Avatar()
-    {
-        _Disposable = new CompositeDisposable();
-    }
-   
-    public Transform GetDummy(string key)
-    {
-        try
+        [Serializable]
+        public class DummyData
         {
-            var data = DummyDatas.First(x => x.DummyType.ToString() == key);
-                
-            return data.Dummy;
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e);
+            public DummyType DummyType;
+
+            public Transform Dummy;
         }
 
-        return this.transform;
-    }
-
-    public CinemachineVirtualCamera GetVirtualCamera(int index)
-    {
-        try
+        [Serializable]
+        public class VFXSource
         {
-            var cameraData = _CameraGroup.CameraDatas.First(x => x.Index == index);
+            public string Key;
 
-            return cameraData.VirtualCamera;
+            public GameObject Source;
         }
-        catch (Exception e)
+
+        [Serializable]
+        public class TimelineAssetSource
         {
-            Debug.LogError(e);
-            return null;
-        }        
-    }
+            public MotionType Action;
 
-    public void Init()
-    {   
-        foreach (var source in VfxSources)
+            public TimelineAsset TimelineAsset;
+        }
+
+        [HideInInspector] public int InstanceID;
+
+        [HideInInspector] public int Location;
+
+        public TimelineAssetSource[] TimelineAssets;
+
+        public DummyData[] DummyDatas;
+
+        public VFXSource[] VfxSources;
+
+        private CompositeDisposable _Disposable;
+
+        [SerializeField] private CameraGroup _CameraGroup;
+
+        public Avatar()
         {
-            var pool = new ObjectPool(Location + source.Key, source.Source, this.transform, 5);
+            _Disposable = new CompositeDisposable();
+        }
 
-            pool.OnAfterSpawn += _AfterSpawn;                                                
+        public Transform GetDummy(string key)
+        {
+            try
+            {
+                var data = DummyDatas.First(x => x.DummyType.ToString() == key);
 
-            PoolManager.Instance.AddPool(pool);
-            
-            pool.Spawn();            
-        }        
-    }
+                return data.Dummy;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
 
-    private void _AfterSpawn(GameObject go)
-    {
-        go.SetActive(false);
-    }
+            return this.transform;
+        }
 
-    public GameObject GetVFX(string key)
-    {
+        public CinemachineVirtualCamera GetVirtualCamera(int index)
+        {
+            try
+            {
+                var cameraData = _CameraGroup.CameraDatas.First(x => x.Index == index);
+
+                return cameraData.VirtualCamera;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                return null;
+            }
+        }
+
+        public void Init()
+        {
+            foreach (var source in VfxSources)
+            {
+                var pool = new ObjectPool(Location + source.Key, source.Source, this.transform, 5);
+
+                pool.OnAfterSpawn += _AfterSpawn;
+
+                PoolManager.Instance.AddPool(pool);
+
+                pool.Spawn();
+            }
+        }
+
+        private void _AfterSpawn(GameObject go)
+        {
+            go.SetActive(false);
+        }
+
+        public GameObject GetVFX(string key)
+        {
 //        ObjectPool pool;
 
-        var go = PoolManager.Instance.GetObject<GameObject>(Location + key, false);
+            var go = PoolManager.Instance.GetObject<GameObject>(Location + key, false);
 
-        var obs = go.OnParticleStoppedAsObserver(key);
-        
-        obs.Subscribe(_Recycle).AddTo(_Disposable);
-        
-        return go;
+            var obs = go.OnParticleStoppedAsObserver(key);
+
+            obs.Subscribe(_Recycle).AddTo(_Disposable);
+
+            return go;
 //        {
 //            var go = pool.Get(false);
 //
@@ -129,15 +129,16 @@ public class Avatar : MonoBehaviour
 //        }
 //
 //        return null;
-    }
+        }
 
-    private void _Recycle(ObserverParticleStopped go)
-    {       
-        PoolManager.Instance.Recycle(Location + go.Key, go.gameObject);
-    }
+        private void _Recycle(ObserverParticleStopped go)
+        {
+            PoolManager.Instance.Recycle(Location + go.Key, go.gameObject);
+        }
 
-    private void OnDestroy()
-    {      
-        _Disposable.Clear();
+        private void OnDestroy()
+        {
+            _Disposable.Clear();
+        }
     }
 }

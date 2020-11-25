@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using Phoenix.Playables;
+using Phoenix.Project1.Common.Battles;
 using Spine.Unity;
 using UnityEngine;
 using UnityEngine.Playables;
 
 namespace Phoenix.Project1.Client.Battles
 {
-    public class VFXBinding : IVFXBinding
+    public static partial class TimelineBinding
     {
-        public void Bind(PlayableDirector playableDirector, params object[] data)
+        public static void BindVFXTrack(PlayableDirector playableDirector, params object[] data)
         {
-            var actorData = data[0] as ActData;
+            var actorData = data[0] as ActorFrameMotion;
             
             if(actorData == null)
                 return;
@@ -33,11 +34,11 @@ namespace Phoenix.Project1.Client.Battles
 
             var startLoaction = track.StartBindingType == BindingTrackType.Actor
                 ? controller.GetAvatarByID(actorData.ActorId)?.GetDummy(track.AnchorDummyKey)
-                : controller.GetLocator(actorData.Location)?.transform;
+                : controller.GetLocator(actorData.TargetLocation)?.transform;
 
             var endLoaction = track.StartBindingType == BindingTrackType.Actor
                 ? controller.GetAvatarByID(actorData.ActorId)?.GetDummy(track.AnchorDummyKey)
-                : controller.GetLocator(actorData.Location)?.transform;
+                : controller.GetLocator(actorData.TargetLocation)?.transform;
                 
             foreach (var clip in track.GetClips())
             {

@@ -1,6 +1,7 @@
 using System;
 using Phoenix.Playables;
 using Phoenix.Project1.Client.Battles;
+using Phoenix.Project1.Common.Battles;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -13,7 +14,7 @@ namespace Phoenix.Project1.Editors
     {
         private TriggerDirectorClip _Clip;
 
-        private ActionKey _Type;
+        private MotionType _Type;
 
         private PlayableDirector _Director;
 
@@ -23,14 +24,14 @@ namespace Phoenix.Project1.Editors
 
             try
             {
-                _Type = (ActionKey) (string.IsNullOrEmpty(_Clip.AssetKey)
-                    ? ((ActionKey) 0)
-                    : Enum.Parse(typeof(ActionKey), _Clip.AssetKey));
+                _Type = (MotionType) (string.IsNullOrEmpty(_Clip.AssetKey)
+                    ? ((MotionType) 0)
+                    : Enum.Parse(typeof(MotionType), _Clip.AssetKey));
             }
             catch (Exception e)
             {
                 Debug.LogError(e);
-                _Type = (ActionKey) 0;
+                _Type = (MotionType) 0;
                 _Clip.AssetKey = _Type.ToString();
             }
             
@@ -44,7 +45,7 @@ namespace Phoenix.Project1.Editors
 
             _Director = EditorGUILayout.ObjectField("Director", _Director, typeof(PlayableDirector)) as PlayableDirector;
             
-            _Type = (ActionKey)EditorGUILayout.EnumPopup("ActionKey", _Type);
+            _Type = (MotionType)EditorGUILayout.EnumPopup("ActionKey", _Type);
 
             if (GUI.changed)
             {

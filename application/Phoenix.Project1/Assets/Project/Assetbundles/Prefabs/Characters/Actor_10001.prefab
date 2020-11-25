@@ -2451,7 +2451,7 @@ MonoBehaviour:
     TimelineAsset: {fileID: 11400000, guid: 10e4f5e395acd1b47874ba6c171ff01d, type: 2}
   - Action: 3
     TimelineAsset: {fileID: 11400000, guid: 776a31fab6062824ea9f93fc800f4864, type: 2}
-  - Action: 4
+  - Action: 2
     TimelineAsset: {fileID: 11400000, guid: c98307ae0cf988b4ca0bdbd7f0e0c4f1, type: 2}
   DummyDatas:
   - DummyType: 0

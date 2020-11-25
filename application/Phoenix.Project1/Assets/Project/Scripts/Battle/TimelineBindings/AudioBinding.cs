@@ -1,24 +1,15 @@
-using System.Security.Policy;
-using Phoenix.Playables;
 using Phoenix.Project1.Client.Audio;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Audio;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
 namespace Phoenix.Project1.Client.Battles
 {
-    public class AudioBinding
+    public static partial class TimelineBinding
     {
-        public void Bind(PlayableDirector playableDirector, params object[] data)
-        {
-            var actorData = data[0] as ActData;
-            
-            if(actorData == null)
-                return;
-
-            var track = data[1] as AudioTrack;
+        public static void BindAudioTrack(PlayableDirector playableDirector, params object[] data)
+        {           
+            var track = data[0] as AudioTrack;
             
             if(track == null)
                 return;

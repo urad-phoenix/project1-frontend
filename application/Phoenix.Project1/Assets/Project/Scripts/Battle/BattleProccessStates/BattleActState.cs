@@ -1,5 +1,7 @@
+using System;
 using System.Linq;
 using Phoenix.Playables;
+using Phoenix.Project1.Common.Battles;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -9,13 +11,13 @@ namespace Phoenix.Project1.Client.Battles
 {
     public class BattleActState : BattleStateBase
     {
-        private ActData _ActData;
+        private ActorFrameMotion _ActData;
         
         private BattleController _Controller;
                
         private CompositeDisposable _Disposable;
         
-        public BattleActState(string name, BattleStateMachine stateMachine, ActData actData, BattleController controller) : base(name, stateMachine)
+        public BattleActState(string name, BattleStateMachine stateMachine, ActorFrameMotion actData, BattleController controller) : base(name, stateMachine)
         {
             _ActData = actData;
                      
@@ -31,49 +33,56 @@ namespace Phoenix.Project1.Client.Battles
                 _Finished(null);
                 return;
             }
-                                              
-            var director = _Controller.GetPlayableDirector(_ActData.ActKey, _ActData.ActorId);
 
-            Debug.Log($"act key {_ActData.ActKey}");
-            
-            if (director == null)
+            try
             {
-                _Finished(null);
-                return;
+                var motion = _ActData.MotionId;
+                
+                var director = _Controller.GetPlayableDirector(motion, _ActData.ActorId);
+
+                Debug.Log($"act key {motion}");
+                
+                if (director == null)
+                {
+                    _Finished(null);
+                    return;
+                }
+
+                var tracks = ((TimelineAsset) director.playableAsset).GetOutputTracks();         
+
+                foreach (var track in tracks)
+                {
+                    if (track is SpineAnimationTrack)
+                    {                       
+                        TimelineBinding.BindSpineTrack(director, _ActData, track, _Controller);    
+                    }
+                    else if (track is VFXTrack)
+                    {
+                        TimelineBinding.BindVFXTrack(director, _ActData, track, _Controller);
+                    }
+                    else if (track is CameraShotTrack)
+                    {
+                        TimelineBinding.BindCameraTrack(director, _ActData, track, _Controller);
+                    }
+                    else if(track is AudioTrack)
+                    {
+                        TimelineBinding.BindAudioTrack(director, track, _Controller);
+                    }
+                    else if(track is TransformTweenTrack)
+                    {                                    
+                        TimelineBinding.BindTransformTrack(director, _ActData, track, _Controller);                        
+                    }
+                }                  
+            
+                director.PlayAsObservable().Subscribe(_Finished).AddTo(_Disposable);
             }
-
-            var tracks = ((TimelineAsset) director.playableAsset).GetOutputTracks();         
-
-            foreach (var track in tracks)
+            catch (Exception e)
             {
-                if (track is SpineAnimationTrack)
-                {
-                    var spineBinding = new SpineAnimationBinding();
-            
-                    spineBinding.Bind(director, _ActData, track, _Controller);    
-                }
-                else if (track is VFXTrack)
-                {
-                    var vfxBinding = new VFXBinding();
-            
-                    vfxBinding.Bind(director, _ActData, track, _Controller);
-                }
-                else if (track is CameraShotTrack)
-                {
-                    var cameraBinding = new CameraBinding();
-                    
-                    cameraBinding.Bind(director, _ActData, track, _Controller);
-                }
-                else if(track is AudioTrack)
-                {
-                    var audioBinding = new AudioBinding();
-                    
-                    audioBinding.Bind(director, _ActData, track, _Controller);
-                }
-            }                  
-            
-            director.PlayAsObservable().Subscribe(_Finished).AddTo(_Disposable);
-
+                Debug.LogError(e);
+                _Finished(null);
+                
+                return;
+            }            
         }
        
         public override void Update()

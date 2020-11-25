@@ -8,18 +8,7 @@ namespace Phoenix.Project1.Client.Battles
         RightHand,
         UIText,
         Max
-    }
-
-    public enum ActionKey
-    {
-        Move,        
-        Attack,
-        Entrance,
-        Caster,
-        Back,
-        Hit,        
-        Max
-    }
+    }   
     
     public enum CampType
     {

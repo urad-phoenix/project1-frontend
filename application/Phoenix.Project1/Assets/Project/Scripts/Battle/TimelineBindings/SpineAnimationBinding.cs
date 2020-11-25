@@ -1,17 +1,15 @@
-using System.Collections.Generic;
-using System.Linq;
 using Phoenix.Playables;
+using Phoenix.Project1.Common.Battles;
 using Spine.Unity;
 using UnityEngine.Playables;
-using UnityEngine.Timeline;
 
 namespace Phoenix.Project1.Client.Battles
 {
-    public class SpineAnimationBinding : ISpineAnimationBinding
+    public static partial class TimelineBinding
     {
-        public void Bind(PlayableDirector playableDirector, params object[] data)
+        public static void BindSpineTrack(PlayableDirector playableDirector, params object[] data)
         {   
-            var actorData = data[0] as ActData;
+            var actorData = data[0] as ActorFrameMotion;
             
             if(actorData == null)
                 return;
