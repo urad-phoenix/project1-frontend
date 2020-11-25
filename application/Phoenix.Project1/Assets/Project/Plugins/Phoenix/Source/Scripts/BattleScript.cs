@@ -61,7 +61,7 @@ namespace Phoenix.Project1.Client.Scripts
             actorHpObs.Subscribe(v => _PrintActorHp(v.actor.InstanceId.Value , v.newHp)).AddTo(_Disposables);
         }
 
-        private void _PrintActorHp(int id, int newHp)
+        private void _PrintActorHp(int id, float newHp)
         {
             _Viewer.WriteLine($"Actor {id} Hp = {newHp}");
         }

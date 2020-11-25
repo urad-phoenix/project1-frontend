@@ -41,12 +41,12 @@ namespace Phoenix.Project1.Battles
 
         private bool _CheckVictory()
         {
-            if(_Stage.Attacker.Actors.All(a => a.Hp == 0))
+            if(_Stage.Attacker.Actors.All(a => !a.IsSurvival() ))
             {
                 VictoryEvent(Common.Battles.Winner.Defenecer);
                 return true;
             }
-            if (_Stage.Defender.Actors.All(a => a.Hp == 0))
+            if (_Stage.Defender.Actors.All(a => !a.IsSurvival()))
             {
                 VictoryEvent(Common.Battles.Winner.Attacker);
 

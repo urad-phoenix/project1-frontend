@@ -30,19 +30,11 @@ namespace Phoenix.Project1.Battles
             {
                 actor = _ActorCircular.GetCurrentAndNext();
             }
-            while (actor.IsMovable());
+            while (!actor.IsMovable());
 
             return actor;
         }
-        public static Stage GetDemo()
-        {
-            var attacker = new Actor(1, 5, 100);
-            var defender = new Actor(2, 8, 100);
-            var aTeam = new Team(attacker);
-            var dTeam = new Team(defender);
-            var stage = new Stage(1, aTeam, dTeam);
-            return stage;
-        }
+        
 
         internal Actor[] GetActors()
         {
@@ -54,14 +46,36 @@ namespace Phoenix.Project1.Battles
             return _Actors.Where(a => a.Id == actor).Single();
         }
 
-        public static Stage GetAttackWin()
+        internal Actor GetLocation(Actor actor, Configs.EffectTarget target)
         {
-            var attacker = new Actor(1, 5, 10);
-            var defender = new Actor(2, 8, 0);
-            var aTeam = new Team(attacker);
-            var dTeam = new Team(defender);
-            var stage = new Stage(1, aTeam, dTeam);
-            return stage;
+            if (Attacker.IsMember(actor))
+                return _GetLocation(Defender, target);
+            if (Defender.IsMember(actor))
+                return _GetLocation(Attacker, target);
+            throw new Exception($"沒有陣營的角色 {actor.Id}");
+        }
+
+        private Actor _GetLocation(Team team, Configs.EffectTarget target)
+        {
+            // todo 依類型取出站位
+            return _DefaultLocation(team);
+        }
+
+        private static Actor _DefaultLocation(Team team)
+        {
+            return team.GetSurvivors().First();
+        }
+
+        internal System.Collections.Generic.IEnumerable<Actor> GetActorsByEffectTarget(Actor actor, int location, Configs.EffectTarget target)
+        {
+
+            // todo 依類型取出影響的角色
+            if (Attacker.IsMember(actor))
+                yield return _DefaultLocation(Defender);
+            if (Defender.IsMember(actor))
+                yield return _DefaultLocation(Attacker);
+            throw new Exception($"沒有陣營的角色 {actor.Id}");
+
         }
     }
 }

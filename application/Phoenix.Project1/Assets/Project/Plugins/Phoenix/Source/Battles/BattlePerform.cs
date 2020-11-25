@@ -5,21 +5,11 @@ using System.Security.Cryptography;
 
 namespace Phoenix.Project1.Battles
 {
-    interface IEffectHandler
-    {
-        void Handle(Actor actor, int value);
-    }
-
-    class InjureEffect : IEffectHandler
-    {
-        void IEffectHandler.Handle(Actor actor, int value)
-        {
-            actor.Injure(value);
-        }
-    }
+    
+    
     internal class BattlePerform : IStatus
     {
-        System.Collections.Generic.Dictionary<EffectType, IEffectHandler> _EffectHandlers;
+        
         private readonly Actor _Actor;
         private readonly Stage _Stage;
         private readonly IBattleTime _Time;
@@ -27,51 +17,54 @@ namespace Phoenix.Project1.Battles
         int _EndFrames;
         int _CurrentFrames;
 
-
-        private readonly System.Collections.Generic.List<ActorFrameEffect> _Effects;
-
-
         public System.Action DoneEvent;
         public System.Action<ActorPerformTimestamp> PerformEvent;
+
+        readonly FrameTimer _Timer;
         public BattlePerform(Actor actor, Stage stage,IBattleTime time)
         {
             _Actor = actor;
             this._Stage = stage;
             this._Time = time;
-            _Effects = new System.Collections.Generic.List<ActorFrameEffect>();
-
-            _EffectHandlers = new System.Collections.Generic.Dictionary<EffectType, IEffectHandler>();
-            _EffectHandlers.Add(EffectType.Injure ,new InjureEffect() );
+            _Timer = new FrameTimer();
         }
 
         void IStatus.Enter()
         {
-            _Effects.Clear();
             var startFrame = _Time.Frame;
-            Spell spell = _Actor.CastSpell();
-            
-            int location = spell.GetLocation(_Actor , _Stage);
-            var motion = _Actor.GetMotion(spell.Motion);
-            _EndFrames = motion.Frames + startFrame;
-            _CurrentFrames = startFrame;
-            for (int i = 0; i < motion.HitFrames.Length; i++)
-            {
-                var hitFrame = motion.HitFrames[i];
-                var effects = spell.CreateEffects(_Actor, _Stage);
+            Spell spell = _Actor.CastSpell();            
+            var cast = spell.CreateCast(_Actor, _Stage);
 
-                _Effects.Add(new ActorFrameEffect { Frames = hitFrame + startFrame, Effects = effects.ToArray() } );
+            var motionCast = _Actor.GetMotion(spell.Motion);
+            var motionForward = _Actor.GetMotion(MotionType.Forward);
+            var motionBack = _Actor.GetMotion(MotionType.Back);
+
+            _EndFrames = motionBack.TotalFrame +  motionForward.TotalFrame + motionCast.TotalFrame + startFrame;
+            _CurrentFrames = startFrame;
+
+            var castStart = motionForward.TotalFrame + startFrame;
+
+            var effects = new System.Collections.Generic.List<ActorFrameEffect>();
+            for (int i = 0; i < motionCast.Hits.Length; i++)
+            {
+                
+                var hitFrame = motionCast.Hits[i];
+                var startHitFrame = castStart + hitFrame.Frame;
+                _Timer.Register(startHitFrame, () => cast.Occurrence(_Stage));
+                effects.Add(new ActorFrameEffect() { Frames = startHitFrame, Effects = cast.ToEffects().ToArray() });
             }
 
             ActorPerformTimestamp timestamp = new ActorPerformTimestamp()
             {
                 Frames = startFrame,
-                ActorPerform = new ActorPerform() { 
-                    StarringId = _Actor.Id.Value, SpellId = spell.Id, 
-                    Location = location, 
-                    TargetEffects = _Effects.ToArray() }
+                ActorPerform = new ActorPerform(_Actor.Id.Value , cast.Location, "Move", "Back" , "Caster" , effects.ToArray()) 
             };
             PerformEvent(timestamp);
         }
+
+        
+
+        
 
         void IStatus.Leave()
         {
@@ -99,7 +92,7 @@ namespace Phoenix.Project1.Battles
         private bool _Advance()
         {
             _CurrentFrames++;
-            _HitEffect(_CheckHitFrame());
+            _Timer.Run(_CurrentFrames);
             if (_CheckEndFrame())
             {                
                 return false;
@@ -107,48 +100,11 @@ namespace Phoenix.Project1.Battles
             return true;
         }
 
-        private void _HitEffect(System.Collections.Generic.IEnumerable<Effect> effects)
-        {
-            var gEffects = from e in effects
-                           group e by e.Type into g
-                            select new { EffectType = g.Key , Effects = g.AsEnumerable() };
-
-
-            foreach (var item in gEffects)
-            {
-                var handler = _EffectHandlers[item.EffectType];
-                foreach (var effect in item.Effects)
-                {
-                    handler.Handle(_GetAcror(effect.Actor) , effect.Value);
-                }
-            }
-
-        }
-
-        private Actor _GetAcror(int actor)
-        {
-            return _Stage.GetActor(actor);
-        }
-
         private bool _CheckEndFrame()
         {
             return _CurrentFrames >= _EndFrames;
         }
 
-        private System.Collections.Generic.IEnumerable<Effect> _CheckHitFrame()
-        {            
-            var now = _CurrentFrames;
-            var frameEffects = from e in _Effects
-                          where e.Frames == now
-                          select e;
-
-            foreach (var frameEffect in frameEffects)
-            {
-                foreach (var effect in frameEffect.Effects)
-                {
-                    yield return effect;
-                }
-            }
-        }
+       
     }
 }
