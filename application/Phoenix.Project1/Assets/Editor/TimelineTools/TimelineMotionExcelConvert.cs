@@ -35,13 +35,13 @@ namespace Phoenix.Project1.Editors.Tools
 
             var timelineAssets = TimelineOutputExcelTool.GetTimelineFiles(setting.SourcePath,  setting.FilterFolder, setting.FilterTypes);
              
-            var timelineSheet = NewSheetData("sheet1", new [] {"技能表SpellKey", "Timline資源名稱","是否開啟", "總幀數"});
-            timelineSheet.Rows.Add(NewRowData(new[] {"Key", "MotionKey","__extra", "TotalFrame"}));
-            timelineSheet.Rows.Add(NewRowData(new[] { "Both", "Both", "Both", "Both" }));
+            var timelineSheet = NewSheetData("sheet1", new [] {"技能表SpellKey", "是否開啟", "總幀數"});
+            timelineSheet.Rows.Add(NewRowData(new[] {"Key", "__extra" ,  "TotalFrame"}));
+            timelineSheet.Rows.Add(NewRowData(new[] { "Both", "Both", "Both" }));
 
-            var hitSheet = NewSheetData("sheet1", new[] {"技能表SpellKey", "Timline資源名稱", "是否開啟", "總幀數"});
-            hitSheet.Rows.Add(NewRowData(new[] {"Key", "MotionKey", "__extra", "Frame"}));
-            hitSheet.Rows.Add(NewRowData(new[] { "Both", "Both", "Both", "Both" }));
+            var hitSheet = NewSheetData("sheet1", new[] {"技能表SpellKey", "是否開啟",  "總幀數"});
+            hitSheet.Rows.Add(NewRowData(new[] {"Key", "__extra",  "Frame"}));
+            hitSheet.Rows.Add(NewRowData(new[] { "Both", "Both", "Both" }));
 
             for (int i = 0; i < timelineAssets.Count; ++i)
             {
@@ -62,13 +62,13 @@ namespace Phoenix.Project1.Editors.Tools
                     {
                         var timelineData = TimelineOutputExcelTool.ConvertData(motion.Key, motion.Asset);
 
-                        timelineSheet.Rows.Add(NewRowData(new[] {spellAsset.name, motion.Key,"1", timelineData.TotalFrame.ToString()}));                                                                
+                        timelineSheet.Rows.Add(NewRowData(new [] {$"{spellAsset.name}_{motion.Key }","1", timelineData.TotalFrame.ToString() }));                                                                
                 
                         for (int j = 0; j < timelineData.HitDatas.Count; ++j)
                         {
                             var hit = timelineData.HitDatas[j];
 
-                            hitSheet.Rows.Add(NewRowData(new[] {spellAsset.name, motion.Key,"1", hit.Frame.ToString()}));                                        
+                            hitSheet.Rows.Add(NewRowData(new[] {$"{spellAsset.name}_Hit", "1",  hit.Frame.ToString()}));                                        
                         }    
                     }                   
                 }              

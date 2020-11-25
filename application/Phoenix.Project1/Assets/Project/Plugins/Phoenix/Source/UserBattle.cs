@@ -3,7 +3,7 @@ using Phoenix.Project1.Common;
 using Phoenix.Project1.Common.Battles;
 using Regulus.Remote;
 using Regulus.Utility;
-using System;
+using System.Linq;
 
 namespace Phoenix.Project1.Battles
 {
@@ -27,12 +27,17 @@ namespace Phoenix.Project1.Users
         private Stage _BuildDemoStage()
         {
             
-            var attacker = new Actor(1, 5, _Configuration);
-            var defender = new Actor(2, 8, _Configuration);
+            var attacker = new Actor(_Get(1001),1, 5);
+            var defender = new Actor(_Get(1001), 2,8);
             var aTeam = new Team(attacker);
             var dTeam = new Team(defender);
             var stage = new Stage(1, aTeam, dTeam);
             return stage;
+        }
+
+        private Configs.Actor _Get(int id)
+        {
+            return _Configuration.Query<Configs.Actor>().Where(a => a.Id == id).Single();
         }
 
         void IStatus.Enter()

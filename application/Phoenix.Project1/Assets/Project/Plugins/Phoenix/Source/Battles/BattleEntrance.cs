@@ -32,10 +32,10 @@ namespace Phoenix.Project1.Battles
             foreach (var actor in _Stage.Attacker.Actors.Union(_Stage.Defender.Actors))
             {
                 actors.Add(new ActorEntrance { Id = actor.Id });
-                Common.Battles.Motion motion = actor.GetMotion(MotionType.Entrance);
-                if (maxFrames < motion.Frames)
+                var motion = actor.GetMotion(MotionType.Entrance);
+                if (maxFrames < motion.TotalFrame)
                 {
-                    maxFrames = motion.Frames;
+                    maxFrames = motion.TotalFrame;
                 }
             }
             _WaitFrame = maxFrames;

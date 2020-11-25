@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace Phoenix.Project1.Battles
 {
@@ -13,6 +14,17 @@ namespace Phoenix.Project1.Battles
         public bool IsMember(Actor actor)
         {
             return Actors.Any(a => a == actor);
+        }
+
+        internal System.Collections.Generic.IEnumerable<Actor> GetSurvivors()
+        {
+            foreach (var actor in Actors)
+            {
+                if(actor.IsSurvival())
+                {
+                    yield return actor;
+                }
+            }
         }
     }
 }

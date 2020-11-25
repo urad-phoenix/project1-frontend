@@ -207,7 +207,7 @@ namespace Phoenix.Project1.Client.Battles
                 select new { actor, newHp };
             
             actorHpObs.DoOnError(_Error).ObserveOnMainThread()
-                .Subscribe(v => _ChangeActorHp(v.actor.InstanceId.Value, v.newHp)).AddTo(_Disposables);
+                .Subscribe(v => _ChangeActorHp(v.actor.InstanceId.Value,(int) v.newHp)).AddTo(_Disposables);
             
             _Frame = new Subject<int>();
             
@@ -257,30 +257,35 @@ namespace Phoenix.Project1.Client.Battles
         }
 
         private void _ActorPerform(ActorPerformTimestamp obj)
-        {                     
-           //Debug.Log($"_ActorPerform location : {obj.ActorPerform.Location}");         
+        {
+            //Debug.Log($"_ActorPerform location : {obj.ActorPerform.Location}");         
             
+                
             var stateMachine = new BattleStateMachine();
-            stateMachine.
-            AddState(new MoveState($"move{obj.Frames.ToString()}", stateMachine, new MoveData()
+            var forward = obj.ActorPerform.Forwards[0];
+            var cast = obj.ActorPerform.Casts[0];
+            var back = obj.ActorPerform.Backs[0];
+
+            stateMachine.AddState(new MoveState($"move{obj.Frames.ToString()}", stateMachine, new MoveData()
             {
-                MoveActorId = obj.ActorPerform.StarringId,
-                Location = obj.ActorPerform.Location
+                MoveActorId = forward.ActorId,
+                Location = forward.TargetLocation
             }, this)).
             AddNext(stateMachine.AddState(new BattleActState($"act{obj.Frames.ToString()}", stateMachine, new ActData()
             {
-                ActKey = (ActionKey) obj.ActorPerform.SpellId,
-                Location = obj.ActorPerform.Location,
-                ActorId = obj.ActorPerform.StarringId
+
+                ActKey = (ActionKey)Enum.Parse(typeof(ActionKey), cast.MotionId)  ,
+                Location = cast.TargetLocation,
+                ActorId = cast.ActorId
             }, this))).
             AddNext(stateMachine.AddState(new BackMoveState($"move{obj.Frames.ToString()}", stateMachine, new MoveData()
                 {
-                    MoveActorId = obj.ActorPerform.StarringId,
-                    Location = GetLocatorIndex(obj.ActorPerform.StarringId)
+                    MoveActorId = back.ActorId,
+                    Location = GetLocatorIndex(back.ActorId)
                 }, this)));
                         
             //Debug.Log($"action frame {obj.Frames}, client frame {_FrameNumber}");
-            IObservable<Effect[]> triggerSubject = from effects in _EffectTriggerCombine(obj.ActorPerform.TargetEffects, _FrameNumber)//obj.Frames)                
+            IObservable<Effect[]> triggerSubject = from effects in _EffectTriggerCombine(obj.ActorPerform.FrameEffects, _FrameNumber)//obj.Frames)                
                                                     select effects;
 
             triggerSubject.ObserveOnMainThread().Subscribe(_EffectFinished).AddTo(_Disposables);

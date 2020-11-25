@@ -5,7 +5,7 @@ using Phoenix.Project1.Common.Battles;
 using Regulus.Remote.Reactive;
 using UniRx;
 using UnityEngine;
-using Action = Phoenix.Project1.Common.Battles.Action;
+
 
 namespace Project.Scripts.UI
 {
@@ -71,11 +71,11 @@ namespace Project.Scripts.UI
             transform.position = screenPoint;                                  
         }
 
-        public void _SetActorHp(int id, int hp)
+        public void _SetActorHp(int id, float hp)
         {
             if (FollowId == id)
             {                
-                _UIBlood.SetCurrentBlood(hp);
+                _UIBlood.SetCurrentBlood((int)hp);
             }
         }    
         

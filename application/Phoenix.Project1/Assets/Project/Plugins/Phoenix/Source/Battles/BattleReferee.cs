@@ -14,7 +14,7 @@ namespace Phoenix.Project1.Battles
         public event System.Action<Common.Battles.Winner> VictoryEvent;
         public event System.Action<Actor> PerformEvent;
 
-
+       
         public BattleReferee(Battles.Stage stage)
         {           
             this._Stage = stage;            
@@ -22,11 +22,16 @@ namespace Phoenix.Project1.Battles
 
         void IStatus.Enter()
         {
+            if (_Stage.Rounds++ > 5)
+                VictoryEvent(Common.Battles.Winner.Defenecer);
+
             if (_CheckVictory())
                 return;
             
             if (_CheckPerformr())
                 return;
+
+            
         }
 
         private bool _CheckPerformr()
@@ -41,12 +46,12 @@ namespace Phoenix.Project1.Battles
 
         private bool _CheckVictory()
         {
-            if(_Stage.Attacker.Actors.All(a => a.Hp == 0))
+            if(_Stage.Attacker.Actors.All(a => !a.IsSurvival() ))
             {
                 VictoryEvent(Common.Battles.Winner.Defenecer);
                 return true;
             }
-            if (_Stage.Defender.Actors.All(a => a.Hp == 0))
+            if (_Stage.Defender.Actors.All(a => !a.IsSurvival()))
             {
                 VictoryEvent(Common.Battles.Winner.Attacker);
 
