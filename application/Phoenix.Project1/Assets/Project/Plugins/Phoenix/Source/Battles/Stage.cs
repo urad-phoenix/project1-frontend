@@ -11,6 +11,7 @@ namespace Phoenix.Project1.Battles
 
         readonly Actor[] _Actors;
         readonly Game.CircularQueue<Actor> _ActorCircular;
+        public int Rounds;
 
         public Stage(int id, Team attack, Team defend)
         {
