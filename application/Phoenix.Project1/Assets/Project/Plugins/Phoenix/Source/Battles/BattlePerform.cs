@@ -68,7 +68,27 @@ namespace Phoenix.Project1.Battles
             ActorPerformTimestamp timestamp = new ActorPerformTimestamp()
             {
                 Frames = startFrame,
-                ActorPerform = new ActorPerform(_Actor.Id.Value , cast.Location, "Move", "Back" , "Caster" , effects.ToArray()) 
+                ActorPerform = new ActorPerform(effects.ToArray() , new ActorFrameMotion() {
+                    ActorId = _Actor.Id , 
+                    StartFrames = 0 , 
+                    EndFrames = 0+motionForward.TotalFrame ,
+                    MotionId = MotionType.Forward,
+                    TargetLocation = 0
+                } , new ActorFrameMotion()
+                {
+                    ActorId = _Actor.Id,
+                    StartFrames = 0 + motionForward.TotalFrame + motionCast.TotalFrame,
+                    EndFrames = 0 + motionForward.TotalFrame + motionCast.TotalFrame + motionBack.TotalFrame,
+                    MotionId = MotionType.Back,
+                    TargetLocation = 0
+                }, new ActorFrameMotion()
+                {
+                    ActorId = _Actor.Id,
+                    StartFrames =0+ motionForward.TotalFrame ,
+                    EndFrames = 0 + motionForward.TotalFrame + motionCast.TotalFrame,
+                    MotionId = MotionType.Cast1,
+                    TargetLocation = cast.Location
+                })
             };
             PerformEvent(timestamp);
         }

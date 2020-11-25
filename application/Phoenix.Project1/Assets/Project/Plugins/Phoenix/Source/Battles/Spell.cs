@@ -1,35 +1,14 @@
-﻿using Phoenix.Project1.Battles.SkillExtensions;
+﻿using Phoenix.Project1.Battles.Extensions;
 using Phoenix.Project1.Common.Battles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Phoenix.Project1.Battles.SkillExtensions
+namespace Phoenix.Project1.Battles.Extensions
 {
 }
 namespace Phoenix.Project1.Battles
 {
-    public class Buff
-    {
-        public int Actor;
-        public BuffType Type;
-        public int Count;
-    }
-
-    public class Energy
-    {
-        public int Actor;
-        public EnergyType Type;
-        public float Value;
-        public bool Critical;
-    }
-
-    public class Attribute
-    {
-        public int Actor;
-        public int Value;
-        public AttributeType Type;
-    }
 
     public class Spell
     {

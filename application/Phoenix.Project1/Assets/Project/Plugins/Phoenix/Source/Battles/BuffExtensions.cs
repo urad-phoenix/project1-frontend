@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Phoenix.Project1.Battles.SkillExtensions
+namespace Phoenix.Project1.Battles.Extensions
 {
     public static class BuffExtensions
     {
