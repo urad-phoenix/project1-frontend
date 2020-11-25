@@ -45,14 +45,24 @@ namespace Phoenix.Project1.Battles
             var castStart = motionForward.TotalFrame + startFrame;
 
             var effects = new System.Collections.Generic.List<ActorFrameEffect>();
+
+            var hitEffects = cast.ToEffects().ToArray();
             for (int i = 0; i < motionCast.Hits.Length; i++)
-            {
-                
+            {                
                 var hitFrame = motionCast.Hits[i];
                 var startHitFrame = castStart + hitFrame.Frame;
-                _Timer.Register(startHitFrame, () => cast.Occurrence(_Stage));
-                effects.Add(new ActorFrameEffect() { Frames = startHitFrame, Effects = cast.ToEffects().ToArray() });
+                
+                effects.Add(new ActorFrameEffect() { Frames = startHitFrame, Effects = hitEffects });
             }
+
+            if(effects.Count == 0)
+            {
+
+                Regulus.Utility.Log.Instance.WriteInfo($"The motion {motionCast.Key} has no hit point.");
+                _Timer.Register(castStart, () => cast.Occurrence(_Stage));
+                effects.Add(new ActorFrameEffect() { Frames = castStart, Effects = hitEffects });
+            }
+                
 
             ActorPerformTimestamp timestamp = new ActorPerformTimestamp()
             {

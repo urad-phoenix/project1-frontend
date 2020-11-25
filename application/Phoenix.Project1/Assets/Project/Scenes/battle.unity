@@ -206,6 +206,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 243793395, guid: a1f6913a4965cd840a5411c41a920b1d, type: 3}
+      propertyPath: _Texts.Array.data[0].Key
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8970193891420324982, guid: a1f6913a4965cd840a5411c41a920b1d,
         type: 3}
       propertyPath: m_Name

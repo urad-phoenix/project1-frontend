@@ -68,7 +68,7 @@ namespace Phoenix.Project1.Editors.Tools
                         {
                             var hit = timelineData.HitDatas[j];
 
-                            hitSheet.Rows.Add(NewRowData(new[] {$"{spellAsset.name}_Hit", "1",  hit.Frame.ToString()}));                                        
+                            hitSheet.Rows.Add(NewRowData(new[] {$"{spellAsset.name}_{motion.Key}", "1",  hit.Frame.ToString()}));                                        
                         }    
                     }                   
                 }              

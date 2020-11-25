@@ -11,8 +11,7 @@ namespace Phoenix.Project1.Battles
 
         readonly Actor[] _Actors;
         readonly Game.CircularQueue<Actor> _ActorCircular;
-        public int Rounds;
-
+        int _Rounds;
         public Stage(int id, Team attack, Team defend)
         {
             this.Id = id;
@@ -22,6 +21,11 @@ namespace Phoenix.Project1.Battles
             _Actors = Attacker.Actors.Union(Defender.Actors).ToArray();
             _ActorCircular = new Game.CircularQueue<Actor>(_Actors);
 
+        }
+
+        internal bool CheckFinish()
+        {
+            return _Rounds++ > 20;
         }
 
         public Actor NextPerformer()
