@@ -8,7 +8,20 @@ namespace TP.Scene.Locators.Editor
     [CustomEditor(typeof(CharacterLocator)), CanEditMultipleObjects]
     public class CharacterLocatorEditor : Editor
     {
-         static List<CharacterLocator> _Locators = new List<CharacterLocator>();
+        static List<CharacterLocator> _Locators = new List<CharacterLocator>();
+
+//        private CharacterLocator _Locator;
+//
+//        private CampLocator _Camp;
+        
+//        private void OnEnable()
+//        {
+//            _Locator = target as CharacterLocator;  
+//            
+//            _Camp = _Locator.transform.GetComponentInParent<CampLocator>();
+//
+//            _Locator.CampType = _Camp.CampType;
+//        }       
 
         private void OnSceneGUI()
         {

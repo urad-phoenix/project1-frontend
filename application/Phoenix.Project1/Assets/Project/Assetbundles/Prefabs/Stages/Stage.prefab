@@ -676,6 +676,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Index: 4
+  CampType: 0
   Color: {r: 0, g: 0, b: 1, a: 1}
   LabelShownPos: 0.5
   FontMaxSize: 10
@@ -726,6 +727,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Index: 3
+  CampType: 0
   Color: {r: 0, g: 0, b: 1, a: 1}
   LabelShownPos: 0.5
   FontMaxSize: 10
@@ -776,6 +778,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Index: 11
+  CampType: 1
   Color: {r: 1, g: 0.22772029, b: 0, a: 1}
   LabelShownPos: 0.5
   FontMaxSize: 10
@@ -882,6 +885,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Index: 9
+  CampType: 1
   Color: {r: 1, g: 0.22772029, b: 0, a: 1}
   LabelShownPos: 0.5
   FontMaxSize: 10
@@ -932,6 +936,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Index: 1
+  CampType: 0
   Color: {r: 0, g: 0, b: 1, a: 1}
   LabelShownPos: 0.5
   FontMaxSize: 10
@@ -1028,6 +1033,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Index: 8
+  CampType: 1
   Color: {r: 1, g: 0.22772029, b: 0, a: 1}
   LabelShownPos: 0.5
   FontMaxSize: 10
@@ -1078,6 +1084,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Index: 2
+  CampType: 0
   Color: {r: 0, g: 0, b: 1, a: 1}
   LabelShownPos: 0.5
   FontMaxSize: 10
@@ -1128,6 +1135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Index: 10
+  CampType: 1
   Color: {r: 1, g: 0.22772029, b: 0, a: 1}
   LabelShownPos: 0.5
   FontMaxSize: 10
@@ -1224,6 +1232,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Index: 6
+  CampType: 0
   Color: {r: 0, g: 0, b: 1, a: 1}
   LabelShownPos: 0.5
   FontMaxSize: 10
@@ -1794,6 +1803,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Index: 7
+  CampType: 1
   Color: {r: 1, g: 0.22772029, b: 0, a: 1}
   LabelShownPos: 0.5
   FontMaxSize: 10
@@ -1844,6 +1854,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Index: 12
+  CampType: 1
   Color: {r: 1, g: 0.22772029, b: 0, a: 1}
   LabelShownPos: 0.5
   FontMaxSize: 10
@@ -1894,6 +1905,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Index: 5
+  CampType: 0
   Color: {r: 0, g: 0, b: 1, a: 1}
   LabelShownPos: 0.5
   FontMaxSize: 10
