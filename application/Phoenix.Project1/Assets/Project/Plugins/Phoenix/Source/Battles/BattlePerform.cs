@@ -115,6 +115,7 @@ namespace Phoenix.Project1.Battles
                 }
 
                 done = true;
+                break;
             }
             if (done)
                 DoneEvent();

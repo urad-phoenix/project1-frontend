@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+
 using Cinemachine;
 using Phoenix.Playables;
 using Phoenix.Pool;
@@ -11,6 +11,7 @@ using Project.Scripts.UI;
 using Regulus.Remote.Reactive;
 using TP.Scene.Locators;
 using UniRx;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Playables;
@@ -90,6 +91,8 @@ namespace Phoenix.Project1.Client.Battles
                                     
             battleObs.Subscribe(_Battle).AddTo(_Disposables);
 
+            
+
             _SetPlayablePool();
         }     
 
@@ -164,8 +167,23 @@ namespace Phoenix.Project1.Client.Battles
             return Observable.Return(true);
         }
 
+
+        void SetTime()
+        {
+            var unbattleObs = from battle in NotifierRx.ToObservable().Unsupply<IBattle>()
+                              select battle;
+
+            unbattleObs.Subscribe(_ => UnityEngine.Time.timeScale = 1).AddTo(_Disposables);
+
+            var speedObs = from battle in NotifierRx.ToObservable().Supply<IBattle>()
+                           from speed in battle.Speed.ObserveEveryValueChanged(b => b.Value)
+                           select speed;
+            speedObs.Subscribe(_UpdateSpeed).AddTo(_Disposables);
+        }
         private void _Battle(IBattle battle)
-        {            
+        {
+            SetTime();
+
             var actorPerformObs = UniRx.Observable.FromEvent<Action<ActorPerformTimestamp> , ActorPerformTimestamp>(h => (gpi) => h(gpi), h => battle.ActorPerformEvent += h, h => battle.ActorPerformEvent -= h);
             var enterenceObs =  UniRx.Observable.FromEvent<Action<ActorEntranceTimestamp>, ActorEntranceTimestamp>(h => (gpi) => h(gpi), h => battle.EntranceEvent += h, h => battle.EntranceEvent -= h);
             var finishObs = UniRx.Observable.FromEvent<Action<BattleResult>, BattleResult>(h => (gpi) => h(gpi), h => battle.FinishEvent += h, h => battle.FinishEvent -= h);
@@ -197,6 +215,10 @@ namespace Phoenix.Project1.Client.Battles
             readyObs.Subscribe(r => _Ready(r)).AddTo(_Disposables);
         }
       
+        void _UpdateSpeed(float val)
+        {
+            UnityEngine.Time.timeScale = val;
+        }
         private void _Ready(IReady ready)
         {
             ready.Ready();
@@ -206,6 +228,7 @@ namespace Phoenix.Project1.Client.Battles
                 from newHp in actor.Hp.ChangeObservable()
                 select new { actor, newHp };
             
+           
             actorHpObs.DoOnError(_Error).ObserveOnMainThread()
                 .Subscribe(v => _ChangeActorHp(v.actor.InstanceId.Value,(int) v.newHp)).AddTo(_Disposables);
             

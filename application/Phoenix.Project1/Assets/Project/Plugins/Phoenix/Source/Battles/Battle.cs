@@ -29,6 +29,7 @@ namespace Phoenix.Project1.Battles
             _Actors = new NotifierCollection<IActor>();
 
             _ActorCount = new Property<int>();
+            
         }
 
         
@@ -66,7 +67,8 @@ namespace Phoenix.Project1.Battles
 
         public void End()
         {
-            while(_Battleing)
+            _Time.Speed.Value = 99999;
+            while (_Battleing)
             {
                 _Machine.Update();
             }
@@ -111,6 +113,11 @@ namespace Phoenix.Project1.Battles
                 End();
         }
 
+        void IBattle.SetSpeed(float val)
+        {
+            _Time.Speed.Value = val;
+        }
+
         readonly Regulus.Remote.Property<int> _StageProperty;
         Regulus.Remote.Property<int> IBattle.Stage => _StageProperty;
 
@@ -122,6 +129,8 @@ namespace Phoenix.Project1.Battles
 
         readonly Property<int> _ActorCount ;
         Property<int> IBattle.ActorCount => _ActorCount;
+
+        Property<float> IBattle.Speed => _Time.Speed;
 
         readonly Phoenix.Project1.NotifierCollection<ActorEntranceTimestamp> _Entrances;
 

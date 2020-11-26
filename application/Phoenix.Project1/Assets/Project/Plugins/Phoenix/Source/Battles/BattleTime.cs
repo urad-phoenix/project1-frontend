@@ -11,19 +11,23 @@ namespace Phoenix.Project1.Battles
         readonly TimeCounter _Counter;
 
         readonly Property<int> _Frames;
+
+        public readonly Property<float> Speed;
         public BattleTime()
         {
             _Counter = new TimeCounter();
             _Pusher = new TimePusher();
             _Frames = new Property<int>();
+            Speed = new Property<float>(1) ;
         }
+        
         int IBattleTime.Frame => _Frames;
 
         public Property<int> Frames => _Frames;
 
         int IBattleTime.Advance()
         {
-            var frames = _Pusher.Advance(_Counter.Second);
+            var frames = _Pusher.Advance(_Counter.Second* Speed);
             _Counter.Reset();
             _Frames.Value += frames;
             
