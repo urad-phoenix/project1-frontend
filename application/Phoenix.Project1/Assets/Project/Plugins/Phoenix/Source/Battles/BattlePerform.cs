@@ -73,14 +73,14 @@ namespace Phoenix.Project1.Battles
                     StartFrames = 0 , 
                     EndFrames = 0+motionForward.TotalFrame ,
                     MotionId = MotionType.Forward,
-                    TargetLocation = 0
+                    TargetLocation = cast.Location
                 } , new ActorFrameMotion()
                 {
                     ActorId = _Actor.Id,
                     StartFrames = 0 + motionForward.TotalFrame + motionCast.TotalFrame,
                     EndFrames = 0 + motionForward.TotalFrame + motionCast.TotalFrame + motionBack.TotalFrame,
                     MotionId = MotionType.Back,
-                    TargetLocation = 0
+                    TargetLocation = cast.Location
                 }, new ActorFrameMotion()
                 {
                     ActorId = _Actor.Id,

@@ -338,7 +338,7 @@ namespace Phoenix.Project1.Client.Battles
         
         private IObservable<bool> _ActorMotion(ActorFrameMotion data)
         {
-            //Debug.Log($"_ActorMotion Effect {data.ActorId},  {data.MotionId} target {data.TargetLocation} startFrame {data.StartFrames} endFrame {data.EndFrames} currentFrame {_FrameNumber}");
+            Debug.Log($"_ActorMotion Effect {data.ActorId},  {data.MotionId} target {data.TargetLocation} startFrame {data.StartFrames} endFrame {data.EndFrames} currentFrame {_FrameNumber}");
 
             var obs = TimelineBinding.PlayableAsObservable(data, this);
 

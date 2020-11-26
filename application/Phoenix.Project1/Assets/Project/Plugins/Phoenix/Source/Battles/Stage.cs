@@ -25,7 +25,7 @@ namespace Phoenix.Project1.Battles
 
         internal bool CheckFinish()
         {
-            return _Rounds++ > 20;
+            return _Rounds++ > 999;
         }
 
         public Actor NextPerformer()
