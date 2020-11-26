@@ -27,10 +27,22 @@ namespace Phoenix.Project1.Users
         private Stage _BuildDemoStage()
         {
             
-            var attacker = new Actor(_Get(10001),1, 5);
-            var defender = new Actor(_Get(10001), 2,8);
-            var aTeam = new Team(attacker);
-            var dTeam = new Team(defender);
+            var attacker1 = new Actor(_Get(10001),1, 1);
+            var attacker2 = new Actor(_Get(10001), 2, 2);
+            var attacker3 = new Actor(_Get(10001), 3, 3);
+            var attacker4 = new Actor(_Get(10001), 4, 4);
+            var attacker5 = new Actor(_Get(10001), 5, 5);
+            var attacker6 = new Actor(_Get(10001), 6, 6);
+            var defender1 = new Actor(_Get(10001), 7,7);
+            var defender2 = new Actor(_Get(10001), 8, 8);
+            var defender3 = new Actor(_Get(10001), 9, 9);
+            var defender4 = new Actor(_Get(10001), 10, 10);
+            var defender5 = new Actor(_Get(10001), 11, 11);
+            var defender6= new Actor(_Get(10001), 12, 12);
+            //var aTeam = new Team(attacker1, attacker2, attacker3, attacker4, attacker5, attacker6);
+            var aTeam = new Team(attacker1, attacker2, attacker3);
+            //var dTeam = new Team(defender1, defender2, defender3, defender4, defender5, defender6);
+            var dTeam = new Team(defender1, defender2);
             var stage = new Stage(1, aTeam, dTeam);
             return stage;
         }
