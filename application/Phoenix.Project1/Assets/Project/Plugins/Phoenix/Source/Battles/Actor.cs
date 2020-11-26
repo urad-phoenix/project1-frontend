@@ -29,7 +29,7 @@ namespace Phoenix.Project1.Battles
                 Now.Value = 0;
         }
     }
-    public class Actor : IActor
+    public class Actor : IActor 
     {
 
         public readonly Configs.Actor Prototype;
@@ -51,8 +51,11 @@ namespace Phoenix.Project1.Battles
             _Motions.Add(MotionType.Back, Prototype.Motions.Back);
             _Motions.Add(MotionType.Cast1, Prototype.Motions.Cast1);
             Id = new Property<int>(instance_id);
-            Location = new Property<int>(location);            
-            _AvatarId = new Property<string>("hero-1");
+            Location = new Property<int>(location);    
+            if(prototype.Id == 10002)
+                _AvatarId = new Property<string>("hero-2");
+            else
+                _AvatarId = new Property<string>("hero-1");
 
             _Spells = _Create(Prototype).ToArray();
             _Attributes = _BuildAttributes(prototype);
@@ -103,7 +106,7 @@ namespace Phoenix.Project1.Battles
             return _Attributes[attack];
         }
 
-        internal bool IsSurvival()
+        internal bool IsDamageable()
         {
             return _Energys[EnergyType.Hp].Now > 0;
         }
@@ -159,7 +162,7 @@ namespace Phoenix.Project1.Battles
             return _Motions[type];
         }
 
-      
+
     }
 }
 
