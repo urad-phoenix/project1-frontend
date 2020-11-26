@@ -18,11 +18,11 @@ namespace Phoenix.Project1.Client.Battles
 
                 var director = controller.GetPlayableDirector(motion, actData.ActorId);
 
-                Debug.Log($"act key {actData.MotionId}");
+                //Debug.Log($"act key {actData.MotionId}");
 
                 if (director == null || director.playableAsset == null)
                 {
-                    Debug.LogError($"act key {actData.MotionId} timeline is null"); 
+                    //Debug.LogError($"act key {actData.MotionId} timeline is null"); 
                     return new Subject<PlayableDirector>();
                 }
 

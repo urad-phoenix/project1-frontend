@@ -258,7 +258,7 @@ namespace Phoenix.Project1.Client.Battles
 
         private void _ActorPerform(ActorPerformTimestamp obj)
         {            
-            Debug.Log($"action frame {obj.Frames}, client frame {_FrameNumber}");
+            //Debug.Log($"ActorPerform frame {obj.Frames}, client frame {_FrameNumber}");
             
             ActAsObservable(obj.ActorPerform.Forwards);
             ActAsObservable(obj.ActorPerform.Casts);
@@ -338,20 +338,11 @@ namespace Phoenix.Project1.Client.Battles
         
         private IObservable<bool> _ActorMotion(ActorFrameMotion data)
         {
-            Debug.Log($"_ActorMotion Effect {data.ActorId},  {data.MotionId} target {data.TargetLocation} startFrame {data.StartFrames} endFrame {data.EndFrames} currentFrame {_FrameNumber}");
+            //Debug.Log($"_ActorMotion Effect {data.ActorId},  {data.MotionId} target {data.TargetLocation} startFrame {data.StartFrames} endFrame {data.EndFrames} currentFrame {_FrameNumber}");
 
             var obs = TimelineBinding.PlayableAsObservable(data, this);
 
-            obs.ObserveOnMainThread().Subscribe(RecyclePlayableDirector).AddTo(_Disposables);
-//            if (data.TargetLocation > 0)
-//            {
-//                var stateMachine = new BattleStateMachine();
-//
-//                stateMachine.AddState(new BattleActState($"act{data.ActorId.ToString()}{data.EndFrames}", stateMachine,
-//                    data, this));
-//            
-//                Enqueue(stateMachine);    
-//            }            
+            obs.ObserveOnMainThread().Subscribe(RecyclePlayableDirector).AddTo(_Disposables);         
             
             return Observable.Return(true);
         }       
@@ -489,7 +480,7 @@ namespace Phoenix.Project1.Client.Battles
 
         public void RecyclePlayableDirector(PlayableDirector playableDirector)
         {                       
-            Debug.Log($"RecyclePlayableDirector===============");
+            //Debug.Log($"RecyclePlayableDirector===============");
             PoolManager.Instance.Recycle(_PlayablePoolName, playableDirector.gameObject);
         }
 
