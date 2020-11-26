@@ -37,13 +37,6 @@ public class UIBlood : MonoBehaviour
 
     private int _UpdateValue;
 
-    private CompositeDisposable _Disposable;
-
-    public UIBlood()
-    {
-        _Disposable = new CompositeDisposable();
-    }  
-
     public void Init(int value)
     {
         _Isinitialized = true;
@@ -97,10 +90,5 @@ public class UIBlood : MonoBehaviour
         _AnimBooldImage.color = _IncreaseColor;
         
         _RealBloodSlider.DOValue(targetValue, _Duration);        
-    }
-
-    private void OnDestroy()
-    {
-        _Disposable.Clear();
-    }
+    }   
 }

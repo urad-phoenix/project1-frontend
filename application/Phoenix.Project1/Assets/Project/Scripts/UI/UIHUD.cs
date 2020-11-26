@@ -36,14 +36,15 @@ namespace Project.Scripts.UI
             FollowId = id;
 
             gameObject.SetActive(true);
-            
-            var actorHpObs =  from battle in NotifierRx.ToObservable().Supply<IBattle>()
+
+            var actorHpObs = from battle in NotifierRx.ToObservable().Supply<IBattle>()
                 from actor in battle.Actors.SupplyEvent()
-                from newHp in actor.Hp.ChangeObservable()
-                select new { actor, newHp };
+                where actor.InstanceId == FollowId
+                from newHp in actor.Hp.ObserveEveryValueChanged(v => v.Value)
+                select newHp;                     
             
             actorHpObs.DoOnError(_Error).ObserveOnMainThread()
-                .Subscribe(v => _SetActorHp(v.actor.InstanceId.Value, v.newHp)).AddTo(_Disposables);
+                .Subscribe(_SetActorHp).AddTo(_Disposables);
         }
         
         public void _Error(Exception exception)
@@ -71,12 +72,9 @@ namespace Project.Scripts.UI
             transform.position = screenPoint;                                  
         }
 
-        public void _SetActorHp(int id, float hp)
-        {
-            if (FollowId == id)
-            {                
-                _UIBlood.SetCurrentBlood((int)hp);
-            }
+        public void _SetActorHp(float hp)
+        {                         
+            _UIBlood.SetCurrentBlood((int)hp);            
         }    
         
         public void EffectTrigger(Effect effect)
@@ -94,7 +92,7 @@ namespace Project.Scripts.UI
             {
                 _UIBlood.ReduceValue(effect.Value);
             }
-        }
+        }                
         
         private void OnDestroy()
         {

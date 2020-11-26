@@ -162,7 +162,7 @@ namespace Phoenix.Project1.Client.Battles
 
             Observable.FromEvent<Action<Effect>, Effect>(h => value => h(value),
                     h => _EffectTriggerCallback += hud.EffectTrigger, h => _EffectTriggerCallback -= h)
-                .Subscribe().AddTo(_Disposables);                                   
+                .ObserveOnMainThread().Subscribe().AddTo(_Disposables);                                   
             
             return Observable.Return(true);
         }
@@ -281,20 +281,20 @@ namespace Phoenix.Project1.Client.Battles
 
         private void _ActorPerform(ActorPerformTimestamp obj)
         {            
-            //Debug.Log($"ActorPerform frame {obj.Frames}, client frame {_FrameNumber}");
+            Debug.Log($"ActorPerform frame {obj.Frames}, client frame {_FrameNumber}");
             
-            ActAsObservable(obj.ActorPerform.Forwards);
-            ActAsObservable(obj.ActorPerform.Casts);
-            ActAsObservable(obj.ActorPerform.Backs);
+            ActAsObservable(obj.ActorPerform.Forwards, obj.Frames);
+            ActAsObservable(obj.ActorPerform.Casts, obj.Frames);
+            ActAsObservable(obj.ActorPerform.Backs, obj.Frames);
                         
-            IObservable<Effect[]> triggerSubject = from effects in _EffectTriggerCombine(obj.ActorPerform.FrameEffects, _FrameNumber)//obj.Frames)                
+            IObservable<Effect[]> triggerSubject = from effects in _EffectTriggerCombine(obj.ActorPerform.FrameEffects, obj.Frames)//obj.Frames)                
                                                     select effects;
             triggerSubject.ObserveOnMainThread().Subscribe(_EffectFinished).AddTo(_Disposables);                        
         }
 
-        private void ActAsObservable(ActorFrameMotion[] motions)
+        private void ActAsObservable(ActorFrameMotion[] motions, int currentFrame)
         {
-            var obs = from act in _ActCombine(motions)
+            var obs = from act in _ActCombine(motions, currentFrame)
                     select act;
             obs.ObserveOnMainThread().Subscribe(_ActorFinished).AddTo(_Disposables);                        
         }
@@ -326,6 +326,8 @@ namespace Phoenix.Project1.Client.Battles
 
             foreach (var frameEffect in frameEffects)
             {
+                Debug.Log($"Trigger Effect {frameEffect.Frames} Current Frame {currentFrame}");
+                
                 foreach (var effect in frameEffect.Effects)
                 {
                     obs.Add(EffectTriggerRx.OnEffectTriggerObserver(effect, frameEffect.Frames, currentFrame));    
@@ -340,7 +342,7 @@ namespace Phoenix.Project1.Client.Battles
             return Observable.WhenAll(effectObs);
        }
         
-        private IObservable<ActorFrameMotion[]> _ActCombine(ActorFrameMotion[] frameMotions)
+        private IObservable<ActorFrameMotion[]> _ActCombine(ActorFrameMotion[] frameMotions, int currentFrame)
         {
             List<IObservable<ActorFrameMotion>> obs = new List<IObservable<ActorFrameMotion>>();
 
@@ -348,7 +350,7 @@ namespace Phoenix.Project1.Client.Battles
             {
                 //Debug.Log($"ActCombine Frame {motion.StartFrames}, End Frame {motion.EndFrames} client frame {_FrameNumber}");
                 //obs.Add(TimelineBinding.PlayableAsObservable(motion, this));
-                obs.Add(ActorTimelineRx.OnActorObserver(motion, motion.StartFrames + _FrameNumber, _FrameNumber));                    
+                obs.Add(ActorTimelineRx.OnActorObserver(motion, motion.StartFrames + currentFrame, currentFrame));                    
             }                     
             
             var effectObs = from handle in Observable.Merge(obs) 
@@ -393,11 +395,11 @@ namespace Phoenix.Project1.Client.Battles
 
             if (isLast)
             {
-                finishedObs.Subscribe(_EndBattle);
+                finishedObs.Subscribe(_EndBattle).AddTo(_Disposables);
             }
             else
             {
-                finishedObs.Subscribe(_StateMachineFinished);    
+                finishedObs.Subscribe(_StateMachineFinished).AddTo(_Disposables);    
             }
 
             if (_Machines.Count == 0 && _CurrentStateMachine == null)

@@ -68,7 +68,7 @@ namespace Phoenix.Project1.Client.Battles
                 
                 var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), _FrameEffect.CurrentFrame);
 
-                obs.Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
+                obs.ObserveOnMainThread().Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
 
                 return this;
             }

@@ -55,7 +55,7 @@ namespace Phoenix.Project1.Client.Battles
                 sourceSubscription.Disposable = parent.source.Subscribe(this);
 
                 var scheduling = UniRx.Observable.EveryFixedUpdate()
-                    .Subscribe(frame => OnNext((int)frame));
+                    .ObserveOnMainThread().Subscribe(frame => OnNext((int)frame));
 
                 return StableCompositeDisposable.Create(sourceSubscription, scheduling);
             }
