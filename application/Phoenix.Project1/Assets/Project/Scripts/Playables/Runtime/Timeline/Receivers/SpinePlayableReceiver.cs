@@ -9,7 +9,7 @@ namespace Phoenix.Playables.Markers
         {                            
             var notifier = notification is SpineAnimationNotification ? (SpineAnimationNotification)notification : new SpineAnimationNotification() {Name = "non"} ;
                         
-            Debug.Log($"notification type {notification} id {notification.id}, name {notifier.Name} playable {origin.ToString()}");
+            //Debug.Log($"notification type {notification} id {notification.id}, name {notifier.Name} playable {origin.ToString()}");
         }
     }
 }

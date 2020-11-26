@@ -1,6 +1,7 @@
 using System;
 using Phoenix.Project1.Common.Battles;
 using UniRx;
+using UnityEngine;
 
 namespace Phoenix.Project1.Client.Battles
 {
@@ -9,18 +10,18 @@ namespace Phoenix.Project1.Client.Battles
         public class FrameData
         {
             public ActorFrameMotion Motion;
-            public int Frame;
+            public int StartFrame;
             public int CurrentFrame;
         }
         
         private FrameData _FrameData;
         
-        public ActorTimelineObservable(ActorFrameMotion value, int frame, int currentFrame) : base(false)
+        public ActorTimelineObservable(ActorFrameMotion value, int startFrame, int currentFrame) : base(false)
         {
             
             _FrameData = new FrameData();            
             _FrameData.Motion = value;
-            _FrameData.Frame = frame;
+            _FrameData.StartFrame = startFrame;
             _FrameData.CurrentFrame = currentFrame;
         }
 
@@ -31,7 +32,6 @@ namespace Phoenix.Project1.Client.Battles
         
         class ActorObserver : UniRx.Operators.OperatorObserverBase<ActorFrameMotion, ActorFrameMotion>
         {
-            readonly object gate = new object();
             readonly CompositeDisposable _CancellationToken = new CompositeDisposable();
             bool isCompleted;
             
@@ -51,9 +51,9 @@ namespace Phoenix.Project1.Client.Battles
                 if(isCompleted)
                     return;
 
-                if (frame >= _FrameData.Frame)
+                if (frame >= _FrameData.StartFrame)
                 {                  
-//                    Debug.Log($"trigger effect currentFrame {frame}, target frame {_FrameEffect.Frame}");
+                    //Debug.Log($"ActorObserver {_FrameData.Motion.MotionId} currentFrame {frame}, target frame {_FrameData.StartFrame}");
                     observer.OnNext(_FrameData.Motion);                        
                     OnCompleted();
                 }
@@ -65,7 +65,7 @@ namespace Phoenix.Project1.Client.Battles
                 
                 var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), _FrameData.CurrentFrame);
 
-                obs.Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
+                obs.ObserveOnMainThread().Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
 
                 return this;
             }         
@@ -107,9 +107,9 @@ namespace Phoenix.Project1.Client.Battles
     
     public static class ActorTimelineRx
     {
-        public static IObservable<ActorFrameMotion> OnActorObserver(ActorFrameMotion motion, int frame, int currentFrame)
+        public static IObservable<ActorFrameMotion> OnActorObserver(ActorFrameMotion motion, int startFrame, int currentFrame)
         {                                  
-            return new ActorTimelineObservable(motion, frame, currentFrame); 
+            return new ActorTimelineObservable(motion, startFrame, currentFrame); 
         }
     }
 }
