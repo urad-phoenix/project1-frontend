@@ -40,9 +40,9 @@ namespace Phoenix.Project1.Users
             var defender5 = new Actor(_Get(10001), 11, 11);
             var defender6= new Actor(_Get(10001), 12, 12);
             //var aTeam = new Team(attacker1, attacker2, attacker3, attacker4, attacker5, attacker6);
-            var aTeam = new Team(attacker1, attacker2, attacker3);
+            var aTeam = new Team(attacker1, attacker2, attacker3,attacker4, attacker5, attacker6);
             //var dTeam = new Team(defender1, defender2, defender3, defender4, defender5, defender6);
-            var dTeam = new Team(defender1, defender2);
+            var dTeam = new Team(defender1, defender2, defender3, defender4, defender5, defender6);
             var stage = new Stage(1, aTeam, dTeam);
             return stage;
         }

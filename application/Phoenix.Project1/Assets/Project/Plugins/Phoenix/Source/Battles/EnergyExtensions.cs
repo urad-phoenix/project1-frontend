@@ -54,7 +54,9 @@ namespace Phoenix.Project1.Battles.Extensions
 
 
             var v =0- (v1 * (1 - v2 / v3) / (v4 / v5) * v6);
-//            var v = -10;
+            //            var v = -10;
+            if (v >= 0)
+                v = -1;
             return new Energy()
             { Actor = target.Id , Critical = false , Type = Common.Battles.EnergyType.Hp , Value =v };
            
