@@ -29,13 +29,13 @@ namespace Phoenix.Project1.Users
             
             var attacker1 = new Actor(_Get(10002),1, 4);
             var attacker2 = new Actor(_Get(10002), 3,5);
-            var attacker3 = new Actor(_Get(10002), 5,6);
-            var attacker4 = new Actor(_Get(10001), 7, 1);
-            var attacker5 = new Actor(_Get(10001), 9, 2);
-            var attacker6 = new Actor(_Get(10001), 11, 3);
-            var defender1 = new Actor(_Get(10001), 2,7);
+            var attacker3 = new Actor(_Get(10001), 5,6);
+            var attacker4 = new Actor(_Get(10002), 7, 1);
+            var attacker5 = new Actor(_Get(10002), 9, 2);
+            var attacker6 = new Actor(_Get(10002), 11, 3);
+            var defender1 = new Actor(_Get(10002), 2,7);
             var defender2 = new Actor(_Get(10001), 4, 8);
-            var defender3 = new Actor(_Get(10001), 6, 9);
+            var defender3 = new Actor(_Get(10002), 6, 9);
             var defender4 = new Actor(_Get(10002), 8, 10);
             var defender5 = new Actor(_Get(10002), 10, 11);
             var defender6= new Actor(_Get(10002), 12, 12);
