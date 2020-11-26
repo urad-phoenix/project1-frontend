@@ -27,18 +27,18 @@ namespace Phoenix.Project1.Users
         private Stage _BuildDemoStage()
         {
             
-            var attacker1 = new Actor(_Get(10001),1, 1);
-            var attacker2 = new Actor(_Get(10001), 2, 2);
-            var attacker3 = new Actor(_Get(10001), 3, 3);
-            var attacker4 = new Actor(_Get(10001), 4, 4);
-            var attacker5 = new Actor(_Get(10001), 5, 5);
-            var attacker6 = new Actor(_Get(10001), 6, 6);
-            var defender1 = new Actor(_Get(10001), 7,7);
-            var defender2 = new Actor(_Get(10001), 8, 8);
-            var defender3 = new Actor(_Get(10001), 9, 9);
-            var defender4 = new Actor(_Get(10001), 10, 10);
-            var defender5 = new Actor(_Get(10001), 11, 11);
-            var defender6= new Actor(_Get(10001), 12, 12);
+            var attacker1 = new Actor(_Get(10002),1, 4);
+            var attacker2 = new Actor(_Get(10002), 3,5);
+            var attacker3 = new Actor(_Get(10002), 5,6);
+            var attacker4 = new Actor(_Get(10001), 7, 1);
+            var attacker5 = new Actor(_Get(10001), 9, 2);
+            var attacker6 = new Actor(_Get(10001), 11, 3);
+            var defender1 = new Actor(_Get(10001), 2,7);
+            var defender2 = new Actor(_Get(10001), 4, 8);
+            var defender3 = new Actor(_Get(10001), 6, 9);
+            var defender4 = new Actor(_Get(10002), 8, 10);
+            var defender5 = new Actor(_Get(10002), 10, 11);
+            var defender6= new Actor(_Get(10002), 12, 12);
             //var aTeam = new Team(attacker1, attacker2, attacker3, attacker4, attacker5, attacker6);
             var aTeam = new Team(attacker1, attacker2, attacker3,attacker4, attacker5, attacker6);
             //var dTeam = new Team(defender1, defender2, defender3, defender4, defender5, defender6);

@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Regulus.Remote;
+using System;
 using System.Linq;
 
 namespace Phoenix.Project1.Battles
 {
-    public class Stage
+    public class Stage 
     {
         public readonly int Id;
         public readonly Team Attacker;
@@ -11,6 +12,7 @@ namespace Phoenix.Project1.Battles
 
         readonly Actor[] _Actors;
         readonly Game.CircularQueue<Actor> _ActorCircular;
+        readonly LocationCalculator _LocationCalculator;
         int _Rounds;
         public Stage(int id, Team attack, Team defend)
         {
@@ -18,9 +20,9 @@ namespace Phoenix.Project1.Battles
             Attacker = attack;
             Defender = defend;
 
-            _Actors = Attacker.Actors.Union(Defender.Actors).ToArray();
+            _Actors = Attacker.Actors.Union(Defender.Actors).OrderBy(a => a, new ActorComparer()).ToArray();
             _ActorCircular = new Game.CircularQueue<Actor>(_Actors);
-
+            _LocationCalculator = new LocationCalculator(Common.Battles.Configs.StageSetting.YCount);
         }
 
         internal bool CheckFinish()
@@ -53,22 +55,55 @@ namespace Phoenix.Project1.Battles
 
         internal Actor GetLocation(Actor actor, Configs.EffectTarget target)
         {
+
+            // todo 混亂應該也是在這找
             if (Attacker.IsMember(actor))
-                return _GetLocation(Defender, target);
+                return _GetLocation(actor,Defender, Attacker, target);
             if (Defender.IsMember(actor))
-                return _GetLocation(Attacker, target);
+                return _GetLocation(actor,Attacker, Defender, target);
             throw new Exception($"沒有陣營的角色 {actor.Id}");
         }
 
-        private Actor _GetLocation(Team team, Configs.EffectTarget target)
+        private Actor _GetLocation(Actor actor,Team defender, Team attacker, Configs.EffectTarget target)
+        {
+            var targetActor = _FindWithTarget(actor, defender, attacker, target);
+            if(targetActor == null || !targetActor.IsDamageable())
+                return _DefaultLocation(defender);
+            return targetActor;
+        }
+        Actor _FindWithTarget(Actor actor, Team defender, Team attacker, Configs.EffectTarget target)
         {
             // todo 依類型取出站位
-            return _DefaultLocation(team);
+            if (target.Id == 10001)
+                return _FrontSignle(actor, attacker, defender);
+            if (target.Id == 10002)
+                return _BackSignle(actor, attacker, defender);
+            return null;
         }
+        private Actor _BackSignle(Actor actor, Team attacker, Team defender)
+        {
+            var location = _LocationCalculator.BackSignle(actor.Location.Value);
+            var target = defender.FindActorByLocation(location);
+            if (target != null)
+                return target;
+            return null;
+        }
+
+        private Actor _FrontSignle(Actor actor, Team attacker, Team defender)
+        {
+            
+            var location = _LocationCalculator.FrontSignle(actor.Location.Value);
+            var target = defender.FindActorByLocation(location);
+            if(target!=null)
+                return target;
+            return null;
+        }
+
+        
 
         private static Actor _DefaultLocation(Team team)
         {
-            return team.GetSurvivors().First();
+            return team.GetDamageables().First();
         }
 
         internal System.Collections.Generic.IEnumerable<Actor> GetActorsByEffectTarget(Actor actor, int location, Configs.EffectTarget target)
@@ -84,3 +119,4 @@ namespace Phoenix.Project1.Battles
         }
     }
 }
+
