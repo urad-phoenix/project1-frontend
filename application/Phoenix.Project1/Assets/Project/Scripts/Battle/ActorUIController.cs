@@ -121,13 +121,14 @@ namespace Phoenix.Project1.Client.Battles
             var component = textObj.GetComponent<TextJumpComponent>();
 
             component.InvertEnd = isAttacker;
-            
-            var obs = from jump in component.SetTextJumpAsObservable(text)
-                select jump;
 
-            obs.Subscribe().AddTo(gameObject);
+            component.SetTexture(text);
+//            var obs = from jump in component.SetTextJumpAsObservable(text)
+//                select jump;
+//
+//            obs.Subscribe().AddTo(gameObject);
             //obs.Subscribe(unit => _Compelete()).AddTo(gameObject);
-        }  
+        }                
         
         private Vector3 _GetPosition(Camera camera, Transform follow)
         {

@@ -42,6 +42,8 @@ public class TextJumpComponent : MonoBehaviour
     
     public void SetTexture(string text)
     {
+        _Text.text = text;         
+        
         if(_RectTransform == null)
             _RectTransform = GetComponent<RectTransform>();
 
@@ -69,14 +71,17 @@ public class TextJumpComponent : MonoBehaviour
     private IObservable<Unit> PlayTweenAsObservable()
     {
         return _RectTransform.DOLocalJump(
-            new Vector3(_RectTransform.localPosition.x + (Random.Range(_EndXRandomRange.x, _EndXRandomRange.y) * (InvertEnd ? -1 : 1)),
-                _RectTransform.localPosition.y + Random.Range(_EndYRandomRange.x, _EndYRandomRange.y), 0.0f),
-            _RectTransform.localPosition.y + Random.Range(_JumpYRandomRange.x, _JumpYRandomRange.y), 1, _Duration).OnComplete(_Complete).OnCompleteAsObservable();        
+                new Vector3(
+                    _RectTransform.localPosition.x +
+                    (Random.Range(_EndXRandomRange.x, _EndXRandomRange.y) * (InvertEnd ? -1 : 1)),
+                    _RectTransform.localPosition.y + Random.Range(_EndYRandomRange.x, _EndYRandomRange.y), 0.0f),
+                _RectTransform.localPosition.y + Random.Range(_JumpYRandomRange.x, _JumpYRandomRange.y), 1, _Duration)
+            .OnComplete(_Complete).OnCompleteAsObservable();
     }
 
     void _Complete()
     {
-        _Disposable?.Dispose();
+       // _Disposable?.Dispose();
         
         OnCompletedEvent?.Invoke(this.gameObject);
 
@@ -86,6 +91,6 @@ public class TextJumpComponent : MonoBehaviour
 
     private void OnDestroy()
     {
-        _Disposable?.Dispose();
+        //_Disposable?.Dispose();
     }
 }
