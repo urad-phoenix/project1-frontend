@@ -1,8 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace TP.Scene.Locators.Editor
 {
@@ -12,6 +9,29 @@ namespace TP.Scene.Locators.Editor
     public class CampLocatorEditor : Editor
     {        
         static List<CampLocator> _Locators = new List<CampLocator>();
+
+        private CampLocator _CampLocator;
+        
+        private void OnEnable()
+        {
+            _CampLocator = target as CampLocator;                        
+        }
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+            
+            if (GUI.changed)
+            {
+                var characters = _CampLocator.GetComponentsInChildren<CharacterLocator>();
+
+                foreach (var characterLocator in characters)
+                {
+                    characterLocator.CampType = _CampLocator.CampType;
+                }
+            }
+        }
+        
         
         [DrawGizmo(GizmoType.NonSelected | GizmoType.Active)]
         static void OnDrawGizmos(CampLocator locator, GizmoType gizmoType)

@@ -39,10 +39,14 @@ namespace Phoenix.Project1.Client.Battles
             
             private FrameData _FrameData;
             
+            private int _CurrentFrame;
+            
             public ActorObserver(FrameData frameData, IObserver<ActorFrameMotion> observer, IDisposable cancel) : base(observer, cancel)
             {                
                 _FrameData = frameData;
-               
+
+                _CurrentFrame = _FrameData.CurrentFrame;
+                
                 isCompleted = false;             
             }
 
@@ -63,11 +67,11 @@ namespace Phoenix.Project1.Client.Battles
             {               
                 _Frame = new Subject<int>();               
                 
-                var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), _FrameData.CurrentFrame);
-
-                var scheduling = obs.ObserveOnMainThread().Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
-//                var scheduling = UniRx.Observable.EveryUpdate()
-//                    .ObserveOnMainThread().Subscribe(frame => Update((int)frame)).AddTo(_CancellationToken);
+//                var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), _FrameData.CurrentFrame);
+//
+//                var scheduling = obs.ObserveOnMainThread().Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
+                var scheduling = UniRx.Observable.EveryUpdate()
+                    .ObserveOnMainThread().Subscribe(frame => Update(_CurrentFrame++)).AddTo(_CancellationToken);
                 
                 return StableCompositeDisposable.Create(_CancellationToken, scheduling);
             }         

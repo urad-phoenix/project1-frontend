@@ -3,6 +3,7 @@ using DG.Tweening;
 using Phoenix.Project1.Client.Utilities.RxExtensions;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
 public class TextJumpComponent : MonoBehaviour
@@ -35,7 +36,9 @@ public class TextJumpComponent : MonoBehaviour
     
     public event Action<GameObject> OnCompletedEvent;
 
-    private RectTransform _RectTransform;   
+    private RectTransform _RectTransform;
+
+    private CompositeDisposable _Disposable = new CompositeDisposable();
     
     public void SetTexture(string text)
     {
@@ -73,9 +76,16 @@ public class TextJumpComponent : MonoBehaviour
 
     void _Complete()
     {
-        OnCompletedEvent?.Invoke(this.gameObject);
+        _Disposable?.Dispose();
         
+        OnCompletedEvent?.Invoke(this.gameObject);
+
         if(_IsAutoDestroy)
             Destroy(gameObject);
-    }     
+    }
+
+    private void OnDestroy()
+    {
+        _Disposable?.Dispose();
+    }
 }

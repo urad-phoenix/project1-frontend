@@ -67,10 +67,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 0
     m_MaxSize: 40
     m_Alignment: 0
     m_AlignByGeometry: 0
@@ -91,9 +91,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ee83d19376c6af4a829a3768e1bf189, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _EndXRandomRange: {x: 150, y: 200}
-  _EndYRandomRange: {x: 120, y: 150}
-  _JumpYRandomRange: {x: 180, y: 200}
-  _Duration: 0.5
+  _EndXRandomRange: {x: 100, y: 150}
+  _EndYRandomRange: {x: 50, y: 60}
+  _JumpYRandomRange: {x: 80, y: 100}
+  _Duration: 0.8
+  InvertEnd: 0
   _Text: {fileID: 6588038554399631231}
   _IsAutoDestroy: 0
