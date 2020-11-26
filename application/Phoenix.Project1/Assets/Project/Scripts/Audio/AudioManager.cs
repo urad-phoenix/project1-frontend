@@ -333,11 +333,10 @@ namespace Phoenix.Project1.Client.Audio
     public static class AudioRx
     {                
         public static IObservable<AudioSource> PlayAsObserver(this AudioSource audio)
-        {
-            audio.Play();
-
+        {            
             return Observable.Create<AudioSource>(ob =>
             {
+                audio.Play();
                 Observable.EveryUpdate().Subscribe(u =>
                 {
                     if (!audio.isPlaying)

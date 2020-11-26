@@ -68,9 +68,13 @@ namespace Phoenix.Project1.Client.Battles
                 
                 var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), _FrameEffect.CurrentFrame);
 
-                obs.ObserveOnMainThread().Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
-
-                return this;
+                var scheduling = obs.Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
+                
+//                var scheduling = UniRx.Observable.EveryUpdate()
+//                    .ObserveOnMainThread().Subscribe(frame => Update((int)frame)).AddTo(_CancellationToken);
+                
+                return StableCompositeDisposable.Create(_CancellationToken, scheduling);
+               
             }
 
             public override void OnNext(Effect value)
@@ -83,11 +87,12 @@ namespace Phoenix.Project1.Client.Battles
                 try
                 {
                     observer.OnError(error);
+                    _CancellationToken.Dispose();
                 }
                 finally
                 {
                     Dispose(); 
-                    _CancellationToken.Clear();
+                    _CancellationToken.Dispose();
                 }
             }
 
@@ -98,11 +103,12 @@ namespace Phoenix.Project1.Client.Battles
                     isCompleted = true;
 
                     observer.OnCompleted();
+                    _CancellationToken.Dispose();
                 }
                 finally
                 {
                     Dispose();
-                    _CancellationToken.Clear();
+                    _CancellationToken.Dispose();
                 }
             }
         }

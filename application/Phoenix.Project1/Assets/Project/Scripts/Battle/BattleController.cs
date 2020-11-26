@@ -39,9 +39,9 @@ namespace Phoenix.Project1.Client.Battles
 
         private Queue<BattleStateMachine> _Machines;
                                 
-        private Subject<int> _Frame;
+        //private Subject<int> _Frame;
         
-        private int _FrameNumber;
+        //private int _FrameNumber;
         
         [SerializeField]
         private CharacterLocator[] _Locators;
@@ -232,13 +232,13 @@ namespace Phoenix.Project1.Client.Battles
             actorHpObs.DoOnError(_Error).ObserveOnMainThread()
                 .Subscribe(v => _ChangeActorHp(v.actor.InstanceId.Value,(int) v.newHp)).AddTo(_Disposables);
             
-            _Frame = new Subject<int>();
+            //_Frame = new Subject<int>();
             
-            _FrameNumber = 0;
+            //_FrameNumber = 0;
             
-            var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), 0);
-            
-            obs.ObserveOnMainThread().Subscribe(frame => _Update(frame)).AddTo(_Disposables);
+//            var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), 0);
+//            
+//            obs.ObserveOnMainThread().Subscribe(frame => _Update(frame)).AddTo(_Disposables);
         }
 
         private void _ChangeActorHp(int id, int newHp)
@@ -281,7 +281,7 @@ namespace Phoenix.Project1.Client.Battles
 
         private void _ActorPerform(ActorPerformTimestamp obj)
         {            
-            Debug.Log($"ActorPerform frame {obj.Frames}, client frame {_FrameNumber}");
+            //Debug.Log($"ActorPerform frame {obj.Frames}, client frame {_FrameNumber}");
             
             ActAsObservable(obj.ActorPerform.Forwards, obj.Frames);
             ActAsObservable(obj.ActorPerform.Casts, obj.Frames);
@@ -363,7 +363,7 @@ namespace Phoenix.Project1.Client.Battles
         
         private IObservable<bool> _ActorMotion(ActorFrameMotion data)
         {
-            Debug.Log($"_ActorMotion Effect {data.ActorId},  {data.MotionId} target {data.TargetLocation} startFrame {data.StartFrames} endFrame {data.EndFrames} currentFrame {_FrameNumber}");
+            Debug.Log($"_ActorMotion Effect {data.ActorId},  {data.MotionId} target {data.TargetLocation} startFrame {data.StartFrames} endFrame {data.EndFrames}");
 
             var obs = TimelineBinding.PlayableAsObservable(data, this);
 
@@ -414,9 +414,9 @@ namespace Phoenix.Project1.Client.Battles
             }
         }     
         
-        private void _Update(int frame)
+        private void Update()
         {
-            _FrameNumber = frame;
+            //_FrameNumber = frame;
             _CurrentStateMachine?.Update();
         }      
 
@@ -519,7 +519,7 @@ namespace Phoenix.Project1.Client.Battles
             
             _Machines.Clear();    
             
-            _Frame?.Dispose();
+            //_Frame?.Dispose();
             
             PoolManager.Instance.RemovePool(_PlayablePoolName);
         }

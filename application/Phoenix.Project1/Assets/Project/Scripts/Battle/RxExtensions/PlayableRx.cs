@@ -8,23 +8,21 @@ namespace Phoenix.Project1.Client.Battles
 {
     public static class PlayableRx
     {
-        public static IObservable<PlayableDirector> PlayAsObservable(this PlayableDirector director)
+        public static IObservable<PlayableDirector> PlayAsObservable(this PlayableDirector director, IDisposable disposable)
         {
-            director.Play();
-            
             return Observable.Create<PlayableDirector>(obs =>
-            {
-                Observable.EveryUpdate().Subscribe(u =>
+            {                
+                director.Play();
+                
+                return Observable.EveryUpdate().Subscribe(u =>
                 {
                     director.stopped += playableDirector =>
                     {
                         obs.OnNext(playableDirector);
                         obs.OnCompleted();
+                        disposable.Dispose();
                     };
-                    
-                }).AddTo(director);
-
-                return Disposable.Empty;
+                });
             });
         }                
     }

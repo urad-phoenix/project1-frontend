@@ -72,9 +72,9 @@ namespace Phoenix.Project1.Client.Battles
                     {                                    
                         TimelineBinding.BindTransformTrack(director, _ActData, track, _Controller);                        
                     }
-                }                  
+                }
             
-                director.PlayAsObservable().Subscribe(_Finished).AddTo(_Disposable);
+                director.PlayAsObservable(new CompositeDisposable()).Subscribe(_Finished).AddTo(_Disposable);
             }
             catch (Exception e)
             {
@@ -95,10 +95,12 @@ namespace Phoenix.Project1.Client.Battles
         }
 
         private void _Finished(PlayableDirector director)
-        {        
-            if(director)
-                _Controller.RecyclePlayableDirector(director);  
-            
+        {
+            if (director)
+            {
+                _Controller.RecyclePlayableDirector(director);                
+            }
+
             _SwitchState();
         }
     }

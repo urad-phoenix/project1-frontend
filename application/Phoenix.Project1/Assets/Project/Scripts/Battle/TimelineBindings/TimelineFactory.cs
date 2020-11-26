@@ -54,7 +54,7 @@ namespace Phoenix.Project1.Client.Battles
                     }
                 }
 
-                return director.PlayAsObservable();
+                return director.PlayAsObservable(new CompositeDisposable());
             }
             catch (Exception e)
             {

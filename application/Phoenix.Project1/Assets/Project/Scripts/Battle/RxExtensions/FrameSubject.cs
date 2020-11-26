@@ -54,7 +54,7 @@ namespace Phoenix.Project1.Client.Battles
                 sourceSubscription = new SingleAssignmentDisposable();
                 sourceSubscription.Disposable = parent.source.Subscribe(this);
 
-                var scheduling = UniRx.Observable.EveryFixedUpdate()
+                var scheduling = UniRx.Observable.EveryUpdate()
                     .ObserveOnMainThread().Subscribe(frame => OnNext((int)frame));
 
                 return StableCompositeDisposable.Create(sourceSubscription, scheduling);
@@ -104,6 +104,7 @@ namespace Phoenix.Project1.Client.Battles
                     try
                     {
                         base.observer.OnError(error);
+                        sourceSubscription.Dispose();
                     }
                     finally
                     {
@@ -116,8 +117,17 @@ namespace Phoenix.Project1.Client.Battles
             {
                 lock (gate)
                 {
-                    isCompleted = true;
-                    sourceSubscription.Dispose();
+                    try
+                    {
+                        isCompleted = true;
+                        
+                        base.observer.OnCompleted();
+                        sourceSubscription.Dispose();
+                    }
+                    finally
+                    {
+                        Dispose();
+                    }
                 }
             }
 
