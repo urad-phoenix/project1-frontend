@@ -59,24 +59,24 @@ namespace Phoenix.Project1.Client.Battles
                 return;
             }
 
-//            foreach (var text in _Texts)
-//            {
-//                var key = text.Key.ToString();
-//                
-//                text.TextJump.gameObject.name = key;
-//                
-//                Debug.Log($"text key {key}");
-//                
-//                var pool = new ObjectPool(key, text.TextJump.gameObject, this.transform, 5);
-//
-//                pool.OnAfterSpawn += _TextAfterSpawn;
-//
-//                _TextKey.Add(key);
-//
-//                PoolManager.Instance.AddPool(pool);
-//                
-//                pool.Spawn();
-//            }                        
+            foreach (var text in _Texts)
+            {
+                var key = text.Key.ToString();
+                
+                text.TextJump.gameObject.name = key;
+                
+                Debug.Log($"text key {key}");
+                
+                var pool = new ObjectPool(key, text.TextJump.gameObject, this.transform, 5);
+
+                pool.OnAfterSpawn += _TextAfterSpawn;
+
+                _TextKey.Add(key);
+
+                PoolManager.Instance.AddPool(pool);
+                
+                pool.Spawn();
+            }                        
         }
 
         private void _TextAfterSpawn(GameObject go)
@@ -115,36 +115,36 @@ namespace Phoenix.Project1.Client.Battles
 
         public void ShowJumpText(EffectType type, string text, Avatar avatar, bool isAttacker)
         {         
-//            var textObj = PoolManager.Instance.GetObject<GameObject>(type.ToString());
-//
-//            textObj.transform.position = _GetPosition(_Camera, avatar.GetDummy(DummyType.UIText.ToString()));
-//            
-//            var component = textObj.GetComponent<TextJumpComponent>();
-//
-//            component.InvertEnd = isAttacker;
-//
-//            component.SetTexture(text);
-//            var obs = from jump in component.SetTextJumpAsObservable(text)
-//                select jump;
-//
-//            obs.Subscribe().AddTo(gameObject);
-            //obs.Subscribe(unit => _Compelete()).AddTo(gameObject);
+            var textObj = PoolManager.Instance.GetObject<GameObject>(type.ToString());
 
-            var go = _Texts.First(x => x.Key == type);
-
-            var textObj = Instantiate(go.TextJump.gameObject, this.transform);
-            
             textObj.transform.position = _GetPosition(_Camera, avatar.GetDummy(DummyType.UIText.ToString()));
-            
-            textObj.SetActive(true);
             
             var component = textObj.GetComponent<TextJumpComponent>();
 
-            component.IsAutoDestroy = true;
-            
             component.InvertEnd = isAttacker;
 
-            component.SetTexture(text, _GetPosition(_Camera, avatar.GetDummy(DummyType.UIText.ToString())));
+            component.SetTextJumpAsObservable(text);
+            var obs = from jump in component.SetTextJumpAsObservable(text)
+                select jump;
+
+            obs.Subscribe().AddTo(gameObject);
+            //obs.Subscribe(unit => _Compelete()).AddTo(gameObject);
+
+//            var go = _Texts.First(x => x.Key == type);
+//
+//            var textObj = Instantiate(go.TextJump.gameObject, this.transform);
+//            
+//            textObj.transform.position = _GetPosition(_Camera, avatar.GetDummy(DummyType.UIText.ToString()));
+//            
+//            textObj.SetActive(true);
+//            
+//            var component = textObj.GetComponent<TextJumpComponent>();
+//
+//            component.IsAutoDestroy = true;
+//            
+//            component.InvertEnd = isAttacker;
+//
+//            component.SetTexture(text, _GetPosition(_Camera, avatar.GetDummy(DummyType.UIText.ToString())));
             
             
         }                

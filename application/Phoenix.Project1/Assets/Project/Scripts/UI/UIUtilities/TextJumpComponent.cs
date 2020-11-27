@@ -41,19 +41,16 @@ public class TextJumpComponent : MonoBehaviour
 
     private Tween _Tween;
     
-    public void SetTexture(string text, Vector3 position)
+    public void SetTexture(string text)
     {
-        _Text.text = text;         
-        
-        if(_RectTransform == null)
-            _RectTransform = GetComponent<RectTransform>();
+        _Text.text = text;                        
 
-        var endPosition = new Vector3(position.x + (Random.Range(_EndXRandomRange.x, _EndXRandomRange.y) * (InvertEnd ? -1 : 1)),
-            position.y + Random.Range(_EndYRandomRange.x, _EndYRandomRange.y), 0.0f);
+        var endPosition = new Vector3(transform.position.x + (Random.Range(_EndXRandomRange.x, _EndXRandomRange.y) * (InvertEnd ? -1 : 1)),
+            transform.position.y + Random.Range(_EndYRandomRange.x, _EndYRandomRange.y), 0.0f);
         
         var jump = Random.Range(_JumpYRandomRange.x, _JumpYRandomRange.y);  
         
-        _Tween = _RectTransform.DOJump(endPosition, jump, 1, _Duration).OnComplete(_Complete);
+        transform.DOJump(endPosition, jump, 1, _Duration).OnComplete(_Complete);
     }
 
     public IObservable<GameObject> RegisterCompleteCallback()
@@ -73,19 +70,18 @@ public class TextJumpComponent : MonoBehaviour
 
     private IObservable<Unit> PlayTweenAsObservable()
     {
-        return _RectTransform.DOLocalJump(
-                new Vector3(
-                    _RectTransform.localPosition.x +
-                    (Random.Range(_EndXRandomRange.x, _EndXRandomRange.y) * (InvertEnd ? -1 : 1)),
-                    _RectTransform.localPosition.y + Random.Range(_EndYRandomRange.x, _EndYRandomRange.y), 0.0f),
-                _RectTransform.localPosition.y + Random.Range(_JumpYRandomRange.x, _JumpYRandomRange.y), 1, _Duration)
-            .OnComplete(_Complete).OnCompleteAsObservable();
+        var endPosition = new Vector3(transform.position.x + (Random.Range(_EndXRandomRange.x, _EndXRandomRange.y) * (InvertEnd ? -1 : 1)),
+            transform.position.y + Random.Range(_EndYRandomRange.x, _EndYRandomRange.y), 0.0f);
+        
+        var jump = Random.Range(_JumpYRandomRange.x, _JumpYRandomRange.y); 
+        
+        return transform.DOJump(endPosition, jump, 1, _Duration)
+                    .OnComplete(_Complete).OnCompleteAsObservable();
     }
 
     void _Complete()
     {
-       // _Disposable?.Dispose();
-        _Tween.Kill();
+       // _Disposable?.Dispose();        
         
         OnCompletedEvent?.Invoke(this.gameObject);
 
