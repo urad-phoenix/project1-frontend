@@ -30,27 +30,30 @@ public class TextJumpComponent : MonoBehaviour
 
     [SerializeField]
     private UnityEngine.UI.Text _Text;
-
-    [SerializeField]
-    private bool _IsAutoDestroy;
+    
+    public bool IsAutoDestroy;
     
     public event Action<GameObject> OnCompletedEvent;
 
     private RectTransform _RectTransform;
 
     private CompositeDisposable _Disposable = new CompositeDisposable();
+
+    private Tween _Tween;
     
-    public void SetTexture(string text)
+    public void SetTexture(string text, Vector3 position)
     {
         _Text.text = text;         
         
         if(_RectTransform == null)
             _RectTransform = GetComponent<RectTransform>();
 
-        _RectTransform.DOLocalJump(
-            new Vector3(_RectTransform.localPosition.x + (Random.Range(_EndXRandomRange.x, _EndXRandomRange.y) * (InvertEnd ? -1 : 1)),
-                _RectTransform.localPosition.y + Random.Range(_EndYRandomRange.x, _EndYRandomRange.y), 0.0f),
-            _RectTransform.localPosition.y + Random.Range(_JumpYRandomRange.x, _JumpYRandomRange.y), 1, _Duration).OnComplete(_Complete);
+        var endPosition = new Vector3(position.x + (Random.Range(_EndXRandomRange.x, _EndXRandomRange.y) * (InvertEnd ? -1 : 1)),
+            position.y + Random.Range(_EndYRandomRange.x, _EndYRandomRange.y), 0.0f);
+        
+        var jump = Random.Range(_JumpYRandomRange.x, _JumpYRandomRange.y);  
+        
+        _Tween = _RectTransform.DOJump(endPosition, jump, 1, _Duration).OnComplete(_Complete);
     }
 
     public IObservable<GameObject> RegisterCompleteCallback()
@@ -82,10 +85,11 @@ public class TextJumpComponent : MonoBehaviour
     void _Complete()
     {
        // _Disposable?.Dispose();
+        _Tween.Kill();
         
         OnCompletedEvent?.Invoke(this.gameObject);
 
-        if(_IsAutoDestroy)
+        if(IsAutoDestroy)
             Destroy(gameObject);
     }
 

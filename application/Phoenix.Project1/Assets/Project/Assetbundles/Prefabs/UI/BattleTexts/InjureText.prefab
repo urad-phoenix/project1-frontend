@@ -91,10 +91,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ee83d19376c6af4a829a3768e1bf189, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _EndXRandomRange: {x: 100, y: 150}
-  _EndYRandomRange: {x: 50, y: 60}
-  _JumpYRandomRange: {x: 80, y: 100}
+  _EndXRandomRange: {x: 80, y: 100}
+  _EndYRandomRange: {x: 80, y: 100}
+  _JumpYRandomRange: {x: 120, y: 130}
   _Duration: 0.8
   InvertEnd: 0
   _Text: {fileID: 6588038554399631231}
-  _IsAutoDestroy: 0
+  IsAutoDestroy: 0
