@@ -1,0 +1,22 @@
+{
+    "name": "Phoenix.Playables.Editor",
+    "references": [
+        "GUID:ba8c092d026123a418fb4bfb797a7bd8",
+        "GUID:02f771204943f4a40949438e873e3eff",
+        "GUID:f06555f75b070af458a003d92f9efb00",
+        "GUID:919aa2e95f5cc9b4dbd1a7fad49f121e",
+        "GUID:4307f53044263cf4b835bd812fc161a4",
+        "GUID:68765d262e2128e4ab49c983f3411946"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

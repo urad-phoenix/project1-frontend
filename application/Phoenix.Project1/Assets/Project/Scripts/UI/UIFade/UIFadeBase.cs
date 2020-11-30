@@ -10,6 +10,6 @@ namespace Phoenix.Project1.Client.UI
         protected bool _IsFinishedDisable;
         public abstract IObservable<Unit> FadeIn();
 
-        public abstract IObservable<Unit> FadeOut();       
+        public abstract IObservable<Unit> FadeOut();                       
     }
 }

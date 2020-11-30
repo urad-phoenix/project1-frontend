@@ -1,0 +1,433 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9072772933332914428
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e56c2ca2e3dc41c19cb750cb733ab140, type: 3}
+  m_Name: Playable Event Marker
+  m_EditorClassIdentifier: 
+  m_Time: 1.1
+  Name: 
+--- !u!114 &-8850139707334294307
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0022d2597e936174bbea6c779a6b3e2d, type: 3}
+  m_Name: Playable Marker
+  m_EditorClassIdentifier: 
+  m_Time: 1.3666666666666667
+  <parent>k__BackingField: {fileID: 5909816773973281746}
+  Name: Attack1
+--- !u!114 &-6696669223604576687
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15c38f6fa1940124db1ab7f6fe7268d1, type: 3}
+  m_Name: Signal Emitter
+  m_EditorClassIdentifier: 
+  m_Time: 2.3833333333333333
+  m_Retroactive: 0
+  m_EmitOnce: 0
+  m_Asset: {fileID: 0}
+--- !u!114 &-4862731452332101445
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e56c2ca2e3dc41c19cb750cb733ab140, type: 3}
+  m_Name: Playable Event Marker
+  m_EditorClassIdentifier: 
+  m_Time: 0.3
+  Name: 
+--- !u!114 &-4118741165146954336
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3b085d871f11464bbb1a83ee15dd906, type: 3}
+  m_Name: Spine Timeline Marker
+  m_EditorClassIdentifier: 
+  m_Time: 0.7333333333333333
+  action: 0
+  trackIndex: 2
+  animationReference: {fileID: 11400000, guid: 9fc9ad17b39175242a17dedc100251e5, type: 2}
+  loop: 1
+  changeTimeScale: 0
+  timeScale: 1
+--- !u!114 &-4069475867106046389
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a16748d9461eae46a725db9776d5390, type: 3}
+  m_Name: Markers
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children: []
+  m_Clips: []
+  m_Markers:
+    m_Objects: []
+--- !u!114 &-3331318703653475285
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0022d2597e936174bbea6c779a6b3e2d, type: 3}
+  m_Name: Playable Marker
+  m_EditorClassIdentifier: 
+  m_Time: 3.966666666666667
+  <parent>k__BackingField: {fileID: 5909816773973281746}
+  Name: Attack2
+--- !u!114 &-2779809926821037111
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e56c2ca2e3dc41c19cb750cb733ab140, type: 3}
+  m_Name: Playable Event Marker
+  m_EditorClassIdentifier: 
+  m_Time: 0.9333333333333333
+  Name: 
+--- !u!114 &-437894875955154999
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e56c2ca2e3dc41c19cb750cb733ab140, type: 3}
+  m_Name: Playable Event Marker
+  m_EditorClassIdentifier: 
+  m_Time: 0.6333333333333333
+  Name: 
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfda56da833e2384a9677cd3c976a436, type: 3}
+  m_Name: SpineTest
+  m_EditorClassIdentifier: 
+  m_Version: 0
+  m_Tracks:
+  - {fileID: 5909816773973281746}
+  m_FixedDuration: 0
+  m_EditorSettings:
+    m_Framerate: 30
+  m_DurationMode: 0
+  m_MarkerTrack: {fileID: -4069475867106046389}
+--- !u!114 &1432140636858391466
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71c10b250d1059b45a7db1f8b1e06c82, type: 3}
+  m_Name: SpineAnimationClip(Clone)(Clone)
+  m_EditorClassIdentifier: 
+  template:
+    Name: attack
+    Track: 0
+    IsLoop: 1
+    Duration: 0.4
+    IsFirstFrameHappened: 0
+    ReturnName: idle
+    IsReturnToSpecifyState: 1
+  Names:
+  - attack
+  - crouch
+  - crouch-from fall
+  - fall
+  - head-turn
+  - idle
+  - idle-from fall
+  - jump
+  - morningstar pose
+  - run
+  - run-from fall
+  - walk
+  Animator: {fileID: 0}
+--- !u!114 &1764195404327965984
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e56c2ca2e3dc41c19cb750cb733ab140, type: 3}
+  m_Name: Playable Event Marker
+  m_EditorClassIdentifier: 
+  m_Time: 0.6666666666666666
+  Name: 
+--- !u!114 &3023899525271038821
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3b085d871f11464bbb1a83ee15dd906, type: 3}
+  m_Name: Spine Timeline Marker
+  m_EditorClassIdentifier: 
+  m_Time: 1.6166666666666667
+  action: 0
+  trackIndex: 0
+  animationReference: {fileID: 0}
+  loop: 0
+  changeTimeScale: 0
+  timeScale: 0
+--- !u!114 &5909816773973281746
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90739dd36956c6f4399d474feb674b3c, type: 3}
+  m_Name: Spine Animation Track
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children: []
+  m_Clips:
+  - m_Version: 1
+    m_Start: 0.23333333333333334
+    m_ClipIn: 0
+    m_Asset: {fileID: 7312485516204673488}
+    m_Duration: 2.7666666666666666
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 5909816773973281746}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: -1
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0.23333333333333334
+    m_DisplayName: attack
+  - m_Version: 1
+    m_Start: 3
+    m_ClipIn: 0
+    m_Asset: {fileID: 1432140636858391466}
+    m_Duration: 2.7666666666666666
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 5909816773973281746}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: -1
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: Infinity
+    m_PreExtrapolationTime: 0
+    m_DisplayName: attack
+  m_Markers:
+    m_Objects:
+    - {fileID: -8850139707334294307}
+    - {fileID: -3331318703653475285}
+    - {fileID: -9072772933332914428}
+  BindingType: 0
+  IsReturnToSpecifyState: 1
+  ReturnName: idle
+  template:
+    Markers: []
+--- !u!114 &6016986150949532761
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e56c2ca2e3dc41c19cb750cb733ab140, type: 3}
+  m_Name: Playable Event Marker
+  m_EditorClassIdentifier: 
+  m_Time: 0.13333333333333333
+  Name: 
+--- !u!114 &7312485516204673488
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71c10b250d1059b45a7db1f8b1e06c82, type: 3}
+  m_Name: SpineAnimationClip
+  m_EditorClassIdentifier: 
+  template:
+    Name: attack
+    Track: 0
+    IsLoop: 1
+    Duration: 0.4
+    IsFirstFrameHappened: 0
+    ReturnName: idle
+    IsReturnToSpecifyState: 1
+  Names:
+  - attack
+  - crouch
+  - crouch-from fall
+  - fall
+  - head-turn
+  - idle
+  - idle-from fall
+  - jump
+  - morningstar pose
+  - run
+  - run-from fall
+  - walk
+  Animator: {fileID: 0}
+--- !u!114 &7931019842095580270
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3b085d871f11464bbb1a83ee15dd906, type: 3}
+  m_Name: Spine Timeline Marker
+  m_EditorClassIdentifier: 
+  m_Time: 2.033333333333333
+  action: 0
+  trackIndex: 0
+  animationReference: {fileID: 0}
+  loop: 0
+  changeTimeScale: 0
+  timeScale: 0

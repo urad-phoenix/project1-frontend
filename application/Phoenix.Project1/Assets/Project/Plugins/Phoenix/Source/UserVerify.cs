@@ -9,7 +9,7 @@ using UniRx;
 namespace Phoenix.Project1.Users
 {
 
-    internal class UserVerify : Regulus.Utility.IBootable, IVerifier
+    internal class UserVerify : Regulus.Utility.IStatus, IVerifier
     {
         private readonly IBinder _Binder;
         private readonly ILobby _Lobby;
@@ -23,18 +23,9 @@ namespace Phoenix.Project1.Users
             DoneEvent += (p) => { };
         }
 
-        void IBootable.Launch()
-        {
-            _Binder.Bind<IVerifier>(this);
+        
 
-        }
-
-        void IBootable.Shutdown()
-        {
-            _Binder.Unbind<IVerifier>(this);
-            if (_LoadHandler != null)
-                _LoadHandler.Dispose();
-        }
+       
 
         Value<VerifyResult> IVerifier.Verify(string account)
         {
@@ -64,6 +55,23 @@ namespace Phoenix.Project1.Users
             {
                 ret.SetValue(VerifyResult.Fail);
             }
+        }
+
+        void IStatus.Enter()
+        {
+            _Binder.Bind<IVerifier>(this);
+        }
+
+        void IStatus.Leave()
+        {
+            _Binder.Unbind<IVerifier>(this);
+            if (_LoadHandler != null)
+                _LoadHandler.Dispose();
+        }
+
+        void IStatus.Update()
+        {
+            
         }
     }
 }

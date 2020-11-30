@@ -29,6 +29,11 @@ namespace Phoenix.Project1.Client.UI
         {
             _Disposables.Dispose();
         }
+
+        private void Start()
+        {
+            Show();
+        }
         internal void Show()
         {
             _Disposables.Clear();

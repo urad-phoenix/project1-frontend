@@ -3,63 +3,65 @@ using System;
 using UniRx;
 using UnityEngine;
 
-public class TestFade : MonoBehaviour
+namespace Tests
 {
-    [SerializeField]
-    private GameObject _TestTarget;
-
-    private Transform _Clone;
-
-    private bool _IsLock;
-
-    public void GetUI()
+    public class TestFade : MonoBehaviour
     {
-        if(_IsInputLock())
-            return;
+        [SerializeField] private GameObject _TestTarget;
 
-        if(_Clone)
+        private Transform _Clone;
+
+        private bool _IsLock;
+
+        public void GetUI()
         {
-            Destroy(_Clone.gameObject);
+            if (_IsInputLock())
+                return;
+
+            if (_Clone)
+            {
+                Destroy(_Clone.gameObject);
+            }
+
+            var go = Instantiate(_TestTarget);
+
+            _Clone = go.transform;
+
+            _Clone.transform.SetLayer(UILayer.Main);
         }
 
-        var go = Instantiate(_TestTarget);
-        
-        _Clone = go.transform;
+        private bool _IsInputLock()
+        {
+            if (_IsLock)
+                return true;
 
-        _Clone.transform.SetLayer(UILayer.Main);
-    }
+            _IsLock = true;
 
-    private bool _IsInputLock()
-    {
-        if(_IsLock)
-            return true;
+            Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => _IsLock = false);
 
-        _IsLock = true;
+            return false;
+        }
 
-        Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => _IsLock = false);
+        public void TestFadeIn()
+        {
+            if (_IsInputLock())
+                return;
 
-        return false;
-    }
+            var observable = _Clone.transform.FadeInAsObserver();
 
-    public void TestFadeIn()
-    {
-        if(_IsInputLock())
-            return;
+            observable.Subscribe(_ =>
+                Debug.Log("FadeIn Finidhed"));
+        }
 
-        var observable = _Clone.transform.FadeInAsObserver();
+        public void TestFadeOut()
+        {
+            if (_IsInputLock())
+                return;
 
-        observable.Subscribe(_ => 
-        Debug.Log("FadeIn Finidhed"));
-    }
+            var observable = _Clone.transform.FadeOutAsObserver();
 
-    public void TestFadeOut()
-    {
-        if(_IsInputLock())
-            return;
-
-        var observable = _Clone.transform.FadeOutAsObserver();
-
-        observable.Subscribe(_ => 
-        Debug.Log("FadeOut Finidhed"));
+            observable.Subscribe(_ =>
+                Debug.Log("FadeOut Finidhed"));
+        }
     }
 }

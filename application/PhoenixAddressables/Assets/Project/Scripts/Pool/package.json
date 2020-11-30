@@ -1,0 +1,10 @@
+{
+  "name": "com.phoenix.pool",
+  "displayName": "Phoenix.Pool",
+  "version": "0.0.1",
+  "description": "Pool Manager",
+  "keywords": [ "u3d", "package manager" ],
+  "category": "Phoenix",
+  "dependencies": {
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "com.phoenix.dataconverttool",
+  "displayName": "Phoenix.DataConvertTool",
+  "version": "0.0.1",
+  "description": "Data Convert Tool",
+  "keywords": [
+    "u3d",
+    "package manager"
+  ],
+  "category": "Phoenix",
+  "type": "tool"
+}

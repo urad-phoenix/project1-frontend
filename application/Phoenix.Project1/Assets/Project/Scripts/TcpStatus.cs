@@ -1,62 +1,51 @@
-﻿using Regulus.Remote.Client.Tcp;
-using Regulus.Remote.Ghost;
+﻿
+
+using Regulus.Utility.WindowConsoleStand;
 using Regulus.Utility;
+using System.Linq;
+using Regulus.Remote;
 using System;
-using System.Net;
-using UniRx;
+using Phoenix.Project1.Client.Scripts;
 
 namespace Phoenix.Project1.Client
 {
-    internal class TcpStatus : IStatus 
+    internal class TcpStatus : IServiceStatus , IAgentProvider
     {
-        private IPAddress _Ip;
-        private int _Port;
-        private IAgent _Agent
-            ;
-        private readonly Connecter _Conecter;
-        private readonly IObservable<IOnlineable> _ConnectObs;
-        readonly UniRx.CompositeDisposable _Disposables;
-        IOnlineable _Onlineable;
-        public readonly System.IObservable<bool> Result;
-        public TcpStatus(IPAddress ip_address, int port, IAgent agent)
+        private readonly TcpAgent _Agent;
+        private readonly CommandConsole _Console;
+        private readonly INotifierQueryable _Queryable;
+        private readonly IDisposable _Runner;
+
+        public TcpStatus(Regulus.Remote.IProtocol protocol, Regulus.Utility.Console.IInput input, Regulus.Utility.Console.IViewer viewer)
         {
-            this._Ip = ip_address;
-            this._Port = port;
-            this._Agent = agent;
-            _Disposables = new CompositeDisposable();
-            _Conecter = new Regulus.Remote.Client.Tcp.Connecter(_Agent);
-            _ConnectObs = _Conecter.Connect(new IPEndPoint(_Ip, _Port)).ToObservable().ObserveOnMainThread();
-            
-
-            Result = _ConnectObs.ContinueWith<IOnlineable , bool>(_ContinueWith );
+            _Agent = new Phoenix.Project1.Client.TcpAgent(protocol);
+            _Console = new Phoenix.Project1.Client.CommandConsole(protocol, this, input, viewer);
+            _Queryable = _Agent;
+            _Runner = new Scripts.Runner(_Agent, new Scripts.ScriptsCommander("s-{0}", _Console.Command), viewer);
         }
-
-        private IObservable<bool> _ContinueWith(IOnlineable arg)
-        {
-            return UniRx.Observable.Return(arg != null);
-        }
-
+        INotifierQueryable IServiceStatus.Queryable => _Queryable;
         void IStatus.Enter()
         {
-            _ConnectObs.Subscribe(_Result).AddTo(_Disposables);
-            
-        }
+            _Console.Launch();
+            _Console.Command.Run("create-agent", new string[0]).Single();
 
-        private void _Result(IOnlineable onlineable)
-        {
-            _Onlineable = onlineable;
+            
         }
 
         void IStatus.Leave()
         {
-            _Disposables.Clear();
+            _Runner.Dispose();
+            _Console.Shutdown();
+        }
+
+        Tuple<INotifierQueryable, IUpdatable> IAgentProvider.Spawn()
+        {
+            return new Tuple<INotifierQueryable, IUpdatable>(_Agent, _Agent);
         }
 
         void IStatus.Update()
         {
-            _Agent.Update();
+            _Console.Update();
         }
-
- 
     }
 }

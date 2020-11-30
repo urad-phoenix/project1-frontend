@@ -7,8 +7,18 @@ using UnityEngine;
 
 namespace Phoenix.Project1.Client
 {
-    public static class NotifierRx 
+    public static class Reactive
     {
+        public static IObservable<T> FromActionPattern<T>(Action<Action<T>> addHandler, Action<Action<T>> removeHandler)
+        {
+            return Observable.FromEvent<System.Action<T>, T>(h => (gpi) => h(gpi), addHandler, removeHandler);
+        }
+    }
+
+    
+    public static class NotifierRx 
+    {        
+
         public static IObservable<Regulus.Remote.INotifierQueryable> ToObservable()
         {
             return UniRx.Observable.FromCoroutine<Regulus.Remote.INotifierQueryable>(_RunWaitAgent);
@@ -18,9 +28,13 @@ namespace Phoenix.Project1.Client
             
             while (Agent.Instance == null)
             {
-                yield return new WaitForEndOfFrame();           
+                yield return new WaitForEndOfFrame();          
             }
-            observer.OnNext(Agent.Instance.Queryable);
+            while (Agent.Instance.Queryable == null)
+            {
+                yield return new WaitForEndOfFrame();
+            }
+                observer.OnNext(Agent.Instance.Queryable);
             observer.OnCompleted();
         }
 
@@ -52,5 +66,7 @@ namespace Phoenix.Project1.Client
         {
             return Observable.FromEvent<System.Action<TGpi>, TGpi>(h => (gpi) => h(gpi), h => agent.QueryNotifier<TGpi>().Unsupply += h, h => agent.QueryNotifier<TGpi>().Unsupply -= h);
         }
+
+        
     }
 }
