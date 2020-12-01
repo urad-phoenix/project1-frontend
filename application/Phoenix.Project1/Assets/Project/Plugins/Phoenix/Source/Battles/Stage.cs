@@ -82,25 +82,26 @@ namespace Phoenix.Project1.Battles
         }
         private Actor _BackSignle(Actor actor, Team attacker, Team defender)
         {
-            var location = _LocationCalculator.BackSignle(actor.Location.Value);
-            var target = defender.FindActorByLocation(location);
-            if (target != null)
-                return target;
-            return null;
+            var actorLocation = actor.Location.Value;
+            var location = _LocationCalculator.BackSignle(actorLocation);            
+            
+
+            var locations =new[] { location }.Union(_LocationCalculator.BackMultiple(actorLocation));
+            var targets =   from l in locations
+                            let t = defender.FindActorByLocation(l)
+                            where t != null && t.IsDamageable()
+                            select t;
+            return targets.FirstOrDefault();
         }
 
         private Actor _FrontSignle(Actor actor, Team attacker, Team defender)
-        {
-            
+        {            
             var location = _LocationCalculator.FrontSignle(actor.Location.Value);
             var target = defender.FindActorByLocation(location);
             if(target!=null)
                 return target;
             return null;
         }
-
-        
-
         private static Actor _DefaultLocation(Team team)
         {
             return team.GetDamageables().First();

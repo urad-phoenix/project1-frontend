@@ -36,5 +36,14 @@ namespace Phoenix.Project1.Battles
             int dis = targetFrontY - y;
             return (location + dis * _YCount);
         }
+
+        internal System.Collections.Generic.IEnumerable<int> BackMultiple(int location)
+        {            
+            if (_IsLeft(location))
+                return new []{10,11,12 };
+            return new[] { 1, 2, 3};
+        }
+
+        
     }
 }
