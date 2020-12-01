@@ -59,10 +59,10 @@ MonoBehaviour:
       Scale: {x: 0, y: 0, z: 0}
       Rotation: {x: 0, y: 0, z: 0, w: 0}
   startLocation:
-    exposedName: 30a7681107ec174438ef3f6c4be75d23
+    exposedName: 
     defaultValue: {fileID: 0}
   endLocation:
-    exposedName: a072f464bc3cf884c9a7473510911d12
+    exposedName: 
     defaultValue: {fileID: 0}
   Step_away_Targeter: 0
   endScale: {x: 1, y: 1, z: 1}

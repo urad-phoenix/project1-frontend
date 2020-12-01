@@ -10,7 +10,7 @@ namespace Phoenix.Project1.Client.Battles
 {
     public static partial class TimelineBinding
     {
-        public static IObservable<PlayableDirector> PlayableAsObservable(ActorFrameMotion actData, BattleController controller)
+        public static IObservable<PlayableDirector> PlayableAsObservable(ActorFrameMotion actData, int currentFrame, BattleController controller)
         {
             try
             {
@@ -18,7 +18,7 @@ namespace Phoenix.Project1.Client.Battles
 
                 var director = controller.GetPlayableDirector(motion, actData.ActorId);
 
-                //Debug.Log($"act key {actData.MotionId}");
+                Debug.Log($"act key {actData.MotionId} start frame {actData.StartFrames} end frame {actData.EndFrames} currentFrame {currentFrame} ========");
 
                 if (director == null || director.playableAsset == null)
                 {
@@ -54,7 +54,9 @@ namespace Phoenix.Project1.Client.Battles
                     }
                 }
 
-                return director.PlayAsObservable(new CompositeDisposable());
+//                return director.PlayAsObservable(new CompositeDisposable());
+                return director.PlayAsObservable(actData.StartFrames, actData.EndFrames, currentFrame, new CompositeDisposable());
+                //return director.PlayAsObservable(new CompositeDisposable());
             }
             catch (Exception e)
             {

@@ -106,7 +106,7 @@ namespace Phoenix.Project1.Client.Battles
                         
             var directorPool = new ObjectPool(_PlayablePoolName, playable, this.transform, _PlayablePoolSize, true);                       
 
-            PoolManager.Instance.AddPool(directorPool);
+            PoolManager.Instance.AddPool(directorPool);                                    
             
             directorPool.Spawn();
         }     
@@ -304,9 +304,14 @@ namespace Phoenix.Project1.Client.Battles
             Debug.Log($"_EffectFinished");
         }
 
-        private void _ActorFinished(ActorFrameMotion[] directors)
+        private void _ActorFinished(PlayableDirector[] directors)
         {
             Debug.Log($"_ActorFinished");
+
+            foreach (var director in directors)
+            {
+                RecyclePlayableDirector(director);
+            }
         }
 
         private IObservable<bool> _TriggerEffect(Effect data)
@@ -342,35 +347,59 @@ namespace Phoenix.Project1.Client.Battles
             return Observable.WhenAll(effectObs);
        }
         
-        private IObservable<ActorFrameMotion[]> _ActCombine(ActorFrameMotion[] frameMotions, int currentFrame)
+//        private IObservable<ActorFrameMotion[]> _ActCombine(ActorFrameMotion[] frameMotions, int currentFrame)
+//        {
+//            List<IObservable<ActorFrameMotion>> obs = new List<IObservable<ActorFrameMotion>>();
+//
+//            foreach (var motion in frameMotions)
+//            {
+//                //Debug.Log($"ActCombine Frame {motion.StartFrames}, End Frame {motion.EndFrames} client frame {_FrameNumber}");
+//                //obs.Add(TimelineBinding.PlayableAsObservable(motion, this));
+//                obs.Add(ActorTimelineRx.OnActorObserver(motion, motion.StartFrames, currentFrame));                    
+//            }                     
+//            
+//            var effectObs = from handle in Observable.Merge(obs) 
+//                from observable in _ActorMotion(handle)  
+//                where observable
+//                select handle;          
+//           
+//            return Observable.WhenAll(effectObs);
+//        }
+        
+        private IObservable<PlayableDirector[]> _ActCombine(ActorFrameMotion[] frameMotions, int currentFrame)
         {
-            List<IObservable<ActorFrameMotion>> obs = new List<IObservable<ActorFrameMotion>>();
+            List<IObservable<PlayableDirector>> obs = new List<IObservable<PlayableDirector>>();
 
             foreach (var motion in frameMotions)
-            {
-                //Debug.Log($"ActCombine Frame {motion.StartFrames}, End Frame {motion.EndFrames} client frame {_FrameNumber}");
-                //obs.Add(TimelineBinding.PlayableAsObservable(motion, this));
-                obs.Add(ActorTimelineRx.OnActorObserver(motion, motion.StartFrames + currentFrame, currentFrame));                    
+            {                                                    
+                obs.Add(TimelineBinding.PlayableAsObservable(motion, currentFrame, this));
             }                     
             
             var effectObs = from handle in Observable.Merge(obs) 
-                from observable in _ActorMotion(handle)  
+                from observable in _ActorMotion(handle, currentFrame)  
                 where observable
                 select handle;          
            
             return Observable.WhenAll(effectObs);
-        }
+        }  
         
-        private IObservable<bool> _ActorMotion(ActorFrameMotion data)
+        private IObservable<bool> _ActorMotion(PlayableDirector playableDirector, int currentFrame)
         {
-            Debug.Log($"_ActorMotion Effect {data.ActorId},  {data.MotionId} target {data.TargetLocation} startFrame {data.StartFrames} endFrame {data.EndFrames}");
-
-            var obs = TimelineBinding.PlayableAsObservable(data, this);
-
-            obs.ObserveOnMainThread().Subscribe(RecyclePlayableDirector).AddTo(_Disposables);         
+            Debug.Log($"_ActorMotion === frame {currentFrame}");
             
             return Observable.Return(true);
-        }       
+        }  
+        
+//        private IObservable<bool> _ActorMotion(ActorFrameMotion data)
+//        {
+//            Debug.Log($"_ActorMotion Effect {data.ActorId},  {data.MotionId} target {data.TargetLocation} startFrame {data.StartFrames} endFrame {data.EndFrames}");
+//
+//            var obs = TimelineBinding.PlayableAsObservable(data, this);
+//
+//            obs.ObserveOnMainThread().Subscribe(RecyclePlayableDirector).AddTo(_Disposables);         
+//            
+//            return Observable.Return(true);
+//        }       
 
         private void _StateMachineFinished(BattleStateMachine stateMachine)
         {           
@@ -484,10 +513,16 @@ namespace Phoenix.Project1.Client.Battles
             {
                 var timelineData = avatar.TimelineAssets.First(x => x.Action == actionKey);
             
-                var go = PoolManager.Instance.GetObject<GameObject>(_PlayablePoolName);               
+                var go = PoolManager.Instance.GetObject<GameObject>(_PlayablePoolName, false);               
             
                 var director = go.GetComponent<PlayableDirector>();
 
+                director.playOnAwake = false;
+                
+                director.gameObject.SetActive(true);
+
+                director.playableAsset = null;
+                
                 director.playableAsset = timelineData.TimelineAsset;
             
                 return director;
