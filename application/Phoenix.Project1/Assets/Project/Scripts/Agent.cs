@@ -5,6 +5,7 @@ using System.Collections;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using Phoenix.Project1.Addressable;
 using UniRx;
 using UnityEngine;
 namespace Phoenix.Project1.Client
@@ -60,11 +61,16 @@ namespace Phoenix.Project1.Client
             return UniRx.Observable.Return(true);
         }
 
+        private void Awake()
+        {
+            UnityEngine.AddressableAssets.Addressables.InitializeAsync();
+        }
+
         private void Start()
         {
             if (Standalone)
             {
-                _SetStandalone().Subscribe();
+                _SetStandalone().Subscribe().AddTo(gameObject);
 
             }
             else

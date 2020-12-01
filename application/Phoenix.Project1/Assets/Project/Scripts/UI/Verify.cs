@@ -72,7 +72,7 @@ namespace Phoenix.Project1.Client.UI
                     from notifier in NotifierRx.ToObservable()
                     from verifier in notifier.QueryNotifier<IVerifier>().SupplyEvent()
                     from msgBoxVerify in MessageBoxProvider.Instance.OpenObservable("提示", "驗證中...")
-                    from result in verifier.Verify(Account.text).RemoteValue()
+                    from result in verifier.Verify(Account.text).RemoteValue().ObserveOnMainThread()
                     from _ in MessageBoxProvider.Instance.Close(msgBoxVerify)
                     select result;
             loginObs.First().Subscribe(_LoginResult).AddTo(_LoginDisposables);
