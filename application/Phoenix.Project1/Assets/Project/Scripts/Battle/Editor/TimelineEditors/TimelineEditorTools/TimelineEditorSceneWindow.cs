@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -40,6 +41,8 @@ namespace Phoenix.Project1.Editors
             EditorGUILayout.EndVertical();
 
             SourceResultScrollView();
+
+            GenerateButton();
         }
         
         private void DrawSourceTypeView()
@@ -50,7 +53,7 @@ namespace Phoenix.Project1.Editors
                 _SourceFileType = EditorGUILayout.TextField(_SourceFileType);								
             }
             EditorGUILayout.EndHorizontal();
-        }	
+        }
 
         protected override bool SourcePathCheck()
         {
@@ -67,6 +70,28 @@ namespace Phoenix.Project1.Editors
             }
 
             return true;
+        }
+
+        private void GenerateButton()
+        {
+            if (GUILayout.Button("GenerateRole"))
+            {
+                CreateRole();
+            }
+        }
+
+        private void CreateRole()
+        {
+//            if (_SourceDataList.Count() == 0)
+//            {
+//                EditorUtility.DisplayDialog("資料錯誤", "請填寫檔案類型", "OK");
+//                return false;
+//            }
+        }
+
+        private void RoleBinding()
+        {
+            
         }
 
         protected override string GetExtraType()
