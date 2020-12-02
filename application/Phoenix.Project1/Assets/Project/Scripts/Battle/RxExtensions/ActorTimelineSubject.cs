@@ -67,11 +67,11 @@ namespace Phoenix.Project1.Client.Battles
             {               
                 _Frame = new Subject<int>();               
                 
-//                var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), _FrameData.CurrentFrame);
-//
-//                var scheduling = obs.ObserveOnMainThread().Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
-                var scheduling = UniRx.Observable.EveryUpdate()
-                    .ObserveOnMainThread().Subscribe(frame => Update(_CurrentFrame++)).AddTo(_CancellationToken);
+                var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), _FrameData.CurrentFrame);
+
+                var scheduling = obs.ObserveOnMainThread().Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
+//                var scheduling = UniRx.Observable.EveryUpdate()
+//                    .ObserveOnMainThread().Subscribe(frame => Update(_CurrentFrame++)).AddTo(_CancellationToken);
                 
                 return StableCompositeDisposable.Create(_CancellationToken, scheduling);
             }         

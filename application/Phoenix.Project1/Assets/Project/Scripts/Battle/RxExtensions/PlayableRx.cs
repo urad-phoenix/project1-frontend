@@ -46,9 +46,13 @@ namespace Phoenix.Project1.Client.Battles
 
             private int _EndFrame;
 
-            private int _PlayableTick;
+            private float EndTime;
+
+            private float _CurrentTime;
 
             private bool _IsPlay;
+            
+            private Subject<int> _Frame;
             
             public PlayableObserver(PlayableDirector playableDirector, int startFrame, int endFrame, int currentFrame, IObserver<PlayableDirector> observer, IDisposable cancel) : base(observer, cancel)
             {                
@@ -58,9 +62,7 @@ namespace Phoenix.Project1.Client.Battles
 
                 _StartFrame = startFrame;
 
-                _EndFrame = endFrame;
-
-                _PlayableTick = 0;
+                _EndFrame = endFrame;  
                 
                 _IsCompleted = false;
 
@@ -72,24 +74,24 @@ namespace Phoenix.Project1.Client.Battles
                 if(_IsCompleted)
                     return;
 
-                var currFrame = _CurrentFrame + frame;
+                //var currFrame = _CurrentFrame + frame;
                 if (!_IsPlay)
                 {
-                    if (currFrame >= _StartFrame)
+                    if (frame >= _StartFrame)
                     {
                         _IsPlay = true;
                         _PlayableDirector.initialTime = 0;
                         _PlayableDirector.Play();
                     
-                        Debug.Log($"Play : {_StartFrame}  {_EndFrame} {currFrame}");
+                        Debug.Log($"Play : {_StartFrame}  {_EndFrame} {frame}");
                     }
                 }
                 
                 if(_IsPlay)
                 {
-                    _PlayableTick++;
+//                    _PlayableTick++;
 //                    _PlayableDirector.time = _PlayableTick / 30;
-                    _PlayableDirector.Evaluate();                  
+//                    _PlayableDirector.Evaluate();                  
                     
                     if (_PlayableDirector.state == PlayState.Paused)
                     {
@@ -98,19 +100,15 @@ namespace Phoenix.Project1.Client.Battles
                         Debug.Log($"End Play : {_StartFrame} {_EndFrame} duration {_PlayableDirector.duration}");
                     }                                                                                               
                 }
-
-//                    if (frame >= _FrameData.StartFrame)
-//                    {                  
-//                        //Debug.Log($"ActorObserver {_FrameData.Motion.MotionId} currentFrame {frame}, target frame {_FrameData.StartFrame}");
-//                        observer.OnNext(_FrameData.Motion);                        
-//                        OnCompleted();
-//                    }
             }
            
             public IDisposable Run()
-            {                                   
-                var scheduling = UniRx.Observable.EveryUpdate()
-                    .ObserveOnMainThread().Subscribe(frame => Update((int)frame)).AddTo(_CancellationToken);
+            {              
+                _Frame = new Subject<int>();               
+
+                var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), _CurrentFrame);
+
+                var scheduling = obs.ObserveOnMainThread().Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
                 
                 return StableCompositeDisposable.Create(_CancellationToken, scheduling);
             }         

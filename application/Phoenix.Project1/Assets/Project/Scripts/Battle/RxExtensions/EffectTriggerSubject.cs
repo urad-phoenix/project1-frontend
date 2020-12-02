@@ -33,8 +33,7 @@ namespace Phoenix.Project1.Client.Battles
         }
 
         class EffectTriggerObserver : UniRx.Operators.OperatorObserverBase<Effect, Effect>
-        {
-            readonly object gate = new object();
+        {         
             readonly CompositeDisposable _CancellationToken = new CompositeDisposable();
             bool isCompleted;
             
@@ -60,7 +59,6 @@ namespace Phoenix.Project1.Client.Battles
 
                 if (frame >= _FrameEffect.Frame)
                 {                  
-//                    Debug.Log($"trigger effect currentFrame {frame}, target frame {_FrameEffect.Frame}");
                     observer.OnNext(_FrameEffect.Effect);                        
                     OnCompleted();
                 }
@@ -68,14 +66,14 @@ namespace Phoenix.Project1.Client.Battles
            
             public IDisposable Run()
             {               
-//                _Frame = new Subject<int>();               
-//                
-//                var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), _FrameEffect.CurrentFrame);
-//
-//                var scheduling = obs.Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
+                _Frame = new Subject<int>();               
                 
-                var scheduling = UniRx.Observable.EveryUpdate()
-                    .ObserveOnMainThread().Subscribe(frame => Update(_CurrentFrame++)).AddTo(_CancellationToken);
+                var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), _CurrentFrame);
+
+                var scheduling = obs.Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
+                
+//                var scheduling = UniRx.Observable.EveryUpdate()
+//                    .ObserveOnMainThread().Subscribe(frame => Update(_CurrentFrame++)).AddTo(_CancellationToken);
                 
                 return StableCompositeDisposable.Create(_CancellationToken, scheduling);
                
