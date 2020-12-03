@@ -84,7 +84,7 @@ namespace Phoenix.Project1.Client.UI
             observable.Subscribe(_ =>
             {
                 _Lobby.Hide();
-            });
+            }).AddTo(_Disposables);
 
         }
 
@@ -131,7 +131,7 @@ namespace Phoenix.Project1.Client.UI
             observable.Subscribe(_ =>
             {
                 _Verify.Hide();
-            });
+            }).AddTo(_Disposables);
 
         }
 

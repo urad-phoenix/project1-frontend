@@ -60,12 +60,7 @@ namespace Phoenix.Project1.Client
             _Machine.Push(status); 
             return UniRx.Observable.Return(true);
         }
-
-        private void Awake()
-        {
-            UnityEngine.AddressableAssets.Addressables.InitializeAsync();
-        }
-
+       
         private void Start()
         {
             if (Standalone)

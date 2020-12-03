@@ -92,6 +92,9 @@ namespace Phoenix.Project1.Client.Battles
         {
             foreach (var source in VfxSources)
             {
+                if(string.IsNullOrEmpty(source.Key) || source.Source == null)
+                    continue;
+                
                 var pool = new ObjectPool(Location + source.Key, source.Source, this.transform, 5);
 
                 pool.OnAfterSpawn += _AfterSpawn;
@@ -111,13 +114,22 @@ namespace Phoenix.Project1.Client.Battles
         {
 //        ObjectPool pool;
 
-            var go = PoolManager.Instance.GetObject<GameObject>(Location + key, false);
+            try
+            {
+                var go = PoolManager.Instance.GetObject<GameObject>(Location + key, false);
 
-            var obs = go.OnParticleStoppedAsObserver(key);
+                var obs = go.OnParticleStoppedAsObserver(key);
 
-            obs.Subscribe(_Recycle).AddTo(_Disposable);
+                obs.Subscribe(_Recycle).AddTo(_Disposable);
 
-            return go;
+                return go;
+            }
+            catch (Exception e)
+            {
+                //Debug.LogError(e);
+                return null;
+            }
+           
 //        {
 //            var go = pool.Get(false);
 //

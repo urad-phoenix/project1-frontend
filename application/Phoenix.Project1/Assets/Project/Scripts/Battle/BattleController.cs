@@ -38,6 +38,8 @@ namespace Phoenix.Project1.Client.Battles
         private List<Avatar> _Avatars;
 
         private Queue<BattleStateMachine> _Machines;
+
+        private LoadData[] _LoadDatas;
                                 
         //private Subject<int> _Frame;
         
@@ -91,8 +93,6 @@ namespace Phoenix.Project1.Client.Battles
                                     
             battleObs.Subscribe(_Battle).AddTo(_Disposables);
 
-            
-
             _SetPlayablePool();
         }     
 
@@ -125,33 +125,40 @@ namespace Phoenix.Project1.Client.Battles
             
                 var avatarId = actor.AvatarId.Value;
 
-                var loadData = from hnd in UniRx.Observable.Defer(() =>
-                        Addressables.InstantiateAsync(avatarId, role.transform).AsHandleObserver())
-                        select new LoadData() {Id = actor.InstanceId, Location = actor.Location, Handle = hnd};
+                var loadData = from handle in Addressables.LoadAssetAsync<GameObject>(avatarId).AsHandleObserver()
+                    select new LoadData() {Id = actor.InstanceId, Location = actor.Location, Handle = handle};
+//
+//                var loadData = from hnd in UniRx.Observable.Defer(() =>
+//                        Addressables.InstantiateAsync(avatarId, role.transform).AsHandleObserver())
+//                        select new LoadData() {Id = actor.InstanceId, Location = actor.Location, Handle = hnd};
                                
                 loaders.Add(loadData);
             }
                       
-            var obs = from handle in UniRx.Observable.Merge(loaders)
-                from observable in _RoleLoaded(handle)
-                where observable
-                select handle;
+//            var obs = from handle in UniRx.Observable.Merge(loaders)
+//                from observable in _RoleLoaded(handle)
+//                where observable
+//                select handle;
 
-            return Observable.WhenAll(obs);                            
+            return Observable.WhenAll(loaders);                            
         }
 
-        private IObservable<bool> _RoleLoaded(LoadData data)
+        private void _RoleLoaded(LoadData data)
         {    
             if (!data.Handle.IsDone)
             {
-                return Observable.Return(false);
+                return;
             }           
             
             Debug.Log($"_RoleLoaded {data.Id}");
+
+            var role = GetRole(data.Id);
             
-            data.Handle.Result.SetActive(false);
+            var go = Instantiate(data.Handle.Result, role.transform);
+                                    
+            go.SetActive(false);
             
-            var avatar = data.Handle.Result.GetComponent<Avatar>();
+            var avatar = go.GetComponent<Avatar>();
 
             avatar.InstanceID = data.Id;
             avatar.Location = data.Location;
@@ -162,9 +169,7 @@ namespace Phoenix.Project1.Client.Battles
 
             Observable.FromEvent<Action<Effect>, Effect>(h => value => h(value),
                     h => _EffectTriggerCallback += hud.EffectTrigger, h => _EffectTriggerCallback -= h)
-                .ObserveOnMainThread().Subscribe().AddTo(_Disposables);                                   
-            
-            return Observable.Return(true);
+                .ObserveOnMainThread().Subscribe().AddTo(_Disposables);
         }
 
 
@@ -196,7 +201,7 @@ namespace Phoenix.Project1.Client.Battles
                 select spawn;
                        
             
-            loadObs.DoOnError(_Error).Subscribe(_SendReady).AddTo(_Disposables);
+            loadObs.DoOnError(_Error).ObserveOnMainThread().Subscribe(_SendReady).AddTo(_Disposables);
                         
             actorPerformObs.DoOnError(_Error).ObserveOnMainThread().Subscribe(_ActorPerform).AddTo(_Disposables);
             
@@ -207,12 +212,19 @@ namespace Phoenix.Project1.Client.Battles
 
         private void _SendReady(LoadData[] handles)
         {
-            Debug.Log("Ready");           
+            Debug.Log("Ready");
+
+            _LoadDatas = handles;
+            
+            foreach (var handle in handles)
+            {
+                _RoleLoaded(handle);
+            }
 
             var readyObs = from ready in NotifierRx.ToObservable().Supply<IReady>()
                             select ready;
             
-            readyObs.Subscribe(r => _Ready(r)).AddTo(_Disposables);
+            readyObs.ObserveOnMainThread().Subscribe(r => _Ready(r)).AddTo(_Disposables);
         }
       
         void _UpdateSpeed(float val)
@@ -273,7 +285,9 @@ namespace Phoenix.Project1.Client.Battles
             {                
                 var avatar = GetAvatarByID(entrance.Id);
                 
-                avatar.gameObject.SetActive(true);                           
+                avatar.gameObject.SetActive(true); 
+                
+                Debug.Log($"_BattleEntrance Actor active {entrance.Id}");
             }
             
             Debug.Log($"_BattleEntrance : {obj.ActorEntrances.Count()}");          
@@ -281,22 +295,22 @@ namespace Phoenix.Project1.Client.Battles
 
         private void _ActorPerform(ActorPerformTimestamp obj)
         {            
-            //Debug.Log($"ActorPerform frame {obj.Frames}, client frame {_FrameNumber}");
+            Debug.Log($"ActorPerform frame {obj.Frames}");
             
-            ActAsObservable(obj.ActorPerform.Forwards, obj.Frames);
-            ActAsObservable(obj.ActorPerform.Casts, obj.Frames);
-            ActAsObservable(obj.ActorPerform.Backs, obj.Frames);
-                        
-            IObservable<Effect[]> triggerSubject = from effects in _EffectTriggerCombine(obj.ActorPerform.FrameEffects, obj.Frames)//obj.Frames)                
-                                                    select effects;
-            triggerSubject.ObserveOnMainThread().Subscribe(_EffectFinished).AddTo(_Disposables);                        
+//            ActAsObservable(obj.ActorPerform.Forwards, obj.Frames);
+//            ActAsObservable(obj.ActorPerform.Casts, obj.Frames);
+//            ActAsObservable(obj.ActorPerform.Backs, obj.Frames);
+//                        
+//            IObservable<Effect[]> triggerSubject = from effects in _EffectTriggerCombine(obj.ActorPerform.FrameEffects, obj.Frames)//obj.Frames)                
+//                                                    select effects;
+//            triggerSubject.Subscribe(_EffectFinished).AddTo(_Disposables);                        
         }
 
         private void ActAsObservable(ActorFrameMotion[] motions, int currentFrame)
         {
             var obs = from act in _ActCombine(motions, currentFrame)
                     select act;
-            obs.ObserveOnMainThread().Subscribe(_ActorFinished).AddTo(_Disposables);                        
+            obs.Subscribe(_ActorFinished).AddTo(_Disposables);                        
         }
 
         private void _EffectFinished(Effect[] effects)
@@ -316,7 +330,7 @@ namespace Phoenix.Project1.Client.Battles
 
         private IObservable<bool> _TriggerEffect(Effect data)
         {
-            //Debug.Log($"Trigger Effect {data.Actor},  {data.Type} value {data.Value}");         
+            Debug.Log($"_TriggerEffect {data.Actor},  {data.Type} value {data.Value}");         
             
             _ActorUiController.ShowJumpText(data.Type, data.Value.ToString(), GetAvatarByID(data.Actor), IsAttackerByID(data.Actor));
             
@@ -347,59 +361,30 @@ namespace Phoenix.Project1.Client.Battles
             return Observable.WhenAll(effectObs);
        }
         
-//        private IObservable<ActorFrameMotion[]> _ActCombine(ActorFrameMotion[] frameMotions, int currentFrame)
-//        {
-//            List<IObservable<ActorFrameMotion>> obs = new List<IObservable<ActorFrameMotion>>();
-//
-//            foreach (var motion in frameMotions)
-//            {
-//                //Debug.Log($"ActCombine Frame {motion.StartFrames}, End Frame {motion.EndFrames} client frame {_FrameNumber}");
-//                //obs.Add(TimelineBinding.PlayableAsObservable(motion, this));
-//                obs.Add(ActorTimelineRx.OnActorObserver(motion, motion.StartFrames, currentFrame));                    
-//            }                     
-//            
-//            var effectObs = from handle in Observable.Merge(obs) 
-//                from observable in _ActorMotion(handle)  
-//                where observable
-//                select handle;          
-//           
-//            return Observable.WhenAll(effectObs);
-//        }
-        
         private IObservable<PlayableDirector[]> _ActCombine(ActorFrameMotion[] frameMotions, int currentFrame)
         {
             List<IObservable<PlayableDirector>> obs = new List<IObservable<PlayableDirector>>();
 
             foreach (var motion in frameMotions)
-            {                                                    
+            {              
+                Debug.Log($"_ActCombine frame {motion.ActorId}  {motion.MotionId}");
                 obs.Add(TimelineBinding.PlayableAsObservable(motion, currentFrame, this));
             }                     
             
-            var effectObs = from handle in Observable.Merge(obs) 
-                from observable in _ActorMotion(handle, currentFrame)  
-                where observable
-                select handle;          
+//            var effectObs = from handle in Observable.Merge(obs) 
+//                from observable in _ActorMotion(handle, currentFrame)  
+//                where observable
+//                select handle;          
            
-            return Observable.WhenAll(effectObs);
+            return Observable.WhenAll(obs);
         }  
         
-        private IObservable<bool> _ActorMotion(PlayableDirector playableDirector, int currentFrame)
-        {
-            Debug.Log($"_ActorMotion === frame {currentFrame}");
-            
-            return Observable.Return(true);
-        }  
-        
-//        private IObservable<bool> _ActorMotion(ActorFrameMotion data)
+//        private IObservable<bool> _ActorMotion(PlayableDirector playableDirector, int currentFrame)
 //        {
-//            Debug.Log($"_ActorMotion Effect {data.ActorId},  {data.MotionId} target {data.TargetLocation} startFrame {data.StartFrames} endFrame {data.EndFrames}");
-//
-//            var obs = TimelineBinding.PlayableAsObservable(data, this);
-//
-//            obs.ObserveOnMainThread().Subscribe(RecyclePlayableDirector).AddTo(_Disposables);         
+//            Debug.Log($"_ActorMotion === frame {currentFrame}");
 //            
 //            return Observable.Return(true);
-//        }       
+//        }    
 
         private void _StateMachineFinished(BattleStateMachine stateMachine)
         {           
@@ -552,11 +537,30 @@ namespace Phoenix.Project1.Client.Battles
             
             _SendRequestDisposables.Clear();
             
-            _Machines.Clear();    
+            _Machines.Clear();
+
+            _ClearAvatars();
             
+            _ClearLoadHandle();
             //_Frame?.Dispose();
             
             PoolManager.Instance.RemovePool(_PlayablePoolName);
+        }
+
+        private void _ClearAvatars()
+        {
+            foreach (var avatar in _Avatars)
+            {
+                Destroy(avatar);
+            }
+        }
+
+        private void _ClearLoadHandle()
+        {
+            foreach (var loadData in _LoadDatas)
+            {                
+                Addressables.Release(loadData.Handle);
+            }
         }
 
         private void OnDestroy()

@@ -69,7 +69,7 @@ namespace Phoenix.Project1.Client.Battles
                 
                 var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), _FrameData.CurrentFrame);
 
-                var scheduling = obs.ObserveOnMainThread().Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
+                var scheduling = obs.Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
 //                var scheduling = UniRx.Observable.EveryUpdate()
 //                    .ObserveOnMainThread().Subscribe(frame => Update(_CurrentFrame++)).AddTo(_CancellationToken);
                 
