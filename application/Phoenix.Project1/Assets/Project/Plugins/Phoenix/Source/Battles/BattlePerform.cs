@@ -70,22 +70,22 @@ namespace Phoenix.Project1.Battles
                 Frames = startFrame,
                 ActorPerform = new ActorPerform(effects.ToArray() , new ActorFrameMotion() {
                     ActorId = _Actor.Id , 
-                    StartFrames = 0 , 
-                    EndFrames = 0+motionForward.TotalFrame ,
+                    StartFrames = startFrame , 
+                    EndFrames = startFrame + motionForward.TotalFrame ,
                     MotionId = MotionType.Forward,
                     TargetLocation = cast.Location
                 } , new ActorFrameMotion()
                 {
                     ActorId = _Actor.Id,
-                    StartFrames = 0 + motionForward.TotalFrame + motionCast.TotalFrame,
-                    EndFrames = 0 + motionForward.TotalFrame + motionCast.TotalFrame + motionBack.TotalFrame,
+                    StartFrames = startFrame + motionForward.TotalFrame + motionCast.TotalFrame,
+                    EndFrames = startFrame + motionForward.TotalFrame + motionCast.TotalFrame + motionBack.TotalFrame,
                     MotionId = MotionType.Back,
                     TargetLocation = _Actor.Location
                 }, new ActorFrameMotion()
                 {
                     ActorId = _Actor.Id,
-                    StartFrames =0+ motionForward.TotalFrame ,
-                    EndFrames = 0 + motionForward.TotalFrame + motionCast.TotalFrame,
+                    StartFrames = startFrame + motionForward.TotalFrame ,
+                    EndFrames = startFrame + motionForward.TotalFrame + motionCast.TotalFrame,
                     MotionId = MotionType.Cast1,
                     TargetLocation = cast.Location
                 })

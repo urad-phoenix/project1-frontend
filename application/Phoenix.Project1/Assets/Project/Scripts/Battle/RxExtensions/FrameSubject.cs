@@ -5,6 +5,7 @@ using Regulus.Remote;
 using Regulus.Utility;
 using UniRx;
 using UniRx.Operators;
+using Time = UnityEngine.Time;
 
 namespace Phoenix.Project1.Client.Battles
 {
@@ -34,16 +35,18 @@ namespace Phoenix.Project1.Client.Battles
             
             readonly TimePusher _Pusher;
             
-            readonly TimeCounter _Counter;
+            //readonly TimeCounter _Counter;
 
             private int _Frame;
             
             SingleAssignmentDisposable sourceSubscription;
 
+            private IDisposable _UpdateDisposable;
+
             public Frame(FrameSubject parent, IObserver<int> observer, IDisposable cancel) : base(observer, cancel)
             {
                 _Pusher = new TimePusher();
-                _Counter = new TimeCounter();
+                //_Counter = new TimeCounter();
                 this.parent = parent;
 
                 _Frame = parent._Frame;
@@ -54,16 +57,15 @@ namespace Phoenix.Project1.Client.Battles
                 sourceSubscription = new SingleAssignmentDisposable();
                 sourceSubscription.Disposable = parent.source.Subscribe(this);
 
-                var scheduling = UniRx.Observable.EveryUpdate()
-                    .ObserveOnMainThread().Subscribe(frame => OnNext((int)frame));
+                _UpdateDisposable = UniRx.Observable.EveryUpdate().Subscribe(frame => OnNext((int)frame));
 
-                return StableCompositeDisposable.Create(sourceSubscription, scheduling);
+                return sourceSubscription;
             }
             
             int Advance()
             {
-                var frames = _Pusher.Advance(_Counter.Second);
-                _Counter.Reset();
+                var frames = _Pusher.Advance(Time.deltaTime);
+                //_Counter.Reset();
                 _Frame += frames;
             
                 return _Frame;
@@ -103,11 +105,12 @@ namespace Phoenix.Project1.Client.Battles
                 {
                     try
                     {
-                        base.observer.OnError(error);
-                        sourceSubscription.Dispose();
+                        base.observer.OnError(error);                       
                     }
                     finally
                     {
+                        _UpdateDisposable.Dispose();
+                        sourceSubscription.Dispose();
                         Dispose();
                     }
                 }
@@ -120,59 +123,17 @@ namespace Phoenix.Project1.Client.Battles
                     try
                     {
                         isCompleted = true;
-                        
-                        base.observer.OnCompleted();
-                        sourceSubscription.Dispose();
+                      
+                        base.observer.OnCompleted();                                             
                     }
                     finally
                     {
+                        _UpdateDisposable.Dispose();
+                        sourceSubscription.Dispose();
                         Dispose();
                     }
                 }
-            }
-
-            class FrameTick : IObserver<long>
-            {
-                readonly Frame parent;
-
-                public FrameTick(Frame parent)
-                {
-                    this.parent = parent;
-                }
-
-                public void OnCompleted()
-                {
-                }
-
-                public void OnError(Exception error)
-                {
-                }
-
-                public void OnNext(long _)
-                {
-                    lock (parent.gate)
-                    {
-                        if (parent.isUpdated)
-                        {
-                            var value = parent.latestValue;
-                            parent.isUpdated = false;
-                            parent.observer.OnNext(value);
-                        }
-
-                        if (parent.isCompleted)
-                        {
-                            try
-                            {
-                                parent.observer.OnCompleted();
-                            }
-                            finally
-                            {
-                                parent.Dispose();
-                            }
-                        }
-                    }
-                }
-            }
+            }           
         }
     }
 

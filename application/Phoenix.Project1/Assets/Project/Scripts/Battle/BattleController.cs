@@ -23,6 +23,11 @@ namespace Phoenix.Project1.Client.Battles
 {
     public class BattleController : MonoBehaviour
     {       
+        internal class ActData
+        {
+            public PlayableDirector Director;
+            public IDisposable Disposable;
+        }
         private CompositeDisposable _Disposables;
         
         private readonly UniRx.CompositeDisposable _SendDisposables;
@@ -91,7 +96,7 @@ namespace Phoenix.Project1.Client.Battles
             var battleObs = from battle in NotifierRx.ToObservable().Supply<IBattle>()                
                             select battle;
                                     
-            battleObs.Subscribe(_Battle).AddTo(_Disposables);
+            battleObs.ObserveOnMainThread().Subscribe(_Battle).AddTo(_Disposables);
 
             _SetPlayablePool();
         }     
@@ -125,7 +130,7 @@ namespace Phoenix.Project1.Client.Battles
             
                 var avatarId = actor.AvatarId.Value;
 
-                var loadData = from handle in Addressables.LoadAssetAsync<GameObject>(avatarId).AsHandleObserver()
+                var loadData = from handle in Addressables.LoadAssetAsync<GameObject>(avatarId).AsHandleObserver().ObserveOnMainThread()
                     select new LoadData() {Id = actor.InstanceId, Location = actor.Location, Handle = handle};
 //
 //                var loadData = from hnd in UniRx.Observable.Defer(() =>
@@ -183,7 +188,7 @@ namespace Phoenix.Project1.Client.Battles
             var speedObs = from battle in NotifierRx.ToObservable().Supply<IBattle>()
                            from speed in battle.Speed.ObserveEveryValueChanged(b => b.Value)
                            select speed;
-            speedObs.Subscribe(_UpdateSpeed).AddTo(_Disposables);
+            speedObs.ObserveOnMainThread().Subscribe(_UpdateSpeed).AddTo(_Disposables);
         }
         private void _Battle(IBattle battle)
         {
@@ -203,11 +208,11 @@ namespace Phoenix.Project1.Client.Battles
             
             loadObs.DoOnError(_Error).ObserveOnMainThread().Subscribe(_SendReady).AddTo(_Disposables);
                         
-            actorPerformObs.DoOnError(_Error).ObserveOnMainThread().Subscribe(_ActorPerform).AddTo(_Disposables);
+            actorPerformObs.DoOnError(_Error).Subscribe(_ActorPerform).AddTo(_Disposables);
             
-            enterenceObs.DoOnError(_Error).ObserveOnMainThread().Subscribe(_BattleEntrance).AddTo(_Disposables);
+            enterenceObs.DoOnError(_Error).Subscribe(_BattleEntrance).AddTo(_Disposables);
             
-            finishObs.DoOnError(_Error).ObserveOnMainThread().Subscribe(_BattleFinished).AddTo(_Disposables);
+            finishObs.DoOnError(_Error).Subscribe(_BattleFinished).AddTo(_Disposables);
         }
 
         private void _SendReady(LoadData[] handles)
@@ -295,15 +300,15 @@ namespace Phoenix.Project1.Client.Battles
 
         private void _ActorPerform(ActorPerformTimestamp obj)
         {            
-            Debug.Log($"ActorPerform frame {obj.Frames}");
+            //Debug.Log($"ActorPerform frame {obj.Frames}");
             
-//            ActAsObservable(obj.ActorPerform.Forwards, obj.Frames);
-//            ActAsObservable(obj.ActorPerform.Casts, obj.Frames);
-//            ActAsObservable(obj.ActorPerform.Backs, obj.Frames);
-//                        
-//            IObservable<Effect[]> triggerSubject = from effects in _EffectTriggerCombine(obj.ActorPerform.FrameEffects, obj.Frames)//obj.Frames)                
-//                                                    select effects;
-//            triggerSubject.Subscribe(_EffectFinished).AddTo(_Disposables);                        
+            ActAsObservable(obj.ActorPerform.Forwards, obj.Frames);
+            ActAsObservable(obj.ActorPerform.Casts, obj.Frames);
+            ActAsObservable(obj.ActorPerform.Backs, obj.Frames);
+                        
+            IObservable<Effect[]> triggerSubject = from effects in _EffectTriggerCombine(obj.ActorPerform.FrameEffects, obj.Frames)//obj.Frames)                
+                                                    select effects;
+            triggerSubject.Subscribe(_EffectFinished).AddTo(_Disposables);                        
         }
 
         private void ActAsObservable(ActorFrameMotion[] motions, int currentFrame)
@@ -315,12 +320,12 @@ namespace Phoenix.Project1.Client.Battles
 
         private void _EffectFinished(Effect[] effects)
         {
-            Debug.Log($"_EffectFinished");
+            //Debug.Log($"_EffectFinished");
         }
 
         private void _ActorFinished(PlayableDirector[] directors)
         {
-            Debug.Log($"_ActorFinished");
+            //Debug.Log($"_ActorFinished");
 
             foreach (var director in directors)
             {
@@ -330,7 +335,7 @@ namespace Phoenix.Project1.Client.Battles
 
         private IObservable<bool> _TriggerEffect(Effect data)
         {
-            Debug.Log($"_TriggerEffect {data.Actor},  {data.Type} value {data.Value}");         
+            //Debug.Log($"_TriggerEffect {data.Actor},  {data.Type} value {data.Value}");         
             
             _ActorUiController.ShowJumpText(data.Type, data.Value.ToString(), GetAvatarByID(data.Actor), IsAttackerByID(data.Actor));
             
@@ -345,7 +350,7 @@ namespace Phoenix.Project1.Client.Battles
 
             foreach (var frameEffect in frameEffects)
             {
-                Debug.Log($"Trigger Effect {frameEffect.Frames} Current Frame {currentFrame}");
+                //Debug.Log($"Trigger Effect {frameEffect.Frames} Current Frame {currentFrame}");
                 
                 foreach (var effect in frameEffect.Effects)
                 {
@@ -367,7 +372,7 @@ namespace Phoenix.Project1.Client.Battles
 
             foreach (var motion in frameMotions)
             {              
-                Debug.Log($"_ActCombine frame {motion.ActorId}  {motion.MotionId}");
+                //Debug.Log($"_ActCombine frame {motion.ActorId}  {motion.MotionId} currentFrame {currentFrame} StartFrames {motion.StartFrames} end frame {motion.EndFrames}");
                 obs.Add(TimelineBinding.PlayableAsObservable(motion, currentFrame, this));
             }                     
             
@@ -544,7 +549,7 @@ namespace Phoenix.Project1.Client.Battles
             _ClearLoadHandle();
             //_Frame?.Dispose();
             
-            PoolManager.Instance.RemovePool(_PlayablePoolName);
+            PoolManager.Instance.RemoveAllPools();
         }
 
         private void _ClearAvatars()
@@ -561,6 +566,8 @@ namespace Phoenix.Project1.Client.Battles
             {                
                 Addressables.Release(loadData.Handle);
             }
+            
+            Array.Clear(_LoadDatas, 0, _LoadDatas.Length);
         }
 
         private void OnDestroy()
@@ -578,17 +585,19 @@ namespace Phoenix.Project1.Client.Battles
 
         private void _ExitBattle(IBattleStatus battle)
         {
-            foreach (var avatar in _Avatars)
-            {
-                Addressables.ReleaseInstance(avatar.gameObject);
-            }
-
+//            foreach (var avatar in _Avatars)
+//            {
+//                Addressables.ReleaseInstance(avatar.gameObject);
+//            }
+            
             foreach (var machine in _Machines)
             {
                 machine.Dispose();
             }
             
-            battle.Exit();      
+            _Finished();
+            
+            battle.Exit();
         }                            
     }
 }

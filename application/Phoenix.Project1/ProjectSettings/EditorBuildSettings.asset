@@ -6,26 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Project/Scenes/root.unity
-    guid: 1dcf624e3f0536741b2cb5d77c250a38
-  - enabled: 1
-    path: Assets/Project/Scenes/login.unity
-    guid: 43113db160b29b5428a0b73e873fd550
-  - enabled: 1
-    path: Assets/Project/Scenes/dashboard.unity
-    guid: 1bdbe8a8463c0d64da581cab5a45a072
-  - enabled: 1
-    path: Assets/Project/Scenes/battle.unity
-    guid: b457d7a302227094a8c8df9fe9e30ad5
-  - enabled: 1
-    path: Assets/Project/Scenes/hero.unity
-    guid: 24affba2b52ec6441bef26965f0d6628
-  - enabled: 1
-    path: Assets/Project/Scenes/store.unity
-    guid: c6e5bee5b6702b741b7e8bd57faeb022
-  - enabled: 1
-    path: Assets/Project/Scenes/team.unity
-    guid: 7e8f781da5b59bb499d83803d33d6cad
+    path: Assets/Project/Scenes/initial.unity
+    guid: 2a80a836dc54be94f917a678dbf7e50d
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: ab978a762346b1b47a28d8b388349e71,
       type: 2}

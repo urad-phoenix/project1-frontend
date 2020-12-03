@@ -16,7 +16,7 @@ MonoBehaviour:
   Director:
     exposedName: b18df5cda499b0d429afd55335790446
     defaultValue: {fileID: 0}
-  AssetKey: Attack
+  AssetKey: Cast1
 --- !u!114 &-260309999925128285
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -249,7 +249,7 @@ MonoBehaviour:
   Director:
     exposedName: d2c6afa40896536498da34c340368b74
     defaultValue: {fileID: 0}
-  AssetKey: Move
+  AssetKey: Forward
 --- !u!114 &4980914889740462550
 MonoBehaviour:
   m_ObjectHideFlags: 1

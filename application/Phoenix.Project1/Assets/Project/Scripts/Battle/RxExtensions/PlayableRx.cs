@@ -83,7 +83,7 @@ namespace Phoenix.Project1.Client.Battles
                         _PlayableDirector.initialTime = 0;
                         _PlayableDirector.Play();
                     
-                        Debug.Log($"Play : {_StartFrame}  {_EndFrame} {frame}");
+                        //Debug.Log($"Play : {_StartFrame}  {_EndFrame} {frame}");
                     }
                 }
                 
@@ -97,7 +97,7 @@ namespace Phoenix.Project1.Client.Battles
                     {
                         observer.OnNext(_PlayableDirector);
                         OnCompleted();
-                        Debug.Log($"End Play : {_StartFrame} {_EndFrame} duration {_PlayableDirector.duration}");
+                        //Debug.Log($"End Play : {_StartFrame} {_EndFrame} duration {_PlayableDirector.duration}");
                     }                                                                                               
                 }
             }
@@ -108,9 +108,9 @@ namespace Phoenix.Project1.Client.Battles
 
                 var obs = FrameSubjectRx.OnFrameUpdateAsObserver(_Frame.AsObservable(), _CurrentFrame);
 
-                var scheduling = obs.Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
-                
-                return StableCompositeDisposable.Create(_CancellationToken, scheduling);
+                obs.Subscribe(frame => Update(frame)).AddTo(_CancellationToken);
+
+                return _CancellationToken;
             }         
 
             public override void OnNext(PlayableDirector value)
@@ -123,7 +123,6 @@ namespace Phoenix.Project1.Client.Battles
                 try
                 {
                     observer.OnError(error);
-                    _CancellationToken.Dispose();
                 }
                 finally
                 {
@@ -138,9 +137,7 @@ namespace Phoenix.Project1.Client.Battles
                 {
                     _IsCompleted = true;
 
-                    observer.OnCompleted();
-                    
-                    _CancellationToken.Dispose();
+                    observer.OnCompleted();      
                 }
                 finally
                 {
@@ -153,7 +150,7 @@ namespace Phoenix.Project1.Client.Battles
     
     public static class PlayableRx
     {
-        public static IObservable<PlayableDirector> PlayAsObservable(this PlayableDirector director, IDisposable disposable)
+        public static IObservable<PlayableDirector> PlayAsObservable(this PlayableDirector director)
         {
             return Observable.Create<PlayableDirector>(obs =>
             {                
@@ -162,16 +159,15 @@ namespace Phoenix.Project1.Client.Battles
                 director.stopped += playableDirector =>
                 {
                     obs.OnNext(playableDirector);
-                    obs.OnCompleted();
-                    disposable.Dispose();
+                    obs.OnCompleted();                    
                 };
 
-                return disposable;
+                return Disposable.Empty;
             });
         }  
         
         public static IObservable<PlayableDirector> PlayAsObservable(this PlayableDirector director, int startFrame,
-            int endFrame, int currentFrame, IDisposable disposable)
+            int endFrame, int currentFrame)
         {
             return new PlayableObservable(director, startFrame, endFrame, currentFrame);
         }

@@ -19,7 +19,7 @@ public class HeroUI : MonoBehaviour
         var teamObs = from team in NotifierRx.ToObservable().Supply<IHeroStatus>()
                       select team;
 
-        teamObs.Subscribe(_ToDashboard).AddTo(_SendDisposables);
+        teamObs.ObserveOnMainThread().Subscribe(_ToDashboard).AddTo(_SendDisposables);
     }
 
     private void _ToDashboard(IHeroStatus team)

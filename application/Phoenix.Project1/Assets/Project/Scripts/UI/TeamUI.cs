@@ -20,7 +20,7 @@ namespace Phoenix.Project1.Client.UI
             var teamObs = from team in NotifierRx.ToObservable().Supply<ITeamStatus>()
                             select team;
 
-            teamObs.Subscribe(_ToDashboard).AddTo(_SendDisposables);
+            teamObs.ObserveOnMainThread().Subscribe(_ToDashboard).AddTo(_SendDisposables);
         }
 
         private void _ToDashboard(ITeamStatus team)

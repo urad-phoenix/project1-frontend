@@ -39,8 +39,8 @@ namespace Phoenix.Project1.Client.UI
             _Disposables.Clear();
             gameObject.SetActive(true);
 
-            NotifierRx.ToObservable().Supply<IActor>().Subscribe(_AddActor).AddTo(_Disposables);
-            NotifierRx.ToObservable().Unsupply<IActor>().Subscribe(_RemoveActor).AddTo(_Disposables);
+            NotifierRx.ToObservable().Supply<IActor>().ObserveOnMainThread().Subscribe(_AddActor).AddTo(_Disposables);
+            NotifierRx.ToObservable().Unsupply<IActor>().ObserveOnMainThread().Subscribe(_RemoveActor).AddTo(_Disposables);
         }
 
         private void _RemoveActor(IActor gpi)

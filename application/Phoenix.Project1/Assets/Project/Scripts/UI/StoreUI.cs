@@ -21,7 +21,7 @@ public class StoreUI : MonoBehaviour
         var teamObs = from team in NotifierRx.ToObservable().Supply<IStoreStatus>()
                       select team;
 
-        teamObs.Subscribe(_ToDashboard).AddTo(_SendDisposables);
+        teamObs.ObserveOnMainThread().Subscribe(_ToDashboard).AddTo(_SendDisposables);
     }
 
     private void _ToDashboard(IStoreStatus team)

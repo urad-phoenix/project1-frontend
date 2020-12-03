@@ -32,11 +32,11 @@ namespace Phoenix.Project1.Client.UI
         {
 
             
-            NotifierRx.ToObservable().Supply<IVerifier>().Subscribe(_ShowVerify).AddTo(_Disposables);
-            NotifierRx.ToObservable().Unsupply<IVerifier>().Subscribe(_HideVerify).AddTo(_Disposables);
+            NotifierRx.ToObservable().Supply<IVerifier>().ObserveOnMainThread().Subscribe(_ShowVerify).AddTo(_Disposables);
+            NotifierRx.ToObservable().Unsupply<IVerifier>().ObserveOnMainThread().Subscribe(_HideVerify).AddTo(_Disposables);
 
-            NotifierRx.ToObservable().Supply<IPlayer>().Subscribe(_ShowLobby).AddTo(_Disposables);
-            NotifierRx.ToObservable().Unsupply<IPlayer>().Subscribe(_HideLobby).AddTo(_Disposables);
+            NotifierRx.ToObservable().Supply<IPlayer>().ObserveOnMainThread().Subscribe(_ShowLobby).AddTo(_Disposables);
+            NotifierRx.ToObservable().Unsupply<IPlayer>().ObserveOnMainThread().Subscribe(_HideLobby).AddTo(_Disposables);
 
             _ShowVerify(null);
         }

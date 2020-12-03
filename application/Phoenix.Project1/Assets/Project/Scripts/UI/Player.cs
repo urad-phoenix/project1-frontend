@@ -30,8 +30,8 @@ namespace Phoenix.Project1.Client.UI
         // Start is called before the first frame update
         void Start()
         {
-            NotifierRx.ToObservable().Supply<IPlayer>().Subscribe(_Show).AddTo(_Disposables);
-            NotifierRx.ToObservable().Unsupply<IPlayer>().Subscribe(_Hide).AddTo(_Disposables);
+            NotifierRx.ToObservable().Supply<IPlayer>().ObserveOnMainThread().Subscribe(_Show).AddTo(_Disposables);
+            NotifierRx.ToObservable().Unsupply<IPlayer>().ObserveOnMainThread().Subscribe(_Hide).AddTo(_Disposables);
             
         }
        

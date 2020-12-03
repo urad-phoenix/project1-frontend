@@ -33,7 +33,7 @@ MonoBehaviour:
   Director:
     exposedName: d17af4f57679c074882e98ea9032af96
     defaultValue: {fileID: 0}
-  AssetKey: Move
+  AssetKey: Forward
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -280,4 +280,4 @@ MonoBehaviour:
   Director:
     exposedName: f89ea7d17ebb5cc48a261abd798a21a4
     defaultValue: {fileID: 0}
-  AssetKey: Attack
+  AssetKey: Entrance

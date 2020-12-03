@@ -75,7 +75,7 @@ namespace Phoenix.Project1.Client.Battles
 //                var scheduling = UniRx.Observable.EveryUpdate()
 //                    .ObserveOnMainThread().Subscribe(frame => Update(_CurrentFrame++)).AddTo(_CancellationToken);
                 
-                return StableCompositeDisposable.Create(_CancellationToken, scheduling);
+                return _CancellationToken;
                
             }
 
@@ -89,7 +89,6 @@ namespace Phoenix.Project1.Client.Battles
                 try
                 {
                     observer.OnError(error);
-                    _CancellationToken.Dispose();
                 }
                 finally
                 {
@@ -105,7 +104,6 @@ namespace Phoenix.Project1.Client.Battles
                     isCompleted = true;
 
                     observer.OnCompleted();
-                    _CancellationToken.Dispose();
                 }
                 finally
                 {

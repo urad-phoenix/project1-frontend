@@ -59,7 +59,7 @@ namespace Project.Scripts.UI
 
         private void Start()
         {
-            Observable.EveryUpdate().Subscribe(obs => _SetFollow()).AddTo(_Disposables);
+            Observable.EveryUpdate().ObserveOnMainThread().Subscribe(obs => _SetFollow()).AddTo(_Disposables);
         }
 
         private void _SetFollow()
